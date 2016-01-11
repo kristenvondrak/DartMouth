@@ -1,0 +1,106 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="com.example.kristenvondrak.main.DiaryFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/gray"
+            android:layout_centerInParent="true"
+            android:text="Tuesday, November 17"/>
+    </RelativeLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginBottom="7dp"
+        android:background="@color/white"
+        android:stretchColumns="0,2,4,6">
+
+        <TableRow
+            android:padding="5dp">
+            <TextView
+                android:id="@+id/goal"
+                style="@style/DiaryTableValue"
+                android:text="1,500"/>
+            <TextView
+                style="@style/DiaryTableSymbol"
+                android:text="-"/>
+            <TextView
+                android:id="@+id/food_total"
+                style="@style/DiaryTableValue"
+                android:text="780"/>
+            <TextView
+                style="@style/DiaryTableSymbol"
+                android:text="+"/>
+            <TextView
+                android:id="@+id/exercise"
+                style="@style/DiaryTableValue"
+                android:text="350"/>
+            <TextView
+                style="@style/DiaryTableSymbol"
+                android:text="="/>
+            <TextView
+                android:id="@+id/remaining"
+                style="@style/DiaryTableRemainder"
+                android:text="1,070"/>
+        </TableRow>
+
+        <TableRow
+            android:padding="5dp">
+            <TextView
+                android:textSize="12dp"
+                android:gravity="center"
+                android:text="Goal"/>
+            <TextView
+                android:gravity="center"
+                android:text=""/>
+            <TextView
+                android:textSize="12dp"
+                android:gravity="center"
+                android:text="Food"/>
+            <TextView
+                android:gravity="center"
+                android:text=""/>
+            <TextView
+                android:textSize="12dp"
+                android:gravity="center"
+                android:text="Exercise"/>
+            <TextView
+                android:gravity="center"
+                android:text=""/>
+            <TextView
+                android:textSize="12dp"
+                android:gravity="center"
+                android:text="Remaining"/>
+        </TableRow>
+
+
+    </TableLayout>
+
+    <ListView
+        android:id="@+id/meal_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginBottom="7dp"
+        android:background="@color/white">
+    </ListView>
+
+
+</LinearLayout>

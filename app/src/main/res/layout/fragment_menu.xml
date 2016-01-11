@@ -1,0 +1,142 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="com.example.kristenvondrak.main.MenuFragment">
+
+    <FrameLayout
+        android:id="@+id/menu_location_background"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="@color/tab_highlight">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/prev_date_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/left_arrow_selector"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="25dp"
+                android:textColor="@color/white"
+                android:text="Sat, Jan 9"
+                android:layout_marginRight="30dp"
+                android:layout_marginLeft="30dp"/>
+
+            <ImageView
+                android:id="@+id/next_date_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/right_arrow_selector"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/search_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_search_white"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="10dp"/>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/venue_tabs_ll"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+        <include layout="@layout/custom_tab"/>
+        <include layout="@layout/custom_tab"/>
+        <include layout="@layout/custom_tab"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
+    <LinearLayout
+        android:id="@+id/mealtime_tabs_ll"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+        <include layout="@layout/custom_tab"/>
+        <include layout="@layout/custom_tab"/>
+        <include layout="@layout/custom_tab"/>
+        <include layout="@layout/custom_tab"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
+    <HorizontalScrollView
+        android:id="@+id/category_tabs_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:scrollbarAlwaysDrawVerticalTrack="false">
+
+        <LinearLayout
+            android:id="@+id/category_tabs_ll"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal">
+
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+            <include layout="@layout/custom_tab_scrollview"/>
+
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
+    <ListView
+        android:id="@+id/food_items_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:listSelector="@color/light_gray"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="30dp">
+    </ListView>
+
+</LinearLayout>
