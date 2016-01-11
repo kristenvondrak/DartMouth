@@ -1,6 +1,7 @@
 package com.example.kristenvondrak.dartmouth.Parse;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
@@ -16,7 +17,7 @@ public class ParseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.d("&&&&&&&&&&&&&&&&&&&&&&&&", "here!");
         // Add your initialization code here
         ParseObject.registerSubclass(Offering.class);
         ParseObject.registerSubclass(Recipe.class);

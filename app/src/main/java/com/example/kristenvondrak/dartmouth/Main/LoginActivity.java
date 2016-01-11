@@ -22,6 +22,7 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        final Activity me = this;
 
         m_EmailEditText = (EditText) findViewById(R.id.email_edit_text);
         m_PasswordEditText = (EditText) findViewById(R.id.password_edit_text);
@@ -32,6 +33,7 @@ public class LoginActivity extends Activity {
         m_LoginTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                me.finish();
                 // register user/validate
                 // show red ! in edittext
             }

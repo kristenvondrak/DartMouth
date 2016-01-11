@@ -1,5 +1,7 @@
 package com.example.kristenvondrak.dartmouth.Parse;
 
+import android.util.Log;
+
 import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -26,23 +28,32 @@ public class ParseAPI {
     public static List<Recipe> recipesFromCloudForDate(Calendar calendar, String venueKey, String mealName, String menuName) {
         final List<Recipe> recipesList = new ArrayList<>();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.DAY_OF_MONTH);
-        int year = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Offering");
         query.whereEqualTo("month", month);
         query.whereEqualTo("day", day);
         query.whereEqualTo("year", year);
 
+        Log.d("month", Integer.toString(month));
+        Log.d("day", Integer.toString(day));
+        Log.d("year", Integer.toString(year));
+
         if (venueKey != null) {
+            Log.d("^^^^^^^^^^^^^^^", venueKey);
             query.whereEqualTo("venueKey", venueKey);
         }
         if (mealName != null) {
+            Log.d("^^^^^^^^^^^^^^^", mealName);
             query.whereEqualTo("mealName", mealName);
         }
         if (menuName != null) {
+            Log.d("^^^^^^^^^^^^^^^", menuName);
             query.whereEqualTo("menuName", menuName);
         }
+
+
 
         // query.orderByAscending
 
@@ -50,9 +61,10 @@ public class ParseAPI {
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> offeringsList, ParseException e) {
                 if (e == null) {
-
+                    Log.d("^^^^^^^^^^^^^^^", offeringsList.toString());
                     List<ParseQuery<ParseObject>> queryList = new ArrayList<ParseQuery<ParseObject>>();
                     for (ParseObject object : offeringsList) {
+                        Log.d("^^^^^^^^^^^^^^^", object.getObjectId());
                         Offering offering = (Offering) object;
                         ParseRelation<ParseObject> relation = offering.getRecipes();
                         ParseQuery q = relation.getQuery();
@@ -68,10 +80,11 @@ public class ParseAPI {
                         public void done(List<ParseObject> list, ParseException e) {
                             if (e == null) {
                                 for (ParseObject object : list) {
+                                    Log.d("########", object.getObjectId());
                                     recipesList.add((Recipe) object);
                                 }
                             } else {
-                                // error
+
                             }
                         }
                     });

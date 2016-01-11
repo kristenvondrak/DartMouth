@@ -17,83 +17,117 @@ public class Constants {
                         Deli, Grill, GrabGo, Snacks};
 
 
-    public static final Map<Venue, MealTime[]> mealTimesForVenue;
-    static {
-        Map<Venue, MealTime[]> map = new HashMap<>();
-        map.put(Venue.Foco, new MealTime[]{ MealTime.Breakfast,
-                                            MealTime.Lunch,
-                                            MealTime.Dinner});
+
+    public static final Map<Venue, MealTime[]> mealTimesForVenue = Collections.unmodifiableMap(
+            new HashMap<Venue, MealTime[]>() {{
+                put(Venue.Foco, new MealTime[]{ MealTime.Breakfast,
+                        MealTime.Lunch,
+                        MealTime.Dinner});
 
 
-        map.put(Venue.Hop, new MealTime[]{  MealTime.Breakfast,
-                                            MealTime.Lunch,
-                                            MealTime.Dinner,
-                                            MealTime.LateNight});
+                put(Venue.Hop, new MealTime[]{  MealTime.Breakfast,
+                        MealTime.Lunch,
+                        MealTime.Dinner,
+                        MealTime.LateNight});
 
 
-        map.put(Venue.Novack, new MealTime[]{ MealTime.AllDay});
-        mealTimesForVenue = Collections.unmodifiableMap(map);
-    }
+                put(Venue.Novack, new MealTime[]{ MealTime.AllDay});
+
+    }});
 
 
-    public static final Map<Venue, Menu[]> menusForVenue;
-    static {
-        Map<Venue, Menu[]> map = new HashMap<>();
-        map.put(Venue.Foco, new Menu[]{ Menu.AllItems,
-                                        Menu.Specials,
-                                        Menu.EverydayItems,
-                                        Menu.GlutenFree,
-                                        Menu.Beverage,
-                                        Menu.Condiments});
+
+    public static final Map<Venue, Menu[]> menusForVenue = Collections.unmodifiableMap(
+        new HashMap<Venue, Menu[]>() {{
+            put(Venue.Foco, new Menu[]{ Menu.AllItems,
+                    Menu.Specials,
+                    Menu.EverydayItems,
+                    Menu.GlutenFree,
+                    Menu.Beverage,
+                    Menu.Condiments});
 
 
-        map.put(Venue.Hop, new Menu[]{  Menu.AllItems,
-                                        Menu.Specials,
-                                        Menu.EverydayItems,
-                                        Menu.Deli,
-                                        Menu.Grill,
-                                        Menu.GrabGo,
-                                        Menu.Snacks,
-                                        Menu.Beverage,
-                                        Menu.Condiments});
+            put(Venue.Hop, new Menu[]{  Menu.AllItems,
+                    Menu.Specials,
+                    Menu.EverydayItems,
+                    Menu.Deli,
+                    Menu.Grill,
+                    Menu.GrabGo,
+                    Menu.Snacks,
+                    Menu.Beverage,
+                    Menu.Condiments});
 
 
-        map.put(Venue.Novack, new Menu[]{   Menu.AllItems,
-                                            Menu.Specials,
-                                            Menu.EverydayItems,});
+            put(Venue.Novack, new Menu[]{   Menu.AllItems,
+                    Menu.Specials,
+                    Menu.EverydayItems,});
+    }});
 
-        menusForVenue = Collections.unmodifiableMap(map);
-    }
+    public static final Map<Venue, String> venueDisplayStrings = Collections.unmodifiableMap(
+            new HashMap<Venue, String>() {{
+                    put(Venue.Foco, "Foco");
+                    put(Venue.Hop, "Hop");
+                    put(Venue.Novack, "Novack");
+                }});
 
-    public static class VenueStrings {
-        static String FocoDisplay = "Foco";
-        static String FocoParse = "DDS";
+    public static final Map<Venue, String> venueParseStrings = Collections.unmodifiableMap(
+            new HashMap<Venue, String>() {{
+                put(Venue.Foco, "DDS");
+                put(Venue.Hop, "CYC");
+                put(Venue.Novack, "NOVACK");
+            }});
 
-        static String HopDisplay = "Hop";
-        static String HopParse = "CYC";
+    public static final Map<MealTime, String> mealTimeDisplayStrings = Collections.unmodifiableMap(
+            new HashMap<MealTime, String>() {{
+                put(MealTime.Breakfast, "Breakfast");
+                put(MealTime.Lunch, "Lunch");
+                put(MealTime.Dinner, "Dinner");
+                put(MealTime.LateNight, "Late Night");
+                put(MealTime.AllDay, "All Day");
+            }});
 
-        static String NovackDisplay = "Novack";
-        static String NovackParse = "NOVACK";
-    }
+    public static final Map<MealTime, String> mealTimeParseStrings = Collections.unmodifiableMap(
+            new HashMap<MealTime, String>() {{
+                put(MealTime.Breakfast, "Breakfast");
+                put(MealTime.Lunch, "Lunch");
+                put(MealTime.Dinner, "Dinner");
+                put(MealTime.LateNight, "Late Night");
+                put(MealTime.AllDay, "Every Day");
+            }});
 
 
-    public static class MealTimeStrings {
-        static String BreakfastDisplay = "Breakfast";
-        static String BreakfastParse = "Breakfast";
+    public static final Map<Menu, String> menuDisplayStrings = Collections.unmodifiableMap(
+            new HashMap<Menu, String>() {{
+                put(Menu.AllItems, "All Items");
+                put(Menu.Specials, "Today's Specials");
+                put(Menu.EverydayItems, "Everyday Items");
+                put(Menu.Beverage, "Beverage");
+                put(Menu.Cereal, "Cereal");
+                put(Menu.Condiments, "Condiments");
+                put(Menu.GlutenFree, "Gluten Free");
+                put(Menu.EverydayItems, "Everyday Items");
+                put(Menu.Deli, "Deli");
+                put(Menu.Grill, "Grill");
+                put(Menu.GrabGo, "Grab & Go");
+                put(Menu.Snacks, "Snacks");
+            }});
 
-        static String LunchDisplay = "Lunch";
-        static String LunchParse = "Lunch";
+    public static final Map<Menu, String> menuParseStrings = Collections.unmodifiableMap(
+            new HashMap<Menu, String>() {{
+                put(Menu.AllItems, null);
+                put(Menu.Specials, "Today's Specials");
+                put(Menu.EverydayItems, "Everyday Items");
+                put(Menu.Beverage, "Beverage");
+                put(Menu.Cereal, "Cereal");
+                put(Menu.Condiments, "Condiments");
+                put(Menu.GlutenFree, "Additional Gluten Free");
+                put(Menu.EverydayItems, "Everyday Items");
+                put(Menu.Deli, "Courtyard Deli");
+                put(Menu.Grill, "Courtyard Grill");
+                put(Menu.GrabGo, "Grab & Go");
+                put(Menu.Snacks, "Courtyard Snacks");
+            }});
 
-        static String DinnerDisplay = "Dinner";
-        static String DinnerParse = "Dinner";
-
-        static String LateNightDisplay = "Late Night";
-        static String LateNightParse = "Late Night";
-
-        static String AllDayDisplay = "All Day";
-        static String AllDayParse = "Every Day";
-
-    }
 
     public static class MenuStrings {
         static String AllItemsDisplay = "All Items";

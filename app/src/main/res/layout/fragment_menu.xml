@@ -60,35 +60,29 @@
 
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/venue_tabs_ll"
+
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:orientation="horizontal">
-
-        <include layout="@layout/custom_tab"/>
-        <include layout="@layout/custom_tab"/>
-        <include layout="@layout/custom_tab"/>
-
-    </LinearLayout>
+        android:stretchColumns="*">
+        <TableRow
+            android:id="@+id/venue_tabs_row">
+        </TableRow>
+    </TableLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/light_gray" />
 
-    <LinearLayout
-        android:id="@+id/mealtime_tabs_ll"
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:orientation="horizontal">
-
-        <include layout="@layout/custom_tab"/>
-        <include layout="@layout/custom_tab"/>
-        <include layout="@layout/custom_tab"/>
-        <include layout="@layout/custom_tab"/>
-
-    </LinearLayout>
+        android:stretchColumns="*">
+        <TableRow
+            android:id="@+id/mealtime_tabs_row">
+        </TableRow>
+    </TableLayout>
 
     <View
         android:layout_width="match_parent"
@@ -107,17 +101,6 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:orientation="horizontal">
-
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-            <include layout="@layout/custom_tab_scrollview"/>
-
 
         </LinearLayout>
 
@@ -138,5 +121,36 @@
         android:requiresFadingEdge="vertical"
         android:fadingEdgeLength="30dp">
     </ListView>
+
+
+    <!--
+    <LinearLayout
+
+        android:id="@+id/venue_tabs_ll"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
+    <LinearLayout
+        android:id="@+id/mealtime_tabs_ll"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
+    -->
 
 </LinearLayout>

@@ -4,11 +4,12 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 
 /**
  * Created by kristenvondrak on 1/10/16.
  */
-@ParseClassName("Offering")
+@ParseClassName("Recipe")
 public class Recipe extends ParseObject {
 
     // Nutrients is a dictionary whose key type is a dictionary.
@@ -28,8 +29,8 @@ public class Recipe extends ParseObject {
         return getInt("rank");
     }
 
-    public Dictionary<String, Dictionary<String, Object>> getNutrients() {
-        return (Dictionary<String, Dictionary<String, Object>>) get("nutrients");
+    public HashMap<String, HashMap<String, Object>> getNutrients() {
+        return (HashMap<String, HashMap<String, Object>>) get("nutrients");
     }
 
     public String getUUID() {
@@ -141,9 +142,9 @@ public class Recipe extends ParseObject {
     }
 
     public String getServingSize() {
-        String g = (String) getNutrients().get("result").get("serving_size_grams");
+        String g = Integer.toString((Integer)getNutrients().get("result").get("serving_size_grams"));
         if (g == null)
-            return (String) getNutrients().get("result").get("serving_size_mls");
+            return (String) Integer.toString((Integer)getNutrients().get("result").get("serving_size_mls"));
         return g;
     }
 

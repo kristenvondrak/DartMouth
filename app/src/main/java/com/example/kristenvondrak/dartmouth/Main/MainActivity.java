@@ -26,6 +26,7 @@ public class MainActivity extends FragmentActivity {
     private Context m_Me;
     private FragmentTabHost m_FragmentTabHost;
     private int m_TabCount = 4;
+    static final int LOGIN_ACTIVITY_REQUEST = 1;  // The request code
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class MainActivity extends FragmentActivity {
 
         if (ParseAPI.getCurrentParseUser() == null) {
             Intent intent = new Intent(this, LoginActivity.class);
-            this.startActivity(intent);
+            this.startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST);
         }
 
 
@@ -87,6 +88,20 @@ public class MainActivity extends FragmentActivity {
         TextView tv = (TextView) view.findViewById(R.id.tab_text);
         tv.setText(text);
         return view;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == LOGIN_ACTIVITY_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                // Do something with the contact here (bigger example below)
+            }
+        }
     }
 
     @Override
