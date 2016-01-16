@@ -60,7 +60,7 @@
             android:text="Login"
             android:textSize="24dp"
             android:textStyle="bold"
-            android:textColor="@color/accent_blue"
+            android:textColor="@drawable/login_selected_color"
             android:layout_below="@id/password_edit_text"
             android:clickable="true"/>
 
@@ -83,7 +83,7 @@
             android:layout_centerHorizontal="true"
             android:text="Reset"
             android:textSize="18dp"
-            android:textColor="@color/accent_blue"
+            android:textColor="@drawable/login_selected_color"
             android:layout_marginTop="15dp"
             android:layout_below="@id/forgot_password_text_view"
             android:clickable="true"/>
@@ -95,7 +95,7 @@
             android:layout_centerHorizontal="true"
             android:text="Back to Signup"
             android:textSize="18dp"
-            android:textColor="@color/accent_blue"
+            android:textColor="@drawable/login_selected_color"
             android:layout_below="@id/reset_password_text_view"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="20dp"

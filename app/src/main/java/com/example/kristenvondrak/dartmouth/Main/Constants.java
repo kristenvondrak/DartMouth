@@ -1,5 +1,6 @@
 package com.example.kristenvondrak.dartmouth.Main;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,8 @@ public class Constants {
     public enum Menu {AllItems, Specials, EverydayItems, Beverage, Cereal, Condiments, GlutenFree,
                         Deli, Grill, GrabGo, Snacks};
 
+
+    public enum UserMeals {Breakfast, Lunch, Dinner, Snacks};
 
 
     public static final Map<Venue, MealTime[]> mealTimesForVenue = Collections.unmodifiableMap(
@@ -180,6 +183,26 @@ public class Constants {
         static String SigninErrorTitle = "Signin Error";
         static String SigninErrorDefaultMessage = "Unknown error signing in.";
         static String OkActionTitle = "OK";
+    }
+
+    public static Calendar getDateBefore(Calendar calendar) {
+        Calendar c = (Calendar) calendar.clone();
+        c.add(Calendar.DAY_OF_MONTH, -1);
+        c.set(Calendar.HOUR, calendar.getActualMaximum(Calendar.HOUR));
+        c.set(Calendar.HOUR_OF_DAY, calendar.getActualMaximum(Calendar.HOUR_OF_DAY));
+        c.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
+        c.set(Calendar.SECOND, calendar.getActualMaximum(Calendar.SECOND));
+        return c;
+    }
+
+    public static Calendar getDateAfter(Calendar calendar) {
+        Calendar c = (Calendar) calendar.clone();
+        c.add(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR, calendar.getActualMinimum(Calendar.HOUR));
+        c.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        c.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE));
+        c.set(Calendar.SECOND, calendar.getActualMinimum(Calendar.SECOND));
+        return c;
     }
 
 }

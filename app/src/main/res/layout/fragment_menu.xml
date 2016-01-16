@@ -6,60 +6,118 @@
     android:background="@color/white"
     tools:context="com.example.kristenvondrak.main.MenuFragment">
 
-    <FrameLayout
-        android:id="@+id/menu_location_background"
+    <ViewFlipper
+        android:id="@+id/menu_header_view_flipper"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:background="@color/tab_highlight">
+        android:layout_height="60dp">
 
-        <LinearLayout
+        <!-- Date -->
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_height="60dp"
+            android:background="@color/tab_highlight">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/prev_date_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/left_arrow_selector"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/date_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="25dp"
+                    android:textColor="@color/white"
+                    android:text="Sat, Jan 9"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginLeft="30dp"/>
+
+                <ImageView
+                    android:id="@+id/next_date_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/right_arrow_selector"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
 
             <ImageView
-                android:id="@+id/prev_date_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/left_arrow_selector"
+                android:id="@+id/date_search_btn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_search_white"
                 android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="10dp"/>
+
+        </FrameLayout>
+
+        <!-- Search -->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/tab_highlight">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+
+                <ImageView
+                    android:id="@+id/search_btn"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_search_white"
+                    android:tint="@color/light_gray"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="5dp"/>
+
+                <EditText
+                    android:id="@+id/search_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:singleLine="true"
+                    android:textSize="14dp"
+                    android:gravity="center"
+                    android:layout_marginRight="40dp"
+                    android:hint="Search for food items"
+                    android:textColor="@color/dark_gray"
+                    android:textColorHint="@color/light_gray"
+                    android:background="@null"/>
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/date_text_view"
+                android:id="@+id/search_cancel_btn"
+                android:layout_weight="0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textSize="25dp"
+                android:textSize="14dp"
+                android:gravity="center"
                 android:textColor="@color/white"
-                android:text="Sat, Jan 9"
-                android:layout_marginRight="30dp"
-                android:layout_marginLeft="30dp"/>
-
-            <ImageView
-                android:id="@+id/next_date_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/right_arrow_selector"
-                android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"/>
+                android:text="Cancel"
+                android:layout_marginRight="10dp"/>
 
         </LinearLayout>
-
-
-        <ImageView
-            android:id="@+id/search_btn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_search_white"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="10dp"/>
-
-    </FrameLayout>
-
+    </ViewFlipper>
 
     <TableLayout
         android:layout_width="match_parent"
@@ -78,7 +136,8 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:stretchColumns="*">
+        android:stretchColumns="*"
+        android:shrinkColumns="*">
         <TableRow
             android:id="@+id/mealtime_tabs_row">
         </TableRow>

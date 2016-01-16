@@ -6,94 +6,147 @@
     android:background="@color/white"
     tools:context="com.example.kristenvondrak.main.DiaryFragment">
 
-
-    <RelativeLayout
+    <!-- Date selector header -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="7dp"
-        android:background="@color/white">
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/tab_highlight">
+
+        <ImageView
+            android:id="@+id/prev_date_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/left_arrow_selector"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center_vertical"/>
 
         <TextView
+            android:id="@+id/date_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textColor="@color/gray"
-            android:layout_centerInParent="true"
-            android:text="Tuesday, November 17"/>
-    </RelativeLayout>
+            android:layout_gravity="center"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            android:text="Sat, Jan 9"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"/>
+
+        <ImageView
+            android:id="@+id/next_date_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/right_arrow_selector"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="7dp"
-        android:layout_marginRight="7dp"
-        android:layout_marginBottom="7dp"
-        android:background="@color/white"
-        android:stretchColumns="0,2,4,6">
+        android:paddingTop="2dp"
+        android:paddingBottom="5dp"
+        android:background="@color/light_gray_transparent"
+        android:stretchColumns="*">
 
+        <!-- Calorie Headers -->
         <TableRow
-            android:padding="5dp">
+            android:id="@+id/table_headers">
+
+            <!-- Goal -->
+            <TextView
+                android:layout_weight="5"
+                android:textSize="14dp"
+                android:gravity="center"
+                android:text="Goal"/>
+
+            <TextView
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:text=""/>
+
+            <!-- Food -->
+            <TextView
+                android:layout_weight="5"
+                android:textSize="14dp"
+                android:gravity="center"
+                android:text="Food"/>
+
+            <TextView
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:text=""/>
+
+            <!-- Exercise -->
+            <TextView
+                android:layout_weight="5"
+                android:textSize="14dp"
+                android:gravity="center"
+                android:text="Exercise"/>
+
+            <TextView
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:text=""/>
+
+            <!-- Remaining -->
+            <TextView
+                android:layout_weight="5"
+                android:textSize="14dp"
+                android:gravity="center"
+                android:text="Remaining"/>
+
+        </TableRow>
+
+        <!-- Calorie Values-->
+        <TableRow>
+
             <TextView
                 android:id="@+id/goal"
                 style="@style/DiaryTableValue"
                 android:text="1,500"/>
+
             <TextView
                 style="@style/DiaryTableSymbol"
                 android:text="-"/>
+
             <TextView
                 android:id="@+id/food_total"
                 style="@style/DiaryTableValue"
                 android:text="780"/>
+
             <TextView
                 style="@style/DiaryTableSymbol"
                 android:text="+"/>
+
             <TextView
                 android:id="@+id/exercise"
                 style="@style/DiaryTableValue"
                 android:text="350"/>
+
             <TextView
                 style="@style/DiaryTableSymbol"
                 android:text="="/>
+
             <TextView
                 android:id="@+id/remaining"
                 style="@style/DiaryTableRemainder"
                 android:text="1,070"/>
+
         </TableRow>
-
-        <TableRow
-            android:padding="5dp">
-            <TextView
-                android:textSize="12dp"
-                android:gravity="center"
-                android:text="Goal"/>
-            <TextView
-                android:gravity="center"
-                android:text=""/>
-            <TextView
-                android:textSize="12dp"
-                android:gravity="center"
-                android:text="Food"/>
-            <TextView
-                android:gravity="center"
-                android:text=""/>
-            <TextView
-                android:textSize="12dp"
-                android:gravity="center"
-                android:text="Exercise"/>
-            <TextView
-                android:gravity="center"
-                android:text=""/>
-            <TextView
-                android:textSize="12dp"
-                android:gravity="center"
-                android:text="Remaining"/>
-        </TableRow>
-
-
     </TableLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
     <ListView
-        android:id="@+id/meal_list"
+        android:id="@+id/meal_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="7dp"

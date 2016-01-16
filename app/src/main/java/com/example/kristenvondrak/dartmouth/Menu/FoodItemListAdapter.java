@@ -4,17 +4,30 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.NumberPicker;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kristenvondrak.dartmouth.Diary.DiaryEntry;
+import com.example.kristenvondrak.dartmouth.Diary.UserMeal;
+import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -26,10 +39,15 @@ public class FoodItemListAdapter extends BaseAdapter{
     private LayoutInflater m_Inflater;
     private double m_ServingsWhole = 1;
     private double m_ServingsFraction = 0;
+    private Calendar m_Calendar;
+    private Constants.MealTime m_MealTime;
+    private TextView m_SelectedUserMeal;
+    private TableRow m_UserMealTabs;
 
-    public FoodItemListAdapter(Activity activity, List<Recipe> list) {
+    public FoodItemListAdapter(Activity activity, List<Recipe> list, Calendar day) {
         m_Activity = activity;
         m_List = list;
+        m_Calendar = day;
         m_Inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -53,6 +71,10 @@ public class FoodItemListAdapter extends BaseAdapter{
         // Add other attributes here
     }
 
+    public void setMealTime(Constants.MealTime mealtime) {
+        m_MealTime = mealtime;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Holder holder=new Holder();
@@ -69,27 +91,26 @@ public class FoodItemListAdapter extends BaseAdapter{
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(m_Activity);
                 LayoutInflater inflater = m_Activity.getLayoutInflater();
-                final View view = inflater.inflate(R.layout.nutrition_dialog, null);
-
+                final View view = inflater.inflate(R.layout.dialog_nutrition, null);
+                TableRow tabs = (TableRow)view.findViewById(R.id.usermeal_tabs);
                 TextView tv = (TextView)view.findViewById(R.id.name);
                 tv.setText(recipe.getName());
 
-                for (int i = 0; i < Nutrients.grams.length; i++) {
-                    String grams = Nutrients.get(recipe, i);
-                    tv = (TextView)view.findViewById(Nutrients.grams[i]);
-                    tv.setText(Nutrients.addSpace(grams));
-
-                    /**
-                    if (Nutrients.percents[i] > 0 && Nutrients.stripChars(grams) > 0) {
-                        tv = (TextView)view.findViewById(Nutrients.percents[i]);
-                        int percent = (int)(((double)Nutrients.stripChars(grams) / Nutrients.daily_grams[i]) * 100);
-                        tv.setText(Integer.toString(percent) + "%");
-                    }*/
-                }
+                setTextViewValue(view, R.id.calories, recipe.getCalories());
+                setTextViewValue(view, R.id.fat_calories, recipe.getFatCalories());
+                setTextViewValue(view, R.id.total_fat,  recipe.getTotalFat());
+                setTextViewValue(view, R.id.saturated_fat, recipe.getSaturatedFat());
+                setTextViewValue(view, R.id.cholesterol, recipe.getCholestrol());
+                setTextViewValue(view, R.id.sodium, recipe.getSodium());
+                setTextViewValue(view, R.id.carbs, recipe.getTotalCarbs());
+                setTextViewValue(view, R.id.fiber, recipe.getFiber());
+                setTextViewValue(view, R.id.sugars, recipe.getSugars());
+                setTextViewValue(view, R.id.protein, recipe.getProtein());
 
 
                 final NumberPicker number = (NumberPicker) view.findViewById(R.id.servings_picker_number);
                 final NumberPicker fraction = (NumberPicker) view.findViewById(R.id.servings_picker_fraction);
+
 
                 // Selector wheel with values -, 1, 2 ... 99
                 final String[] numbers = new String[100];
@@ -132,12 +153,82 @@ public class FoodItemListAdapter extends BaseAdapter{
                     }
                 });
 
+
+                // Create tabs for selecting the user meal
+                boolean found = false;
+                for (Constants.UserMeals meal : Constants.UserMeals.values()) {
+                    ViewGroup tab = (ViewGroup)inflater.inflate(R.layout.custom_tab, null);
+                    TextView name = (TextView)tab.findViewById(R.id.tab_text);
+                    name.setText(meal.name());
+                    name.setTextColor(m_Activity.getResources().getColor(R.color.tab_highlight));
+                    name.setTag(meal.name());
+
+                    if (meal.name().equals(m_MealTime.name())) {
+                        found = true;
+                        m_SelectedUserMeal = name;
+                        m_SelectedUserMeal.setTypeface(Typeface.DEFAULT_BOLD);
+                    }
+                    tab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            m_SelectedUserMeal.setTypeface(Typeface.DEFAULT);
+                            TextView tv = (TextView)v.findViewById(R.id.tab_text);
+                            tv.setTypeface(Typeface.DEFAULT_BOLD);
+                            m_SelectedUserMeal = tv;
+                        }
+                    });
+                    tabs.addView(tab);
+                }
+
+                if (!found) {
+                    m_SelectedUserMeal = (TextView)tabs.getChildAt(0).findViewById(R.id.tab_text);
+                    m_SelectedUserMeal.setTypeface(Typeface.DEFAULT_BOLD);
+                }
+
+                tabs.invalidate();
                 view.invalidate();
                 builder.setView(view);
                 builder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // add to parse
-                        Toast.makeText(m_Activity, "Item added!", Toast.LENGTH_SHORT).show();
+
+                        // Create new diary entry and save to parse
+                        final DiaryEntry diaryEntry = new DiaryEntry();
+                        diaryEntry.setDate(m_Calendar.getTime());
+                        diaryEntry.setUser(ParseUser.getCurrentUser());
+                        diaryEntry.setRecipe(recipe);
+                        diaryEntry.setServingsMultiplier((float)(m_ServingsWhole + m_ServingsFraction));
+                        diaryEntry.saveInBackground();
+
+                        // Check if user meal exists
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("UserMeal");
+                        query.whereGreaterThan("date", Constants.getDateBefore(m_Calendar));
+                        query.whereLessThan("date", Constants.getDateAfter(m_Calendar));
+                        query.whereEqualTo("user", ParseUser.getCurrentUser());
+                        query.whereEqualTo("title", m_SelectedUserMeal.getTag());
+                        Log.d("Food Item List Adapter: Date before",Constants.getDateBefore(m_Calendar).toString());
+                        Log.d("Food Item List Adapter: Date after",Constants.getDateAfter(m_Calendar).toString());
+
+                        query.findInBackground(new FindCallback<ParseObject>() {
+                            public void done(List<ParseObject> meals, ParseException e) {
+                                if (e == null && meals.size() > 0) {
+                                    // Add diary entry to already existing UserMeal
+                                    UserMeal meal = (UserMeal) meals.get(0);
+                                    meal.addDiaryEntry(diaryEntry);
+                                    meal.saveInBackground();
+                                } else {
+                                    // Add new UserMeal to parse
+                                    UserMeal newmeal = new UserMeal();
+                                    newmeal.put("date", m_Calendar.getTime());
+                                    newmeal.put("user", ParseUser.getCurrentUser());
+                                    newmeal.put("title", m_SelectedUserMeal.getTag());
+                                    List<DiaryEntry> list = new ArrayList<DiaryEntry>();
+                                    list.add(diaryEntry);
+                                    newmeal.put("entries", list);
+                                    newmeal.saveInBackground();
+                                }
+                            }
+                        });
+                        Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -154,32 +245,35 @@ public class FoodItemListAdapter extends BaseAdapter{
         return rowView;
     }
 
+
+    private void setTextViewValue(View v, int id, String text) {
+        ((TextView)v.findViewById(id)).setText(text);
+    }
+
+    private String getNewValue(String value, double multiplier) {
+        int v = (int)(Nutrients.convertToDouble(value) * multiplier);
+        String u = Nutrients.getUnits(value);
+
+        if (v < 0)
+            return "";
+
+        return Integer.toString(v) + u;
+    }
+
     private void updateNutrients(View view, Recipe recipe) {
-        TextView tv;
+
         double num_servings = m_ServingsFraction + m_ServingsWhole;
-        for (int i = 0; i < Nutrients.grams.length; i++) {
-            int value = (int)(Nutrients.convertToDouble(Nutrients.get(recipe, i)) * num_servings);
-            String units = Nutrients.getUnits(Nutrients.get(recipe, i));
 
-            tv = (TextView)view.findViewById(Nutrients.grams[i]);
-            if (value < 0)
-                tv.setText("");
-            else
-                tv.setText(Integer.toString(value) + " " + units);
-
-            if (Nutrients.percents[i] > 0) {
-                tv = (TextView)view.findViewById(Nutrients.percents[i]);
-                int percent;
-                if (value <= 0)
-                    percent = 0;
-                else if (value >= Nutrients.daily_grams[i])
-                    percent = 100;
-                else
-                    percent = (int)(((double)value/(double)Nutrients.daily_grams[i])* 100) ;
-                tv.setText(Integer.toString(percent) + "%");
-            }
-        }
-
+        setTextViewValue(view, R.id.calories, getNewValue(recipe.getCalories(), num_servings));
+        setTextViewValue(view, R.id.fat_calories,  getNewValue(recipe.getFatCalories(), num_servings));
+        setTextViewValue(view, R.id.total_fat,  getNewValue(recipe.getTotalFat(), num_servings));
+        setTextViewValue(view, R.id.saturated_fat,  getNewValue(recipe.getSaturatedFat(), num_servings));
+        setTextViewValue(view, R.id.cholesterol,  getNewValue(recipe.getCholestrol(), num_servings));
+        setTextViewValue(view, R.id.sodium, getNewValue(recipe.getSodium(), num_servings));
+        setTextViewValue(view, R.id.carbs,  getNewValue(recipe.getTotalCarbs(), num_servings));
+        setTextViewValue(view, R.id.fiber,  getNewValue(recipe.getFiber(), num_servings));
+        setTextViewValue(view, R.id.sugars,  getNewValue(recipe.getSugars(), num_servings));
+        setTextViewValue(view, R.id.protein,  getNewValue(recipe.getProtein(), num_servings));
     }
 
     private double parseFraction(String string) {

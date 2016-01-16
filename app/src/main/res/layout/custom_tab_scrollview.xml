@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/tab_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14dp"
         android:textColor="@color/gray"
@@ -19,7 +19,9 @@
     <View
         android:id="@+id/tab_highlight"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_height="3dp"
         android:layout_alignParentBottom="true"
         android:background="@color/tab_highlight"/>
 
