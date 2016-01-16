@@ -39,12 +39,17 @@ public class Nutrients {
     }
 
     public static String getUnits(String string) {
-        if (string.contains("less")) {
-            string = string.substring(10);
+
+        int i = 0;
+        while (true) {
+            if (Character.isDigit(string.charAt(i)))
+                break;
+            i++;
         }
-        for (int i = 0; i < string.length(); i++) {
-            if (Character.isLetter(string.charAt(i)))
-                return (string.substring(i, string.length()));
+
+        for (int j = i; j < string.length(); j++) {
+            if (Character.isLetter(string.charAt(j)))
+                return (string.substring(j, string.length()));
         }
         return "";
     }

@@ -100,7 +100,8 @@
                     android:hint="Search for food items"
                     android:textColor="@color/dark_gray"
                     android:textColorHint="@color/light_gray"
-                    android:background="@null"/>
+                    android:background="@null"
+                    android:imeOptions="actionDone"/>
 
             </LinearLayout>
 

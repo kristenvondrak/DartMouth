@@ -3,13 +3,12 @@ package com.example.kristenvondrak.dartmouth.Menu;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -89,28 +88,19 @@ public class FoodItemListAdapter extends BaseAdapter{
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(m_Activity);
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(m_Activity);
                 LayoutInflater inflater = m_Activity.getLayoutInflater();
                 final View view = inflater.inflate(R.layout.dialog_nutrition, null);
-                TableRow tabs = (TableRow)view.findViewById(R.id.usermeal_tabs);
+
+                // Name
                 TextView tv = (TextView)view.findViewById(R.id.name);
                 tv.setText(recipe.getName());
 
-                setTextViewValue(view, R.id.calories, recipe.getCalories());
-                setTextViewValue(view, R.id.fat_calories, recipe.getFatCalories());
-                setTextViewValue(view, R.id.total_fat,  recipe.getTotalFat());
-                setTextViewValue(view, R.id.saturated_fat, recipe.getSaturatedFat());
-                setTextViewValue(view, R.id.cholesterol, recipe.getCholestrol());
-                setTextViewValue(view, R.id.sodium, recipe.getSodium());
-                setTextViewValue(view, R.id.carbs, recipe.getTotalCarbs());
-                setTextViewValue(view, R.id.fiber, recipe.getFiber());
-                setTextViewValue(view, R.id.sugars, recipe.getSugars());
-                setTextViewValue(view, R.id.protein, recipe.getProtein());
 
-
+                // Servings pickers
                 final NumberPicker number = (NumberPicker) view.findViewById(R.id.servings_picker_number);
                 final NumberPicker fraction = (NumberPicker) view.findViewById(R.id.servings_picker_fraction);
-
 
                 // Selector wheel with values -, 1, 2 ... 99
                 final String[] numbers = new String[100];
@@ -122,7 +112,8 @@ public class FoodItemListAdapter extends BaseAdapter{
                 number.setMaxValue(numbers.length - 1);
                 number.setDisplayedValues(numbers);
                 number.setWrapSelectorWheel(false);
-                number.setValue((int) m_ServingsWhole);
+                number.setValue(1);
+                m_ServingsWhole = 1;
                 number.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                     @Override
                     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -141,6 +132,8 @@ public class FoodItemListAdapter extends BaseAdapter{
                 fraction.setMaxValue(fractions.length - 1);
                 fraction.setDisplayedValues(fractions);
                 fraction.setWrapSelectorWheel(false);
+                fraction.setValue(0);
+                m_ServingsFraction = 0;
                 fraction.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
                     @Override
                     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -152,45 +145,18 @@ public class FoodItemListAdapter extends BaseAdapter{
                         updateNutrients(view, recipe);
                     }
                 });
+                updateNutrients(view, recipe);
 
-
-                // Create tabs for selecting the user meal
-                boolean found = false;
-                for (Constants.UserMeals meal : Constants.UserMeals.values()) {
-                    ViewGroup tab = (ViewGroup)inflater.inflate(R.layout.custom_tab, null);
-                    TextView name = (TextView)tab.findViewById(R.id.tab_text);
-                    name.setText(meal.name());
-                    name.setTextColor(m_Activity.getResources().getColor(R.color.tab_highlight));
-                    name.setTag(meal.name());
-
-                    if (meal.name().equals(m_MealTime.name())) {
-                        found = true;
-                        m_SelectedUserMeal = name;
-                        m_SelectedUserMeal.setTypeface(Typeface.DEFAULT_BOLD);
-                    }
-                    tab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            m_SelectedUserMeal.setTypeface(Typeface.DEFAULT);
-                            TextView tv = (TextView)v.findViewById(R.id.tab_text);
-                            tv.setTypeface(Typeface.DEFAULT_BOLD);
-                            m_SelectedUserMeal = tv;
-                        }
-                    });
-                    tabs.addView(tab);
-                }
-
-                if (!found) {
-                    m_SelectedUserMeal = (TextView)tabs.getChildAt(0).findViewById(R.id.tab_text);
-                    m_SelectedUserMeal.setTypeface(Typeface.DEFAULT_BOLD);
-                }
-
-                tabs.invalidate();
                 view.invalidate();
                 builder.setView(view);
-                builder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                final AlertDialog dialog  = builder.create();
 
+
+                // Add button
+                TextView addButton = (TextView) view.findViewById(R.id.add_btn);
+                addButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         // Create new diary entry and save to parse
                         final DiaryEntry diaryEntry = new DiaryEntry();
                         diaryEntry.setDate(m_Calendar.getTime());
@@ -205,8 +171,8 @@ public class FoodItemListAdapter extends BaseAdapter{
                         query.whereLessThan("date", Constants.getDateAfter(m_Calendar));
                         query.whereEqualTo("user", ParseUser.getCurrentUser());
                         query.whereEqualTo("title", m_SelectedUserMeal.getTag());
-                        Log.d("Food Item List Adapter: Date before",Constants.getDateBefore(m_Calendar).toString());
-                        Log.d("Food Item List Adapter: Date after",Constants.getDateAfter(m_Calendar).toString());
+                        Log.d("**********Food Item List Adapter: Date before",Constants.getDateBefore(m_Calendar).toString());
+                        Log.d("**********Food Item List Adapter: Date after",Constants.getDateAfter(m_Calendar).toString());
 
                         query.findInBackground(new FindCallback<ParseObject>() {
                             public void done(List<ParseObject> meals, ParseException e) {
@@ -228,16 +194,33 @@ public class FoodItemListAdapter extends BaseAdapter{
                                 }
                             }
                         });
+                        dialog.dismiss();
                         Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
                     }
+
                 });
 
-                builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                // Cancel Button
+                TextView cancelButton = (TextView) view.findViewById(R.id.cancel_btn);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
                     }
                 });
 
-                final AlertDialog dialog  = builder.create();
+                // UserMeal selector
+                LinearLayout userMealSelector = (LinearLayout) view.findViewById(R.id.usermeal_selector);
+                userMealSelector.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TextView name = (TextView) v.findViewById(R.id.usermeal_name);
+
+                    }
+                });
+
+
+
                 dialog.show();
             }
         });

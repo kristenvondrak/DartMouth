@@ -156,6 +156,9 @@ public class MenuFragment extends Fragment {
         m_CancelSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Exit search and restore previous items
+                update();
+
                 // Hide the keyboard
                 View view = m_Activity.getCurrentFocus();
                 if (view != null) {
@@ -170,6 +173,7 @@ public class MenuFragment extends Fragment {
                 m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
                 m_HeaderViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
                 m_HeaderViewFlipper.showPrevious();
+
             }
         });
 
