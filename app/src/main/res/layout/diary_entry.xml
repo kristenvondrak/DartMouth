@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp"
-    android:background="@drawable/diary_selector_color">
+    android:layout_marginBottom="2dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,7 +17,8 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textSize="20dp"
-            android:text="Hard Boiled Egg"
+            android:text="Hard Boiled Eggs"
+            android:maxWidth="300dp"
             android:textColor="@color/dark_gray"/>
 
         <TextView
@@ -45,15 +45,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/gray"
-            android:textSize="24dp"
+            android:textSize="18dp"
             android:text="100"
             android:layout_gravity="center_vertical" />
 
         <ImageView
             android:id="@+id/food_item_arrow"
             android:src="@drawable/right_arrow_dark"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:clickable="true"
             android:tint="@color/gray"
             android:layout_gravity="center_vertical"

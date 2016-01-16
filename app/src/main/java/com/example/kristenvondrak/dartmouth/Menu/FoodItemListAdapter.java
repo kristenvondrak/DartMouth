@@ -3,16 +3,16 @@ package com.example.kristenvondrak.dartmouth.Menu;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.TableRow;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.example.kristenvondrak.dartmouth.Diary.DiaryEntry;
 import com.example.kristenvondrak.dartmouth.Diary.UserMeal;
@@ -39,9 +39,7 @@ public class FoodItemListAdapter extends BaseAdapter{
     private double m_ServingsWhole = 1;
     private double m_ServingsFraction = 0;
     private Calendar m_Calendar;
-    private Constants.MealTime m_MealTime;
-    private TextView m_SelectedUserMeal;
-    private TableRow m_UserMealTabs;
+    private String m_SelectedUserMeal;
 
     public FoodItemListAdapter(Activity activity, List<Recipe> list, Calendar day) {
         m_Activity = activity;
@@ -71,7 +69,7 @@ public class FoodItemListAdapter extends BaseAdapter{
     }
 
     public void setMealTime(Constants.MealTime mealtime) {
-        m_MealTime = mealtime;
+        m_SelectedUserMeal = mealtime.name();
     }
 
     @Override
@@ -96,7 +94,6 @@ public class FoodItemListAdapter extends BaseAdapter{
                 // Name
                 TextView tv = (TextView)view.findViewById(R.id.name);
                 tv.setText(recipe.getName());
-
 
                 // Servings pickers
                 final NumberPicker number = (NumberPicker) view.findViewById(R.id.servings_picker_number);
@@ -170,10 +167,7 @@ public class FoodItemListAdapter extends BaseAdapter{
                         query.whereGreaterThan("date", Constants.getDateBefore(m_Calendar));
                         query.whereLessThan("date", Constants.getDateAfter(m_Calendar));
                         query.whereEqualTo("user", ParseUser.getCurrentUser());
-                        query.whereEqualTo("title", m_SelectedUserMeal.getTag());
-                        Log.d("**********Food Item List Adapter: Date before",Constants.getDateBefore(m_Calendar).toString());
-                        Log.d("**********Food Item List Adapter: Date after",Constants.getDateAfter(m_Calendar).toString());
-
+                        query.whereEqualTo("title", m_SelectedUserMeal);
                         query.findInBackground(new FindCallback<ParseObject>() {
                             public void done(List<ParseObject> meals, ParseException e) {
                                 if (e == null && meals.size() > 0) {
@@ -186,7 +180,7 @@ public class FoodItemListAdapter extends BaseAdapter{
                                     UserMeal newmeal = new UserMeal();
                                     newmeal.put("date", m_Calendar.getTime());
                                     newmeal.put("user", ParseUser.getCurrentUser());
-                                    newmeal.put("title", m_SelectedUserMeal.getTag());
+                                    newmeal.put("title", m_SelectedUserMeal);
                                     List<DiaryEntry> list = new ArrayList<DiaryEntry>();
                                     list.add(diaryEntry);
                                     newmeal.put("entries", list);
@@ -210,12 +204,33 @@ public class FoodItemListAdapter extends BaseAdapter{
                 });
 
                 // UserMeal selector
+
                 LinearLayout userMealSelector = (LinearLayout) view.findViewById(R.id.usermeal_selector);
+                TextView title = (TextView) view.findViewById(R.id.usermeal_name);
+                title.setText(m_SelectedUserMeal);
+
                 userMealSelector.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        TextView name = (TextView) v.findViewById(R.id.usermeal_name);
+                        final TextView name = (TextView) v.findViewById(R.id.usermeal_name);
+                        final ViewFlipper vf = (ViewFlipper) view.findViewById(R.id.usermeal_viewflipper);
+                        vf.setInAnimation(m_Activity, R.anim.slide_in_from_bottom);
+                        vf.setOutAnimation(m_Activity, R.anim.slide_out_to_bottom);
+                        vf.showNext();
 
+
+                        RadioGroup rg = (RadioGroup) vf.findViewById(R.id.usermeal_radiogroup);
+                        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                                String usermeal = (String)(group.findViewById(checkedId)).getTag();
+                                name.setText(usermeal);
+                                m_SelectedUserMeal = usermeal;
+                                vf.setInAnimation(m_Activity, R.anim.slide_in_from_bottom);
+                                vf.setOutAnimation(m_Activity, R.anim.slide_out_to_bottom);
+                                vf.showPrevious();
+                            }
+                        });
                     }
                 });
 

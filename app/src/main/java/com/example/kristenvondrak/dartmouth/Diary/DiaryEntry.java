@@ -27,7 +27,7 @@ public class DiaryEntry extends ParseObject {
     }
 
     public float getServingsMultiplier() {
-        return (float)get("servingsMultiplier");
+        return getNumber("servingsMultiplier").floatValue();
     }
 
     public void getTotalNutrients() {
@@ -35,7 +35,7 @@ public class DiaryEntry extends ParseObject {
     }
 
     public int getTotalCalories() {
-        return (int) (Float.parseFloat(getRecipe().getCalories()) * getServingsMultiplier());
+        return (int) ((Integer.parseInt(getRecipe().getCalories())) * getServingsMultiplier());
     }
 
     public void setDate(Date value) {

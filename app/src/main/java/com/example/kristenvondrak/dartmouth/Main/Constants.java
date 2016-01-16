@@ -2,6 +2,7 @@ package com.example.kristenvondrak.dartmouth.Main;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -185,24 +186,24 @@ public class Constants {
         static String OkActionTitle = "OK";
     }
 
-    public static Calendar getDateBefore(Calendar calendar) {
-        Calendar c = (Calendar) calendar.clone();
+    public static Date getDateBefore(Calendar calendar) {
+        Calendar c = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DATE);
+        c.set(year, month, day, 23, 59, 59);
         c.add(Calendar.DAY_OF_MONTH, -1);
-        c.set(Calendar.HOUR, calendar.getActualMaximum(Calendar.HOUR));
-        c.set(Calendar.HOUR_OF_DAY, calendar.getActualMaximum(Calendar.HOUR_OF_DAY));
-        c.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
-        c.set(Calendar.SECOND, calendar.getActualMaximum(Calendar.SECOND));
-        return c;
+        return c.getTime();
     }
 
-    public static Calendar getDateAfter(Calendar calendar) {
-        Calendar c = (Calendar) calendar.clone();
+    public static Date getDateAfter(Calendar calendar) {
+        Calendar c = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DATE);
+        c.set(year, month, day, 0, 0, 0);
         c.add(Calendar.DAY_OF_MONTH, 1);
-        c.set(Calendar.HOUR, calendar.getActualMinimum(Calendar.HOUR));
-        c.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
-        c.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE));
-        c.set(Calendar.SECOND, calendar.getActualMinimum(Calendar.SECOND));
-        return c;
+        return c.getTime();
     }
 
 }

@@ -51,7 +51,9 @@ public class UserMeal extends ParseObject {
     }
 
     public void addDiaryEntry(DiaryEntry value) {
-        getDiaryEntries().add(value);
+        List<DiaryEntry> copy = getDiaryEntries();
+        copy.add(value);
+        setDiaryEntries(copy);
     }
 
 }
