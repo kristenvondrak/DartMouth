@@ -1,9 +1,7 @@
 package com.example.kristenvondrak.dartmouth.Diary;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,21 +57,13 @@ public class DiaryEntriesListAdapter extends BaseAdapter{
         TextView servings = (TextView) rowView.findViewById(R.id.servings);
 
         name.setText(recipe.getName());
-        cals.setText(entry.getTotalCalories());
+        cals.setText(Integer.toString(entry.getTotalCalories()));
         servings.setText(Float.toString(entry.getServingsMultiplier()) + " servings");
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(m_Activity);
-                final View view = m_Inflater.inflate(R.layout.nutrition_dialog, null);
-                builder.setView(view);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-                final AlertDialog dialog  = builder.create();
-                dialog.show();
+
             }
         });
         return rowView;

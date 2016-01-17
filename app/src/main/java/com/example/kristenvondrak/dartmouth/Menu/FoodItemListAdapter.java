@@ -63,10 +63,6 @@ public class FoodItemListAdapter extends BaseAdapter{
         return 0;
     }
 
-    public class Holder {
-        TextView textView;
-        // Add other attributes here
-    }
 
     public void setMealTime(Constants.MealTime mealtime) {
         m_SelectedUserMeal = mealtime.name();
@@ -74,15 +70,18 @@ public class FoodItemListAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Holder holder=new Holder();
+
         final Recipe recipe = m_List.get(position);
 
         View rowView = m_Inflater.inflate(R.layout.menu_list_item, null);
-        holder.textView =(TextView) rowView.findViewById(R.id.item_name_text_view);
-        holder.textView.setText(recipe.getName());
+        TextView name =(TextView) rowView.findViewById(R.id.item_name_text_view);
+        name.setText(recipe.getName());
+
+        TextView cals =(TextView) rowView.findViewById(R.id.item_cals_text_view);
+        cals.setText(recipe.getCalories() + " cals");
 
         // GET NUTRIENTS for given recipe
-       // final Nutrients nutrients = m_DbHandler.getNutrients(Integer.toString(m_List.get(position).getDID()));
+        // final Nutrients nutrients = m_DbHandler.getNutrients(Integer.toString(m_List.get(position).getDID()));
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,7 +203,6 @@ public class FoodItemListAdapter extends BaseAdapter{
                 });
 
                 // UserMeal selector
-
                 LinearLayout userMealSelector = (LinearLayout) view.findViewById(R.id.usermeal_selector);
                 TextView title = (TextView) view.findViewById(R.id.usermeal_name);
                 title.setText(m_SelectedUserMeal);
@@ -218,8 +216,7 @@ public class FoodItemListAdapter extends BaseAdapter{
                         vf.setOutAnimation(m_Activity, R.anim.slide_out_to_bottom);
                         vf.showNext();
 
-
-                        RadioGroup rg = (RadioGroup) vf.findViewById(R.id.usermeal_radiogroup);
+                        final RadioGroup rg = (RadioGroup) vf.findViewById(R.id.usermeal_radiogroup);
                         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -233,8 +230,6 @@ public class FoodItemListAdapter extends BaseAdapter{
                         });
                     }
                 });
-
-
 
                 dialog.show();
             }

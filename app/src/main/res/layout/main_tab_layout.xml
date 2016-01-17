@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/transparent">
 
     <ImageView android:id="@+id/tab_image"
         android:layout_marginTop="5dp"
@@ -10,14 +11,14 @@
         android:layout_height="30dp"
         android:scaleType="fitCenter"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_diary_white"/>
+        android:src="@drawable/diary_white"/>
 
     <TextView
         android:id="@+id/tab_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12dp"
-        android:textColor="@color/light_gray"
+        android:textColor="@color/white"
         android:layout_gravity="center_vertical|center_horizontal"
         android:text="Diary"/>
 

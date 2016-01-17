@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,6 +73,7 @@ public class MenuFragment extends Fragment {
     private List<Recipe> m_FoodItemsList;
     private FoodItemListAdapter m_FoodItemListAdapter;
     private ListView m_FoodItemsListView;
+    private TextView m_EmptyFoodItemsText;
 
 
     @Override
@@ -123,6 +125,7 @@ public class MenuFragment extends Fragment {
         m_SearchBtn = (ImageView) v.findViewById(R.id.date_search_btn);
         m_CancelSearchBtn = (TextView) v.findViewById(R.id.search_cancel_btn);
         m_SearchEditText = (EditText) v.findViewById(R.id.search_edittext);
+        m_EmptyFoodItemsText = (TextView) v.findViewById(R.id.empty_food_list);
         m_CurrentDate = Calendar.getInstance();
     }
 
@@ -165,6 +168,7 @@ public class MenuFragment extends Fragment {
                     InputMethodManager imm =
                             (InputMethodManager)m_Activity.getSystemService(m_Activity.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    // TODO: do we want to restore the items before search??
                 }
                 // Clear the search
                 m_SearchEditText.setText("");
@@ -213,6 +217,22 @@ public class MenuFragment extends Fragment {
 
             }
         });
+
+        for (int i = 0; i < m_MenuTabsLinearLayout.getChildCount(); i++) {
+            final int index = i;
+            final View tv =  m_MenuTabsLinearLayout.getChildAt(i).findViewById(R.id.tab_text);
+            tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                                                   @Override
+                                                                   public void onGlobalLayout() {
+                                                                       View v = m_MenuTabsLinearLayout.getChildAt(index).findViewById(R.id.tab_highlight);
+                                                                       v.setMinimumWidth(tv.getWidth());
+                                                                       v.invalidate();
+                                                                       v.requestLayout();
+
+                                                                   }
+                                                               });
+        }
+
     }
 
     public void changeInVenue() {
@@ -249,7 +269,7 @@ public class MenuFragment extends Fragment {
         found = false;
         m_MenuTabsLinearLayout.removeAllViews();
         for (Constants.Menu menu : Constants.menusForVenue.get(newVenue)) {
-            ViewGroup tab = (ViewGroup)inflater.inflate(R.layout.custom_tab_scrollview, null);
+            final ViewGroup tab = (ViewGroup)inflater.inflate(R.layout.custom_tab_scrollview, null);
             ((TextView)tab.findViewById(R.id.tab_text)).setText(Constants.menuDisplayStrings.get(menu));
             tab.setOnClickListener(menuTabOnClickListener());
 
@@ -261,10 +281,22 @@ public class MenuFragment extends Fragment {
                 setHighlight(tab, false);
             }
             tab.setTag(menu);
-            tab.findViewById(R.id.tab_highlight).invalidate();
+
+            // Need this
+            tab.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    View v = tab.findViewById(R.id.tab_highlight);
+                    int width = (tab.findViewById(R.id.tab_text)).getWidth();
+                    v.setMinimumWidth((int)(width * 1.15));
+                    v.invalidate();
+                    v.requestLayout();
+
+                }
+            });
+
             m_MenuTabsLinearLayout.addView(tab);
         }
-        updateView(m_MenuTabsLinearLayout);
 
         if (!found) {
             m_CurrentMenu = m_MenuTabsLinearLayout.getChildAt(0);
@@ -441,6 +473,12 @@ public class MenuFragment extends Fragment {
             for (Recipe r : recipesList)
                 m_FoodItemsList.add(r);
             m_FoodItemListAdapter.notifyDataSetChanged();
+
+            if (m_FoodItemsList.isEmpty()) {
+                m_EmptyFoodItemsText.setVisibility(View.VISIBLE);
+            } else {
+                m_EmptyFoodItemsText.setVisibility(View.GONE);
+            }
         }
     }
 

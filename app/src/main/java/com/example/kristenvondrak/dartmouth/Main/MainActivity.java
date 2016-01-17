@@ -18,14 +18,13 @@ import com.example.kristenvondrak.dartmouth.Diary.DiaryFragment;
 import com.example.kristenvondrak.dartmouth.Menu.MenuFragment;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Preferences.PrefsFragment;
-import com.example.kristenvondrak.dartmouth.Progress.ProgressFragment;
 import com.example.kristenvondrak.dartmouth.R;
 
 
 public class MainActivity extends FragmentActivity {
     private Context m_Me;
     private FragmentTabHost m_FragmentTabHost;
-    private int m_TabCount = 4;
+    private int m_TabCount = 3;
     static final int LOGIN_ACTIVITY_REQUEST = 1;  // The request code
 
     @Override
@@ -47,9 +46,9 @@ public class MainActivity extends FragmentActivity {
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("diary")
                         .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.diary_selector, "Diary")),
                 DiaryFragment.class, null);
-        m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("progress")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.progress_selector, "Progress")),
-                ProgressFragment.class, null);
+      //  m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("progress")
+         //               .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.progress_selector, "Progress")),
+           //     ProgressFragment.class, null);
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("menu")
                         .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.menu_selector, "Menu")),
                 MenuFragment.class, null);
@@ -57,14 +56,14 @@ public class MainActivity extends FragmentActivity {
                         .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.prefs_selector, "Profile")),
                 PrefsFragment.class, null);
 
-        changeTabTextColor(m_FragmentTabHost.getCurrentTab(), Color.WHITE);
+        changeTabTextColor(m_FragmentTabHost.getCurrentTab(), getResources().getColor(R.color.black_transparent));
         m_FragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
                 for (int i = 0; i < m_TabCount; i++) {
-                    int color = getResources().getColor(R.color.light_gray);
+                    int color = Color.WHITE;
                     if (i == m_FragmentTabHost.getCurrentTab())
-                        color = Color.WHITE;
+                        color = getResources().getColor(R.color.black_transparent);
                     changeTabTextColor(i, color);
                 }
             }

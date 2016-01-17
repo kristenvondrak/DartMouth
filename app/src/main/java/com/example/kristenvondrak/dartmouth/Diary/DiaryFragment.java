@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -42,6 +42,16 @@ public class DiaryFragment extends Fragment {
     private ImageView m_PreviousDateButton;
     private LayoutInflater m_Inflater;
 
+    // Summary calorie
+    private static final int DEFAULT_GOAL_CALS = 2000;
+    private TextView m_GoalTextView;
+    private TextView m_FoodTextView;
+    private TextView m_ExerciseTextView;
+    private TextView m_RemainingTextView;
+    private int m_ExcerciseCals;
+    private int m_GoalCals;
+    private int m_FoodCals;
+
     public static final String DATE_FORMAT = "EEE, LLL d";
 
     @Override
@@ -57,16 +67,20 @@ public class DiaryFragment extends Fragment {
         m_Inflater = inflater;
         View v = m_Inflater.inflate(R.layout.fragment_diary, container, false);
         m_UserMealLayout = (LinearLayout) v.findViewById(R.id.usermeal_layout);
-        m_CurrentDate = Calendar.getInstance();
+        m_GoalTextView = (TextView) v.findViewById(R.id.total_goal_cals);
+        m_FoodTextView = (TextView) v.findViewById(R.id.total_food_cals);
+        m_ExerciseTextView = (TextView) v.findViewById(R.id.total_exercise_cals);
+        m_RemainingTextView = (TextView) v.findViewById(R.id.total_remaining_cals);
         m_CurrentDateTextView = (TextView) v.findViewById(R.id.date_text_view);
         m_NextDateButton = (ImageView) v.findViewById(R.id.next_date_btn);
         m_PreviousDateButton = (ImageView) v.findViewById(R.id.prev_date_btn);
+        m_CurrentDate = Calendar.getInstance();
 
         m_NextDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 m_CurrentDate.add(Calendar.DATE, 1);
-                updateDate();
+                update();
             }
         });
 
@@ -74,32 +88,60 @@ public class DiaryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 m_CurrentDate.add(Calendar.DATE, -1);
-                updateDate();
+                update();
             }
         });
 
-        for (Constants.UserMeals title : Constants.UserMeals.values()) {
-            ViewGroup usermeal = (ViewGroup)m_Inflater.inflate(R.layout.diary_usermeal, null);
-            View divider = m_Inflater.inflate(R.layout.diary_usermeal_divider, null);
-            TextView name = (TextView) usermeal.findViewById(R.id.usermeal_name);
-            name.setText(title.name());
-            usermeal.setTag(title.name());
-            m_UserMealLayout.addView(usermeal);
-        }
-        m_UserMealLayout.invalidate();
-        m_UserMealLayout.requestLayout();
+        m_ExcerciseCals = 0;
+        m_FoodCals = 0;
+        m_GoalCals = DEFAULT_GOAL_CALS;
 
+        addUserMeals();
         update();
         return v;
     }
 
-    private void updateDate() {
-        update();
+    private void addUserMeals() {
+        for (int i = 0; i < Constants.UserMeals.values().length; i++) {
+            String title = Constants.UserMeals.values()[i].name();
+            ViewGroup usermeal = (ViewGroup)m_Inflater.inflate(R.layout.diary_usermeal, null);
+
+            TextView name = (TextView) usermeal.findViewById(R.id.usermeal_name);
+            name.setText(title + ":");
+
+            TextView cals = (TextView) usermeal.findViewById(R.id.usermeal_cals);
+            cals.setText("0");
+
+            usermeal.setTag(title);
+            m_UserMealLayout.addView(usermeal);
+
+            if (i < Constants.UserMeals.values().length - 1) {
+                View divider = m_Inflater.inflate(R.layout.diary_usermeal_divider, null);
+                m_UserMealLayout.addView(divider);
+            }
+        }
+        m_UserMealLayout.invalidate();
+        m_UserMealLayout.requestLayout();
+    }
+
+    private void resetUserMeals() {
+        m_FoodCals = 0;
+        m_UserMealLayout.removeAllViews();
+        addUserMeals();
+    }
+
+    private void updateCalorieSummary() {
+        m_ExerciseTextView.setText(Integer.toString(m_ExcerciseCals));
+        m_GoalTextView.setText(Integer.toString(m_GoalCals));
+        m_FoodTextView.setText(Integer.toString(m_FoodCals));
+        m_RemainingTextView.setText(Integer.toString(m_GoalCals - m_FoodCals + m_ExcerciseCals));
+        Log.d("^^^^^^^^^", Integer.toString(m_GoalCals - m_FoodCals + m_ExcerciseCals));
     }
 
     private void update() {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         m_CurrentDateTextView.setText(sdf.format(m_CurrentDate.getTime()));
+        resetUserMeals();
         new ParseDiaryDayRequest().execute();
     }
 
@@ -116,20 +158,48 @@ public class DiaryFragment extends Fragment {
             query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> meals, ParseException e) {
+
                     if (e == null) {
+
                         for (ParseObject object : meals) {
+
                             UserMeal userMeal = (UserMeal) object;
                             ViewGroup v = (ViewGroup) m_UserMealLayout.findViewWithTag(userMeal.getTitle());
-                            ListView listView = (ListView) v.findViewById(R.id.diary_entries_list);
-                            DiaryEntriesListAdapter adapter = new DiaryEntriesListAdapter(m_Activity, userMeal.getDiaryEntries());
-                            listView.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
+                            LinearLayout list = (LinearLayout) v.findViewById(R.id.diary_entries_list);
+
+                            int total_meal_cals = 0;
+
+                            for (DiaryEntry entry : userMeal.getDiaryEntries()) {
+                                View rowView = m_Inflater.inflate(R.layout.diary_entry, null);
+                                Recipe recipe = entry.getRecipe();
+
+                                TextView name = (TextView) rowView.findViewById(R.id.name);
+                                name.setText(recipe.getName());
+
+                                TextView cals = (TextView) rowView.findViewById(R.id.calories);
+                                int c = entry.getTotalCalories();
+                                cals.setText(Integer.toString(c));
+                                total_meal_cals += c;
+
+                                TextView servings = (TextView) rowView.findViewById(R.id.servings);
+                                servings.setText(Float.toString(entry.getServingsMultiplier()) + " servings");
+                                list.addView(rowView);
+                            }
+                            TextView meal_cals = (TextView) v.findViewById(R.id.usermeal_cals);
+                            meal_cals.setText(Integer.toString(total_meal_cals));
+                            m_FoodCals += total_meal_cals;
+                            Log.d("^^^^", Integer.toString(m_FoodCals));
+
+                            list.invalidate();
+                            list.requestLayout();
                         }
+                        updateCalorieSummary();
                     } else {
                         Log.d("DiaryFragment", "Error getting user meals: " + e.getMessage());
                     }
                 }
             });
+
             return "Executed";
         }
 

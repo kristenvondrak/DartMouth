@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="dartmouth_green">#006400</color>
-    <color name="text_shadow_color">#bd7f7f7f</color>
+    <color name="gray_text">#bd7f7f7f</color>
     <color name="white">#FFFFFF</color>
     <color name="light_green">#99CC99</color>
     <color name="yellow">#FFFF00</color>
@@ -26,7 +26,8 @@
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
     <color name="welcome_overlay">#66FFFFFF</color>
-    <color name="tab_highlight">#4DB6AC</color>
+    <color name="old_main">#4DB6AC</color>
+    <color name="tab_highlight">#049372</color>
     <color name="main">#049372</color>
     <color name="accent_blue">#009ACD</color>
     <color name="light_gray_transparent">#33b6b6b6</color>
