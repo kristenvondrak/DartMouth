@@ -47,6 +47,7 @@ public class MenuFragment extends Fragment {
 
     private Activity m_Activity;
 
+
     // Header
     private ViewFlipper m_HeaderViewFlipper;
 
@@ -77,10 +78,10 @@ public class MenuFragment extends Fragment {
 
     // Food Items
     private HashMap<String, Set<Recipe>> m_CategoryMap;
-    private List<Recipe> m_FoodItemsList;
-    private FoodItemListAdapter m_FoodItemListAdapter;
-    private ListView m_FoodItemsListView;
-    private TextView m_EmptyFoodItemsText;
+    private List<Recipe> m_MenuItemsList;
+    private MenuItemListAdapter m_MenuItemListAdapter;
+    private ListView m_MenuItemsListView;
+    private TextView m_EmptyMenuText;
 
 
     @Override
@@ -117,9 +118,9 @@ public class MenuFragment extends Fragment {
         m_CurrentDateTextView.setText(sdf.format(m_CurrentDate.getTime()));
 
         // Create list of recipes and set the adapter
-        m_FoodItemsList = new ArrayList<>();
-        m_FoodItemListAdapter = new FoodItemListAdapter(m_Activity, m_FoodItemsList, m_CurrentDate);
-        m_FoodItemsListView.setAdapter(m_FoodItemListAdapter);
+        m_MenuItemsList = new ArrayList<>();
+        m_MenuItemListAdapter = new MenuItemListAdapter(m_Activity);
+        m_MenuItemsListView.setAdapter(m_MenuItemListAdapter);
 
         // Call parse
         changeInVenue();
@@ -133,12 +134,12 @@ public class MenuFragment extends Fragment {
         m_VenueTabs = (TableRow) v.findViewById(R.id.venue_tabs_row);
         m_MealTimesTabs = (TableRow) v.findViewById(R.id.mealtime_tabs_row);
         m_MenuTabsLinearLayout = (LinearLayout) v.findViewById(R.id.category_tabs_ll);
-        m_FoodItemsListView = (ListView) v.findViewById(R.id.food_items_list_view);
+        m_MenuItemsListView = (ListView) v.findViewById(R.id.food_items_list_view);
         m_HeaderViewFlipper = (ViewFlipper) v.findViewById(R.id.menu_header_view_flipper);
         m_SearchBtn = (ImageView) v.findViewById(R.id.date_search_btn);
         m_CancelSearchBtn = (TextView) v.findViewById(R.id.search_cancel_btn);
         m_SearchEditText = (EditText) v.findViewById(R.id.search_edittext);
-        m_EmptyFoodItemsText = (TextView) v.findViewById(R.id.empty_food_list);
+        m_EmptyMenuText = (TextView) v.findViewById(R.id.empty_food_list);
         m_CurrentDate = Calendar.getInstance();
 
         // If this fragment is being displayed by the diary fragment
@@ -182,7 +183,7 @@ public class MenuFragment extends Fragment {
                 m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
                 m_HeaderViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
                 m_HeaderViewFlipper.showNext();
-                m_RestoredList = copyRecipeList(m_FoodItemsList);
+                m_RestoredList = copyRecipeList(m_MenuItemsList);
             }
         });
 
@@ -234,7 +235,7 @@ public class MenuFragment extends Fragment {
                     listToSearch = m_RestoredList;
                 // Otherwise, search from restricted list
                 } else {
-                    listToSearch = m_FoodItemsList;
+                    listToSearch = m_MenuItemsList;
                 }
 
                 // Substring match
@@ -248,11 +249,10 @@ public class MenuFragment extends Fragment {
                 }
 
                 // Update the list and notify adapter
-                m_FoodItemsList.clear();
-                for (Recipe r: searchResults) {
-                    m_FoodItemsList.add(r);
-                }
-                m_FoodItemListAdapter.notifyDataSetChanged();
+                m_MenuItemsList = searchResults;
+                m_MenuItemListAdapter.updateData(m_MenuItemsList, m_CurrentDate,
+                            Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
+
                 setHighlight(m_CurrentMenu, false);
                 m_CurrentMenu = m_MenuTabsLinearLayout.getChildAt(0);
                 setHighlight(m_CurrentMenu, true);
@@ -368,7 +368,6 @@ public class MenuFragment extends Fragment {
 
 
     public void update() {
-        m_FoodItemListAdapter.setMealTime((Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString())));
         String venue = Constants.venueParseStrings.get(Constants.Venue.valueOf(m_CurrentVenue.getTag().toString()));
         String mealtime = Constants.mealTimeParseStrings.get(Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
         String menu = Constants.menuParseStrings.get(Constants.Menu.valueOf(m_CurrentMenu.getTag().toString()));
@@ -421,7 +420,8 @@ public class MenuFragment extends Fragment {
 
     private class ParseRecipesRequest extends AsyncTask<String, Void, String> {
 
-        final List<Recipe> recipesList = new ArrayList<>();
+        //final List<Recipe> recipesList = new ArrayList<>();
+
 
         @Override
         protected String doInBackground(String... params) {
@@ -454,6 +454,8 @@ public class MenuFragment extends Fragment {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> offeringsList, ParseException e) {
                     if (e == null) {
+                        m_MenuItemsList.clear();
+
                         List<ParseQuery<ParseObject>> queryList = new ArrayList<ParseQuery<ParseObject>>();
                         for (ParseObject object : offeringsList) {
                             Offering offering = (Offering) object;
@@ -463,7 +465,7 @@ public class MenuFragment extends Fragment {
                         }
 
                         if (queryList.isEmpty()) {
-                            updateRecipeList();
+                            notifyMenuListAdapter();
                             return;
                         }
 
@@ -472,16 +474,19 @@ public class MenuFragment extends Fragment {
                         recipesQuery.orderByAscending("name");
                         recipesQuery.setLimit(1000);
 
+
                         recipesQuery.findInBackground(new FindCallback<ParseObject>() {
                             public void done(List<ParseObject> list, ParseException e) {
-                                if (e == null) {
-                                    for (ParseObject object : list) {
-                                        recipesList.add((Recipe) object);
 
-                                    }
+                                // Create the new list of recipes
+                                if (e == null) {
+                                    for (ParseObject object : list)
+                                        m_MenuItemsList.add((Recipe) object);
                                 }
-                                updateRecipeList();
-                                Log.d("onPostExecute",Integer.toString(m_FoodItemsList.size()));
+
+                                // Notify the adapter and update the view
+                                notifyMenuListAdapter();
+                                Log.d("onPostExecute",Integer.toString(m_MenuItemsList.size()));
                             }
                         });
                     } else {
@@ -503,26 +508,16 @@ public class MenuFragment extends Fragment {
         @Override
         protected void onProgressUpdate(Void... values) {}
 
-        private void updateRecipeList() {
-            m_FoodItemsList.clear();
-            for (Recipe r : recipesList) {
-                m_FoodItemsList.add(r);
 
-                if (m_CategoryMap.containsKey(r.getCategory()))
-                    m_CategoryMap.get(r.getCategory()).add(r);
-                else {
-                    Set<Recipe> set = new HashSet<>();
-                    set.add(r);
-                    m_CategoryMap.put(r.getCategory(), set);
-                }
+        private void notifyMenuListAdapter() {
+            m_MenuItemListAdapter.updateData(m_MenuItemsList, m_CurrentDate,
+                        Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
 
-            }
-            m_FoodItemListAdapter.notifyDataSetChanged();
-
-            if (m_FoodItemsList.isEmpty()) {
-                m_EmptyFoodItemsText.setVisibility(View.VISIBLE);
+            // If no recipes found, show message
+            if (m_MenuItemsList.isEmpty()) {
+                m_EmptyMenuText.setVisibility(View.VISIBLE);
             } else {
-                m_EmptyFoodItemsText.setVisibility(View.GONE);
+                m_EmptyMenuText.setVisibility(View.GONE);
             }
         }
     }
