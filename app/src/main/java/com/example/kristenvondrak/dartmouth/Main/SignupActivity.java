@@ -17,20 +17,24 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class LoginActivity extends Activity {
+public class SignupActivity extends Activity {
 
     private EditText m_EmailEditText;
+    private EditText m_ConfirmEditText;
     private EditText m_PasswordEditText;
-    private TextView m_LoginTextView;
-    private TextView m_ResetTextView;
     private TextView m_SignupTextView;
+    private TextView m_LoginTextView;
+
     public Activity me;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signup);
         me = this;
+        initializeViews();
+        initializeListeners();
+
 
 
     }
@@ -38,9 +42,10 @@ public class LoginActivity extends Activity {
     private void initializeViews() {
         m_EmailEditText = (EditText) findViewById(R.id.email_edit_text);
         m_PasswordEditText = (EditText) findViewById(R.id.password_edit_text);
+        m_ConfirmEditText = (EditText) findViewById(R.id.confirm_password_edit_text);
         m_LoginTextView = (TextView) findViewById(R.id.login);
-        m_ResetTextView = (TextView) findViewById(R.id.reset_password);
         m_SignupTextView = (TextView) findViewById(R.id.signup);
+
     }
 
     private void initializeListeners() {
@@ -48,8 +53,17 @@ public class LoginActivity extends Activity {
         m_LoginTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(me, LoginActivity.class);
+                me.startActivity(intent);
+            }
+        });
+
+        m_SignupTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Object email = m_EmailEditText.getText();
                 Object password = m_PasswordEditText.getText();
+                Object confirm = m_ConfirmEditText.getText();
 
                 if (email == null || !isValidEmail(email.toString())) {
                     Toast.makeText(me, "Invalid Email", Toast.LENGTH_SHORT).show();
@@ -59,26 +73,16 @@ public class LoginActivity extends Activity {
                     Toast.makeText(me, "Invalid Password", Toast.LENGTH_SHORT).show();
                     // !
 
-                }  else {
-                    logInParseUser(email.toString(),password.toString());
+                } else if (confirm == null || !isValidConfirmation(password.toString(), confirm.toString())) {
+                    Toast.makeText(me, "Confirmation Error", Toast.LENGTH_SHORT).show();
+                    // !
+
+                } else {
+                    createNewParseUser(email.toString(),password.toString());
                 }
-
-                // register user/validate
-                // show red ! in edittext
             }
         });
 
-
-        // signup
-        m_SignupTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(me, SignupActivity.class);
-                me.startActivity(intent);
-            }
-        });
-
-        // reset
 
     }
 
@@ -105,6 +109,12 @@ public class LoginActivity extends Activity {
 
             }
         }*/
+        return true;
+
+    }
+
+    private boolean isValidConfirmation(String first, String second) {
+        //return first.equalsIgnoreCase(second);
         return true;
 
     }

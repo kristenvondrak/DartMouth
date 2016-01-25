@@ -28,15 +28,12 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 /**
  * Created by kristenvondrak on 1/24/16.
  */
-//Adapter Class
 public class MenuItemListAdapter extends BaseAdapter {
 
     private static final int TYPE_ITEM = 0;
