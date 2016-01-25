@@ -22,35 +22,69 @@
             android:textColor="@color/dark_gray"
             android:textStyle="bold"/>
 
-        <EditText
-            android:id="@+id/email_edit_text"
-            android:layout_width="250dp"
+        <FrameLayout
+            android:id="@+id/email_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/name"
-            android:background="@color/white"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:padding="10dp"
-            android:editable="true"
-            android:hint="Email"
-            android:textSize="16dp"
-            android:inputType="textEmailAddress" />
+            android:layout_marginRight="20dp">
 
-        <EditText
-            android:id="@+id/password_edit_text"
-            android:layout_width="250dp"
+            <EditText
+                android:id="@+id/email_edit_text"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="10dp"
+                android:editable="true"
+                android:hint="Email"
+                android:textSize="16dp"
+                android:inputType="textEmailAddress" />
+
+            <ImageView
+                android:visibility="gone"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_error"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="5dp"
+                android:tint="@color/red"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/password_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/email_edit_text"
-            android:background="@color/white"
+            android:layout_below="@+id/email_container"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:padding="10dp"
-            android:editable="true"
-            android:hint="Password"
-            android:textSize="16dp"
-            android:inputType="textPassword" />
+            android:layout_marginRight="20dp">
+
+            <EditText
+                android:id="@+id/password_edit_text"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="10dp"
+                android:editable="true"
+                android:hint="Password"
+                android:textSize="16dp"
+                android:inputType="textPassword" />
+
+            <ImageView
+                android:visibility="gone"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_error"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="5dp"
+                android:tint="@color/red"/>
+
+        </FrameLayout>
+
+
 
         <TextView
             android:id="@+id/login_text_view"
@@ -61,8 +95,9 @@
             android:textSize="24dp"
             android:textStyle="bold"
             android:textColor="@drawable/login_selected_color"
-            android:layout_below="@id/password_edit_text"
+            android:layout_below="@id/password_container"
             android:clickable="true"/>
+
 
         <TextView
             android:id="@+id/forgot_password_text_view"

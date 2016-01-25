@@ -25,7 +25,8 @@ public class MainActivity extends FragmentActivity {
     private Context m_Me;
     private FragmentTabHost m_FragmentTabHost;
     private int m_TabCount = 3;
-    static final int LOGIN_ACTIVITY_REQUEST = 1;  // The request code
+    public static final int LOGIN_ACTIVITY_REQUEST = 1;
+    public static final int DIARY_ACTIVITY_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,40 +45,48 @@ public class MainActivity extends FragmentActivity {
         m_FragmentTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("diary")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.diary_selector, "Diary")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_diary, "Diary")),
                 DiaryFragment.class, null);
-      //  m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("progress")
-         //               .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.progress_selector, "Progress")),
-           //     ProgressFragment.class, null);
+
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("menu")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.menu_selector, "Menu")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_menu, "Menu")),
                 MenuFragment.class, null);
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("prefs")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.prefs_selector, "Profile")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_settings, "Prefs")),
                 PrefsFragment.class, null);
 
-        changeTabTextColor(m_FragmentTabHost.getCurrentTab(), getResources().getColor(R.color.black_transparent));
+        updateTabs();
         m_FragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                for (int i = 0; i < m_TabCount; i++) {
-                    int color = Color.WHITE;
-                    if (i == m_FragmentTabHost.getCurrentTab())
-                        color = getResources().getColor(R.color.black_transparent);
-                    changeTabTextColor(i, color);
-                }
+                updateTabs();
             }
 
             ;
         });
 
-        // Get the new menu info
     }
 
 
-    private void changeTabTextColor(int tab, int color) {
+    private void updateTabs() {
+        for (int i = 0; i < m_TabCount; i++) {
+            if (i == m_FragmentTabHost.getCurrentTab())
+                changeTabColor(i, true);
+            else
+                changeTabColor(i, false);
+        }
+    }
+    private void changeTabColor(int tab, boolean selected) {
         TextView tv = (TextView) m_FragmentTabHost.getTabWidget().getChildTabViewAt(tab).findViewById(R.id.tab_text);
-        tv.setTextColor(color);
+        ImageView iv = (ImageView) m_FragmentTabHost.getTabWidget().getChildTabViewAt(tab).findViewById(R.id.tab_image);
+        if (selected) {
+            tv.setTextColor(getResources().getColor(R.color.main));
+            iv.setColorFilter(getResources().getColor(R.color.main));
+        } else {
+            tv.setTextColor(getResources().getColor(R.color.gray_text));
+            iv.setColorFilter(getResources().getColor(R.color.gray_text));
+        }
+
     }
 
     private View getTabIndicator(Context context, int img, String text) {
@@ -92,14 +101,13 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == LOGIN_ACTIVITY_REQUEST) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                // The user picked a contact.
-                // The Intent's data Uri identifies which contact was selected.
-
-                // Do something with the contact here (bigger example below)
-            }
+        switch (requestCode) {
+            case LOGIN_ACTIVITY_REQUEST:
+                return;
+            case DIARY_ACTIVITY_REQUEST:
+                return;
+            default:
+                return;
         }
     }
 

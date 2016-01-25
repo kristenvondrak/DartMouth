@@ -2,6 +2,10 @@ package com.example.kristenvondrak.dartmouth.Diary;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,8 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.LoginActivity;
+import com.example.kristenvondrak.dartmouth.Main.MainActivity;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.FindCallback;
@@ -31,9 +38,11 @@ import java.util.Locale;
 public class DiaryFragment extends Fragment {
 
     private Activity m_Activity;
+    public static final String EXTRA_MEALTIME = "EXTRA_MEALTIME";
 
     // Meals
     private LinearLayout m_UserMealLayout;
+    private ImageView m_AddToMealBtn;
 
     // Date
     private Calendar m_CurrentDate;
@@ -66,7 +75,24 @@ public class DiaryFragment extends Fragment {
 
         m_Inflater = inflater;
         View v = m_Inflater.inflate(R.layout.fragment_diary, container, false);
+        initializeViews(v);
+        initializeListeners();
+
+        m_CurrentDate = Calendar.getInstance();
+        // TODO: store in parse
+        m_ExcerciseCals = 0;
+        m_FoodCals = 0;
+        m_GoalCals = DEFAULT_GOAL_CALS;
+
+        addUserMeals();
+        update();
+        return v;
+    }
+
+
+    private void initializeViews(View v) {
         m_UserMealLayout = (LinearLayout) v.findViewById(R.id.usermeal_layout);
+        m_AddToMealBtn = (ImageView) v.findViewById(R.id.add_to_meal_btn);
         m_GoalTextView = (TextView) v.findViewById(R.id.total_goal_cals);
         m_FoodTextView = (TextView) v.findViewById(R.id.total_food_cals);
         m_ExerciseTextView = (TextView) v.findViewById(R.id.total_exercise_cals);
@@ -74,7 +100,9 @@ public class DiaryFragment extends Fragment {
         m_CurrentDateTextView = (TextView) v.findViewById(R.id.date_text_view);
         m_NextDateButton = (ImageView) v.findViewById(R.id.next_date_btn);
         m_PreviousDateButton = (ImageView) v.findViewById(R.id.prev_date_btn);
-        m_CurrentDate = Calendar.getInstance();
+    }
+
+    private void initializeListeners() {
 
         m_NextDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,13 +120,56 @@ public class DiaryFragment extends Fragment {
             }
         });
 
-        m_ExcerciseCals = 0;
-        m_FoodCals = 0;
-        m_GoalCals = DEFAULT_GOAL_CALS;
+        m_AddToMealBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        addUserMeals();
-        update();
-        return v;
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                Constants.UserMeals[] meals = Constants.UserMeals.values();
+                final String[][] choices = {new String[meals.length]};
+                for (int i = 0; i < meals.length; i++) {
+                    choices[0][i] = meals[i].name();
+                }
+
+                final int[] selected = {0};
+                // Set the dialog title
+                builder.setTitle("Pick your meal time")
+                        // Specify the list array, the items to be selected by default (null for none),
+                        // and the listener through which to receive callbacks when items are selected
+                        .setSingleChoiceItems(choices[0], selected[0],
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        selected[0] = which;
+
+                                    }
+
+                                })
+
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                                Intent intent = new Intent(m_Activity, AddUserMealActivity.class);
+                                intent.putExtra(EXTRA_MEALTIME, choices[0][selected[0]]);
+                                m_Activity.startActivityForResult(intent, MainActivity.DIARY_ACTIVITY_REQUEST);
+                                m_Activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+
+                ;
+
+                builder.create().show();
+
+            }
+        });
     }
 
     private void addUserMeals() {
@@ -113,6 +184,19 @@ public class DiaryFragment extends Fragment {
             cals.setText("0");
 
             usermeal.setTag(title);
+
+            /*
+            usermeal.findViewById(R.id.usermeal_add_btn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(m_Activity, "usermeal click!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(m_Activity, AddUserMealActivity.class);
+                    // add the info here
+                    m_Activity.startActivityForResult(intent, MainActivity.DIARY_ACTIVITY_REQUEST);
+                    m_Activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                }
+            }); */
+
             m_UserMealLayout.addView(usermeal);
 
             if (i < Constants.UserMeals.values().length - 1) {
@@ -184,6 +268,13 @@ public class DiaryFragment extends Fragment {
                                 TextView servings = (TextView) rowView.findViewById(R.id.servings);
                                 servings.setText(Float.toString(entry.getServingsMultiplier()) + " servings");
                                 list.addView(rowView);
+
+                                rowView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Toast.makeText(m_Activity, "entry click!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                             TextView meal_cals = (TextView) v.findViewById(R.id.usermeal_cals);
                             meal_cals.setText(Integer.toString(total_meal_cals));

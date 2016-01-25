@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.kristenvondrak.dartmouth" >
+    package="com.example.kristenvondrak.dartmouth">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".Parse.ParseApplication"
         android:allowBackup="true"
-        android:name="com.example.kristenvondrak.dartmouth.Parse.ParseApplication"
         android:icon="@drawable/app_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.parse.APPLICATION_ID"
             android:value="APPLICATION ID" />
@@ -21,7 +20,7 @@
 
         <activity
             android:name=".Main.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,8 +29,10 @@
         </activity>
         <activity
             android:name=".Main.LoginActivity"
-            android:label="@string/title_activity_login" >
-        </activity>
+            android:label="@string/title_activity_login"></activity>
+        <activity
+            android:name=".Diary.AddUserMealActivity"
+            android:label="@string/title_activity_add_user_meal"></activity>
     </application>
 
 </manifest>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ViewFlipper
+        android:id="@+id/header_view_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <!-- Main Header -->
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/tab_highlight">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Food"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:layout_gravity="center"/>
+
+            <LinearLayout
+                android:id="@+id/back_to_diary_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="3dp"
+                android:layout_gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/left_arrow_selector"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_vertical|right" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Diary"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/search_btn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_search_white"
+                android:background="@android:color/transparent"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_vertical|right" />
+
+
+        </FrameLayout>
+
+        <!-- Search -->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/tab_highlight">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_search_white"
+                    android:tint="@color/light_gray"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="5dp"/>
+
+                <EditText
+                    android:id="@+id/search_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:singleLine="true"
+                    android:textSize="14dp"
+                    android:gravity="center"
+                    android:layout_marginRight="40dp"
+                    android:hint="Search for food items"
+                    android:textColor="@color/dark_gray"
+                    android:textColorHint="@color/light_gray"
+                    android:background="@null"
+                    android:imeOptions="actionDone"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/search_cancel_btn"
+                android:layout_weight="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="14dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="Cancel"
+                android:layout_marginRight="10dp"/>
+
+        </LinearLayout>
+    </ViewFlipper>
+
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content"
+        android:background="@color/main"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:id="@+id/header_tabs">
+
+            <RelativeLayout
+                style="@style/RelativeLayoutTab"
+                android:id="@+id/tab_dds"
+                android:layout_marginRight="0.5dp"
+                android:layout_marginLeft="1dp">
+
+                <TextView
+                    android:id="@+id/tab_text"
+                    style="@style/TextViewTab"
+                    android:text="DDS"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                style="@style/RelativeLayoutTab"
+                android:id="@+id/tab_foods"
+                android:layout_marginRight="0.5dp"
+                android:layout_marginLeft="0.5dp">
+
+                <TextView
+                    android:id="@id/tab_text"
+                    style="@style/TextViewTab"
+                    android:text="My Foods"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                style="@style/RelativeLayoutTab"
+                android:id="@+id/tab_meals"
+                android:layout_marginRight="0.5dp"
+                android:layout_marginLeft="0.5dp">
+
+                <TextView
+                    android:id="@id/tab_text"
+                    style="@style/TextViewTab"
+                    android:text="My Meals"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                style="@style/RelativeLayoutTab"
+                android:id="@+id/tab_db"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="0.5dp">
+
+                <TextView
+                    android:id="@id/tab_text"
+                    style="@style/TextViewTab"
+                    android:text="Database"/>
+
+            </RelativeLayout>
+
+        </TableRow>
+
+    </TableLayout>
+
+
+    <FrameLayout
+        android:id="@+id/tab_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+
+</LinearLayout>

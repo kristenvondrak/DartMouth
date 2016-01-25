@@ -21,6 +21,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.example.kristenvondrak.dartmouth.Diary.AddUserMealActivity;
 import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Parse.Offering;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
@@ -31,11 +32,15 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 public class MenuFragment extends Fragment {
@@ -56,6 +61,7 @@ public class MenuFragment extends Fragment {
     // Search
     private EditText m_SearchEditText;
     private TextView m_CancelSearchBtn;
+    private List<Recipe> m_RestoredList;
 
     // Venue Tabs
     private TableRow m_VenueTabs;
@@ -70,6 +76,7 @@ public class MenuFragment extends Fragment {
     private View m_CurrentMenu;
 
     // Food Items
+    private HashMap<String, Set<Recipe>> m_CategoryMap;
     private List<Recipe> m_FoodItemsList;
     private FoodItemListAdapter m_FoodItemListAdapter;
     private ListView m_FoodItemsListView;
@@ -86,10 +93,13 @@ public class MenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_menu, container, false);
+
         m_Activity = getActivity();
+
         initializeViews(v);
         initializeListeners();
 
+        // Create the venue tabs
         for (Constants.Venue venue : Constants.Venue.values()) {
             ViewGroup tab = (ViewGroup)inflater.inflate(R.layout.custom_tab, null);
             ((TextView)tab.findViewById(R.id.tab_text)).setText(Constants.venueDisplayStrings.get(venue));
@@ -98,17 +108,20 @@ public class MenuFragment extends Fragment {
             tab.setTag(venue.name());
             m_VenueTabs.addView(tab);
         }
-
         updateView(m_VenueTabs);
         m_CurrentVenue = m_VenueTabs.getChildAt(0);
         setHighlight(m_CurrentVenue, true);
+
+        // Update the date
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         m_CurrentDateTextView.setText(sdf.format(m_CurrentDate.getTime()));
 
+        // Create list of recipes and set the adapter
         m_FoodItemsList = new ArrayList<>();
         m_FoodItemListAdapter = new FoodItemListAdapter(m_Activity, m_FoodItemsList, m_CurrentDate);
         m_FoodItemsListView.setAdapter(m_FoodItemListAdapter);
 
+        // Call parse
         changeInVenue();
         return v;
     }
@@ -127,7 +140,23 @@ public class MenuFragment extends Fragment {
         m_SearchEditText = (EditText) v.findViewById(R.id.search_edittext);
         m_EmptyFoodItemsText = (TextView) v.findViewById(R.id.empty_food_list);
         m_CurrentDate = Calendar.getInstance();
+
+        // If this fragment is being displayed by the diary fragment
+        if (callingFromDiary()) {
+
+            // Do not show date
+            m_HeaderViewFlipper.setVisibility(View.GONE);
+
+            // Different search views
+            AddUserMealActivity activity = (AddUserMealActivity) m_Activity;
+            m_HeaderViewFlipper = activity.getViewFlipper();
+            m_SearchBtn = activity.getSearchBtn();
+            m_CancelSearchBtn = activity.getCancelSearchBtn();
+            m_SearchEditText = activity.getSearchEditText();
+        }
     }
+
+
 
     private void initializeListeners() {
         m_NextDateButton.setOnClickListener(new View.OnClickListener() {
@@ -153,12 +182,16 @@ public class MenuFragment extends Fragment {
                 m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
                 m_HeaderViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
                 m_HeaderViewFlipper.showNext();
+                m_RestoredList = copyRecipeList(m_FoodItemsList);
             }
         });
 
         m_CancelSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Clear memory
+                m_RestoredList.clear();
+
                 // Exit search and restore previous items
                 update();
 
@@ -182,34 +215,47 @@ public class MenuFragment extends Fragment {
         });
 
         m_SearchEditText.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // do nothing
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                // Check for input
                 Object input = m_SearchEditText.getText();
-                if (input != null) {
-                    ArrayList<Recipe> searchResults = new ArrayList<>();
-                    String text = input.toString().toLowerCase().trim();
-                    for (Recipe r : m_FoodItemsList) {
-                        String name = r.getName().toLowerCase();
-                        if (name.contains(text)) {
-                            searchResults.add(r);
-                        }
-                    }
+                if (input == null) return;
 
-                    m_FoodItemsList.clear();
-                    for (Recipe r: searchResults) {
-                        m_FoodItemsList.add(r);
-                    }
-                    m_FoodItemListAdapter.notifyDataSetChanged();
-
-                    setHighlight(m_CurrentMenu, false);
-                    m_CurrentMenu = m_MenuTabsLinearLayout.getChildAt(0);
-                    setHighlight(m_CurrentMenu, true);
+                // If the part of the input was deleted, search again from original list
+                List<Recipe> listToSearch;
+                if (start < before) {
+                    listToSearch = m_RestoredList;
+                // Otherwise, search from restricted list
+                } else {
+                    listToSearch = m_FoodItemsList;
                 }
+
+                // Substring match
+                String text = input.toString().toLowerCase().trim();
+                ArrayList<Recipe> searchResults = new ArrayList<>();
+                for (Recipe r : listToSearch) {
+                    String name = r.getName().toLowerCase();
+                    if (name.contains(text)) {
+                        searchResults.add(r);
+                    }
+                }
+
+                // Update the list and notify adapter
+                m_FoodItemsList.clear();
+                for (Recipe r: searchResults) {
+                    m_FoodItemsList.add(r);
+                }
+                m_FoodItemListAdapter.notifyDataSetChanged();
+                setHighlight(m_CurrentMenu, false);
+                m_CurrentMenu = m_MenuTabsLinearLayout.getChildAt(0);
+                setHighlight(m_CurrentMenu, true);
             }
 
             @Override
@@ -222,18 +268,19 @@ public class MenuFragment extends Fragment {
             final int index = i;
             final View tv =  m_MenuTabsLinearLayout.getChildAt(i).findViewById(R.id.tab_text);
             tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                                                   @Override
-                                                                   public void onGlobalLayout() {
-                                                                       View v = m_MenuTabsLinearLayout.getChildAt(index).findViewById(R.id.tab_highlight);
-                                                                       v.setMinimumWidth(tv.getWidth());
-                                                                       v.invalidate();
-                                                                       v.requestLayout();
+                @Override
+                public void onGlobalLayout() {
+                    View v = m_MenuTabsLinearLayout.getChildAt(index).findViewById(R.id.tab_highlight);
+                    v.setMinimumWidth(tv.getWidth());
+                    v.invalidate();
+                    v.requestLayout();
 
-                                                                   }
-                                                               });
+                }
+            });
         }
 
     }
+
 
     public void changeInVenue() {
 
@@ -371,19 +418,6 @@ public class MenuFragment extends Fragment {
         });
     }
 
-    public void setHighlight(View v, boolean highlight) {
-        if (highlight) {
-            v.findViewById(R.id.tab_highlight).setBackgroundColor(getResources().getColor(R.color.tab_highlight));
-            ((TextView)v.findViewById(R.id.tab_text)).setTypeface(Typeface.DEFAULT_BOLD);
-        } else {
-            v.findViewById(R.id.tab_highlight).setBackgroundColor(getResources().getColor(R.color.transparent));
-            ((TextView)v.findViewById(R.id.tab_text)).setTypeface(Typeface.DEFAULT);
-        }
-        v.findViewById(R.id.tab_highlight).invalidate();
-        v.findViewById(R.id.tab_text).invalidate();
-        v.findViewById(R.id.tab_highlight).requestLayout();
-        v.findViewById(R.id.tab_text).requestLayout();
-    }
 
     private class ParseRecipesRequest extends AsyncTask<String, Void, String> {
 
@@ -443,6 +477,7 @@ public class MenuFragment extends Fragment {
                                 if (e == null) {
                                     for (ParseObject object : list) {
                                         recipesList.add((Recipe) object);
+
                                     }
                                 }
                                 updateRecipeList();
@@ -470,8 +505,18 @@ public class MenuFragment extends Fragment {
 
         private void updateRecipeList() {
             m_FoodItemsList.clear();
-            for (Recipe r : recipesList)
+            for (Recipe r : recipesList) {
                 m_FoodItemsList.add(r);
+
+                if (m_CategoryMap.containsKey(r.getCategory()))
+                    m_CategoryMap.get(r.getCategory()).add(r);
+                else {
+                    Set<Recipe> set = new HashSet<>();
+                    set.add(r);
+                    m_CategoryMap.put(r.getCategory(), set);
+                }
+
+            }
             m_FoodItemListAdapter.notifyDataSetChanged();
 
             if (m_FoodItemsList.isEmpty()) {
@@ -480,6 +525,41 @@ public class MenuFragment extends Fragment {
                 m_EmptyFoodItemsText.setVisibility(View.GONE);
             }
         }
+    }
+
+
+    public void setHighlight(View v, boolean highlight) {
+        TextView tv = (TextView)v.findViewById(R.id.tab_text);
+        View h = v.findViewById(R.id.tab_highlight);
+        if (highlight) {
+            h.setBackgroundColor(getResources().getColor(R.color.main));
+            tv.setTypeface(Typeface.DEFAULT_BOLD);
+            tv.setTextColor(getResources().getColor(R.color.main));
+        } else {
+            h.setBackgroundColor(getResources().getColor(R.color.transparent));
+            tv.setTypeface(Typeface.DEFAULT);
+            tv.setTextColor(getResources().getColor(R.color.black));
+        }
+    }
+
+    private boolean callingFromDiary() {
+        String callingActivity = m_Activity.getLocalClassName();
+        String diaryActivity = AddUserMealActivity.class.getName();
+
+        if (callingActivity == null || diaryActivity == null)
+            return false;
+
+        return diaryActivity.contains(callingActivity);
+
+    }
+
+
+    private List<Recipe> copyRecipeList(List<Recipe> list) {
+        List<Recipe> copy = new ArrayList<>();
+        for (Recipe r : list) {
+            copy.add(r);
+        }
+        return copy;
     }
 
 
