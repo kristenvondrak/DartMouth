@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/usermeal_selector"
+    android:layout_alignParentBottom="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="10dp">
+
+    <ImageView
+        android:id="@+id/usermeal_spinner_icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/up_arrow"
+        android:tint="@color/tab_highlight"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:gravity="center"/>
+
+    <Spinner
+        android:id="@+id/usermeal_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:spinnerMode="dropdown" />
+
+</LinearLayout>

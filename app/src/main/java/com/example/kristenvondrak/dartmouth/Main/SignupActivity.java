@@ -34,9 +34,6 @@ public class SignupActivity extends Activity {
         me = this;
         initializeViews();
         initializeListeners();
-
-
-
     }
 
     private void initializeViews() {

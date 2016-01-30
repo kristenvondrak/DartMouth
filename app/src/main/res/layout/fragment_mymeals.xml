@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mymeals_viewflipper"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/viewflipper_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Your Previous Meals"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:layout_margin="10dp"/>
+
+        <ListView
+            android:id="@+id/mymeals_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/viewflipper_view_meal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_text"
+            android:text="@string/mymeals_message"
+            android:textSize="15dp"
+            android:gravity="center"
+            android:layout_margin="10dp"/>
+
+
+        <ListView
+            android:id="@+id/meal_entries_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fadingEdge="none"
+            android:layout_weight="1000">
+
+        </ListView>
+
+        <include layout="@layout/meal_selector"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+
+</ViewFlipper>
+

@@ -75,6 +75,4 @@ public class Offering extends ParseObject {
         put("recipes", value);
     }
 
-
-
 }

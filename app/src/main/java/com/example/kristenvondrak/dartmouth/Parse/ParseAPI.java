@@ -1,7 +1,6 @@
 package com.example.kristenvondrak.dartmouth.Parse;
 
-import android.util.Log;
-
+import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -21,81 +20,67 @@ import java.util.List;
 public class ParseAPI {
 
 
-    /*
-    * Async function that retrieves Recipes for the given parameters.
-    * Calls completion block with the retrieved Recipes.
-    */
-    public static List<Recipe> recipesFromCloudForDate(Calendar calendar, String venueKey, String mealName, String menuName) {
-        final List<Recipe> recipesList = new ArrayList<>();
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int year = calendar.get(Calendar.YEAR);
+    public static void addDiaryEntry(final Calendar cal, final ParseUser user, final Recipe recipe,
+                                                        float servings, final String userMeal) {
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Offering");
-        query.whereEqualTo("month", month);
-        query.whereEqualTo("day", day);
-        query.whereEqualTo("year", year);
+        // Add recipe to users past recipes
+        ParseRelation<ParseObject> relation = user.getRelation("pastRecipes");
+        relation.add(recipe);
+        user.saveInBackground();
 
-        Log.d("month", Integer.toString(month));
-        Log.d("day", Integer.toString(day));
-        Log.d("year", Integer.toString(year));
+        // Create new diary entry and save to parse
+        final DiaryEntry diaryEntry = new DiaryEntry();
+        diaryEntry.setDate(cal.getTime());
+        diaryEntry.setUser(user);
+        diaryEntry.setRecipe(recipe);
+        diaryEntry.setServingsMultiplier(servings);
+        diaryEntry.saveInBackground();
 
-        if (venueKey != null) {
-            Log.d("^^^^^^^^^^^^^^^", venueKey);
-            query.whereEqualTo("venueKey", venueKey);
-        }
-        if (mealName != null) {
-            Log.d("^^^^^^^^^^^^^^^", mealName);
-            query.whereEqualTo("mealName", mealName);
-        }
-        if (menuName != null) {
-            Log.d("^^^^^^^^^^^^^^^", menuName);
-            query.whereEqualTo("menuName", menuName);
-        }
+        List<DiaryEntry> entries = new ArrayList<>();
+        entries.add(diaryEntry);
+        addUserMeal(cal, user, entries, userMeal);
+    }
 
+    public static void addUserMeal(final Calendar cal, final ParseUser user, final List<DiaryEntry> entries,
+                                     final String userMeal) {
 
+        // Check if user meal exists
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("UserMeal");
+        query.whereGreaterThan("date", Constants.getDateBefore(cal));
+        query.whereLessThan("date", Constants.getDateAfter(cal));
+        query.whereEqualTo("user", user);
+        query.whereEqualTo("title", userMeal);
 
-        // query.orderByAscending
-
-        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
         query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> offeringsList, ParseException e) {
-                if (e == null) {
-                    Log.d("^^^^^^^^^^^^^^^", offeringsList.toString());
-                    List<ParseQuery<ParseObject>> queryList = new ArrayList<ParseQuery<ParseObject>>();
-                    for (ParseObject object : offeringsList) {
-                        Log.d("^^^^^^^^^^^^^^^", object.getObjectId());
-                        Offering offering = (Offering) object;
-                        ParseRelation<ParseObject> relation = offering.getRecipes();
-                        ParseQuery q = relation.getQuery();
-                        queryList.add(q);
+
+            public void done(List<ParseObject> meals, ParseException e) {
+
+                if (e == null && meals.size() > 0) {
+
+                    // Add diary entries to already existing UserMeal
+                    UserMeal meal = (UserMeal) meals.get(0);
+                    for (DiaryEntry entry : entries) {
+                        meal.addDiaryEntry(entry);
+
                     }
+                    meal.saveInBackground();
 
-                    ParseQuery<ParseObject> recipesQuery = ParseQuery.or(queryList);
-                    recipesQuery.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
-                    recipesQuery.orderByAscending("name");
-                    recipesQuery.setLimit(1000);
-
-                    recipesQuery.findInBackground(new FindCallback<ParseObject>() {
-                        public void done(List<ParseObject> list, ParseException e) {
-                            if (e == null) {
-                                for (ParseObject object : list) {
-                                    Log.d("########", object.getObjectId());
-                                    recipesList.add((Recipe) object);
-                                }
-                            } else {
-
-                            }
-                        }
-                    });
                 } else {
-                    // error
+
+                    // Add new UserMeal to parse
+                    UserMeal newmeal = new UserMeal();
+                    newmeal.put("date", cal.getTime());
+                    newmeal.put("user", user);
+                    newmeal.put("title", userMeal);
+                    newmeal.put("entries", entries);
+                    newmeal.saveInBackground();
                 }
             }
         });
-
-        return recipesList;
     }
+
+
+
 
     public static void logOutParseUser() {
         ParseUser.logOut();

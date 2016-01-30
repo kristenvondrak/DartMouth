@@ -11,7 +11,7 @@
         android:layout_height="30dp"
         android:scaleType="fitCenter"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/diary_white"/>
+        android:src="@drawable/main_diary"/>
 
     <TextView
         android:id="@+id/tab_text"

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/arrow_btn"
+    android:layout_width="27dp"
+    android:layout_height="27dp"
+    android:layout_centerVertical="true"
+    android:src="@drawable/right_arrow_white"
+    android:tint="@color/light_gray"
+    android:layout_gravity="center_vertical|end"/>

@@ -19,6 +19,6 @@
         android:id="@android:id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white_transparent"/>
+        android:background="@drawable/main_tab_background"/>
 
 </LinearLayout>

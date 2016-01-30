@@ -1,34 +1,36 @@
 package com.example.kristenvondrak.dartmouth.Diary;
 
+
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
 
 import java.util.List;
 
+
 /**
- * Created by kristenvondrak on 10/20/15.
+ * Created by kristenvondrak on 1/25/16.
  */
-public class DiaryEntriesListAdapter extends BaseAdapter{
+public class MyFoodsListAdapter extends BaseAdapter{
 
-    private Activity m_Activity;
+    private MyFoodsFragment m_Fragment;
+    private List<Recipe> m_List;
     private LayoutInflater m_Inflater;
-    private List<DiaryEntry> m_List;
 
-    public DiaryEntriesListAdapter(Activity activity, List<DiaryEntry> list) {
-        m_Activity = activity;
-        m_Inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+    public MyFoodsListAdapter(Activity activity, MyFoodsFragment fragment, List<Recipe> list) {
+        m_Fragment = fragment;
         m_List = list;
+        m_Inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-
 
     @Override
     public int getCount() {
@@ -49,26 +51,31 @@ public class DiaryEntriesListAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View rowView = m_Inflater.inflate(R.layout.diary_entry, null);
-        DiaryEntry entry = m_List.get(position);
-        Recipe recipe = entry.getRecipe();
+        final Recipe recipe = m_List.get(position);
 
-        TextView name = (TextView) rowView.findViewById(R.id.name);
-        TextView cals = (TextView) rowView.findViewById(R.id.calories);
-        TextView servings = (TextView) rowView.findViewById(R.id.servings);
-
+        View rowView = m_Inflater.inflate(R.layout.recents_list_item, null);
+        TextView name =(TextView) rowView.findViewById(R.id.item_name_text_view);
         name.setText(recipe.getName());
-        cals.setText(Integer.toString(entry.getTotalCalories()));
-        servings.setText(Float.toString(entry.getServingsMultiplier()) + " servings");
+
+        TextView cals =(TextView) rowView.findViewById(R.id.item_cals_text_view);
+        cals.setText(recipe.getCalories() + " cals");
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(m_Activity, "diary entry click!", Toast.LENGTH_SHORT).show();
+                //m_Fragment.onRecipeClick(recipe);
             }
         });
+
         return rowView;
     }
+
+
+    private void setTextViewValue(View v, int id, String text) {
+        ((TextView)v.findViewById(id)).setText(text);
+    }
+
+
 }
 
 

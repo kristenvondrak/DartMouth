@@ -2,8 +2,6 @@ package com.example.kristenvondrak.dartmouth.Parse;
 
 import android.app.Application;
 
-import com.example.kristenvondrak.dartmouth.Diary.DiaryEntry;
-import com.example.kristenvondrak.dartmouth.Diary.UserMeal;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -23,6 +21,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(DiaryEntry.class);
         ParseObject.registerSubclass(Offering.class);
         ParseObject.registerSubclass(Recipe.class);
+        ParseObject.registerSubclass(User.class);
         Parse.initialize(this, APPLICATION_ID, CLIENT_KEY);
 
     }

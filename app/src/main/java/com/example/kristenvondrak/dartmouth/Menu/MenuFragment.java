@@ -13,17 +13,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.kristenvondrak.dartmouth.Diary.AddUserMealActivity;
 import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Parse.Offering;
+import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.FindCallback;
@@ -31,6 +38,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.parse.ParseUser;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
@@ -43,16 +51,13 @@ import java.util.Locale;
 import java.util.Set;
 
 
-public class MenuFragment extends Fragment {
-
-    private Activity m_Activity;
+public class MenuFragment extends NutritionFragment {
 
 
     // Header
     private ViewFlipper m_HeaderViewFlipper;
 
     // Date
-    private Calendar m_CurrentDate;
     private ImageView m_NextDateButton;
     private ImageView m_PreviousDateButton;
     private TextView m_CurrentDateTextView;
@@ -63,6 +68,9 @@ public class MenuFragment extends Fragment {
     private EditText m_SearchEditText;
     private TextView m_CancelSearchBtn;
     private List<Recipe> m_RestoredList;
+
+    // Main
+    private ViewFlipper m_MenuContent;
 
     // Venue Tabs
     private TableRow m_VenueTabs;
@@ -77,11 +85,14 @@ public class MenuFragment extends Fragment {
     private View m_CurrentMenu;
 
     // Food Items
-    private HashMap<String, Set<Recipe>> m_CategoryMap;
     private List<Recipe> m_MenuItemsList;
     private MenuItemListAdapter m_MenuItemListAdapter;
     private ListView m_MenuItemsListView;
     private TextView m_EmptyMenuText;
+
+    // Diary Specific
+    private LinearLayout m_BackToDiaryBtn;
+    private TableLayout m_DiaryTabs;
 
 
     @Override
@@ -96,6 +107,7 @@ public class MenuFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_menu, container, false);
 
         m_Activity = getActivity();
+        m_Calendar = Calendar.getInstance();
 
         initializeViews(v);
         initializeListeners();
@@ -115,11 +127,11 @@ public class MenuFragment extends Fragment {
 
         // Update the date
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        m_CurrentDateTextView.setText(sdf.format(m_CurrentDate.getTime()));
+        m_CurrentDateTextView.setText(sdf.format(m_Calendar.getTime()));
 
         // Create list of recipes and set the adapter
         m_MenuItemsList = new ArrayList<>();
-        m_MenuItemListAdapter = new MenuItemListAdapter(m_Activity);
+        m_MenuItemListAdapter = new MenuItemListAdapter(m_Activity, this);
         m_MenuItemsListView.setAdapter(m_MenuItemListAdapter);
 
         // Call parse
@@ -140,7 +152,15 @@ public class MenuFragment extends Fragment {
         m_CancelSearchBtn = (TextView) v.findViewById(R.id.search_cancel_btn);
         m_SearchEditText = (EditText) v.findViewById(R.id.search_edittext);
         m_EmptyMenuText = (TextView) v.findViewById(R.id.empty_food_list);
-        m_CurrentDate = Calendar.getInstance();
+        m_RecipeAddBtn = (TextView) v.findViewById(R.id.add_item_add_btn);
+        m_RecipeCancelBtn = (TextView) v.findViewById(R.id.add_item_cancel_btn);
+        m_MenuContent = (ViewFlipper) v.findViewById(R.id.menu_contents_viewflipper);
+        m_RecipeNutrientsView = v.findViewById(R.id.nutrients);
+        m_RecipeName = (TextView) v.findViewById(R.id.name);
+        m_RecipeNumberPickerWhole = (NumberPicker) v.findViewById(R.id.servings_picker_number);
+        m_RecipeNumberPickerFrac = (NumberPicker) v.findViewById(R.id.servings_picker_fraction);
+        m_UserMealSpinner = (Spinner) v.findViewById(R.id.usermeal_spinner);
+
 
         // If this fragment is being displayed by the diary fragment
         if (callingFromDiary()) {
@@ -154,6 +174,10 @@ public class MenuFragment extends Fragment {
             m_SearchBtn = activity.getSearchBtn();
             m_CancelSearchBtn = activity.getCancelSearchBtn();
             m_SearchEditText = activity.getSearchEditText();
+            m_RecipeAddBtn = activity.getAddBtn();
+            m_RecipeCancelBtn = activity.getCancelBtn();
+            m_BackToDiaryBtn = activity.getBackBtn();
+            m_DiaryTabs = activity.getMainTabs();
         }
     }
 
@@ -163,7 +187,7 @@ public class MenuFragment extends Fragment {
         m_NextDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_CurrentDate.add(Calendar.DATE, 1);
+                m_Calendar.add(Calendar.DATE, 1);
                 changeInTime();
             }
         });
@@ -171,7 +195,7 @@ public class MenuFragment extends Fragment {
         m_PreviousDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_CurrentDate.add(Calendar.DATE, -1);
+                m_Calendar.add(Calendar.DATE, -1);
                 changeInTime();
             }
         });
@@ -180,9 +204,7 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Display next screen
-                m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
-                m_HeaderViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
-                m_HeaderViewFlipper.showNext();
+                flipHeaderToNext();
                 m_RestoredList = copyRecipeList(m_MenuItemsList);
             }
         });
@@ -200,7 +222,7 @@ public class MenuFragment extends Fragment {
                 View view = m_Activity.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm =
-                            (InputMethodManager)m_Activity.getSystemService(m_Activity.INPUT_METHOD_SERVICE);
+                            (InputMethodManager) m_Activity.getSystemService(m_Activity.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     // TODO: do we want to restore the items before search??
                 }
@@ -208,10 +230,7 @@ public class MenuFragment extends Fragment {
                 m_SearchEditText.setText("");
 
                 // Display previous screen
-                m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
-                m_HeaderViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
-                m_HeaderViewFlipper.showPrevious();
-
+                flipHeaderToPrev();
             }
         });
 
@@ -233,7 +252,7 @@ public class MenuFragment extends Fragment {
                 List<Recipe> listToSearch;
                 if (start < before) {
                     listToSearch = m_RestoredList;
-                // Otherwise, search from restricted list
+                    // Otherwise, search from restricted list
                 } else {
                     listToSearch = m_MenuItemsList;
                 }
@@ -250,8 +269,7 @@ public class MenuFragment extends Fragment {
 
                 // Update the list and notify adapter
                 m_MenuItemsList = searchResults;
-                m_MenuItemListAdapter.updateData(m_MenuItemsList, m_CurrentDate,
-                            Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
+                m_MenuItemListAdapter.updateData(m_MenuItemsList);
 
                 setHighlight(m_CurrentMenu, false);
                 m_CurrentMenu = m_MenuTabsLinearLayout.getChildAt(0);
@@ -264,9 +282,10 @@ public class MenuFragment extends Fragment {
             }
         });
 
+
         for (int i = 0; i < m_MenuTabsLinearLayout.getChildCount(); i++) {
             final int index = i;
-            final View tv =  m_MenuTabsLinearLayout.getChildAt(i).findViewById(R.id.tab_text);
+            final View tv = m_MenuTabsLinearLayout.getChildAt(i).findViewById(R.id.tab_text);
             tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -277,6 +296,70 @@ public class MenuFragment extends Fragment {
 
                 }
             });
+        }
+        initializeNutritionListeners();
+
+    }
+
+    private void flipHeaderToNext() {
+        m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
+        m_HeaderViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
+        m_HeaderViewFlipper.showNext();
+    }
+
+    private void flipHeaderToPrev() {
+        m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
+        m_HeaderViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
+        m_HeaderViewFlipper.showPrevious();
+    }
+
+    @Override
+    protected void flipToPrev() {
+        hideAddBtns();
+        m_MenuContent.setInAnimation(m_Activity, R.anim.slide_in_from_left);
+        m_MenuContent.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
+        m_MenuContent.showPrevious();
+    }
+
+    @Override
+    protected void flipToNext() {
+        showAddBtns();
+        m_MenuContent.setInAnimation(m_Activity, R.anim.slide_in_from_right);
+        m_MenuContent.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
+        m_MenuContent.showNext();
+    }
+
+
+    @Override
+    public void onItemClick(Recipe recipe) {
+        super.onItemClick(recipe);
+        flipToNext();
+    }
+
+    private void showAddBtns() {
+        m_NextDateButton.setVisibility(View.GONE);
+        m_PreviousDateButton.setVisibility(View.GONE);
+        m_SearchBtn.setVisibility(View.GONE);
+        m_RecipeAddBtn.setVisibility(View.VISIBLE);
+        m_RecipeCancelBtn.setVisibility(View.VISIBLE);
+
+        if (callingFromDiary()) {
+            m_BackToDiaryBtn.setVisibility(View.GONE);
+            m_DiaryTabs.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void hideAddBtns() {
+        m_NextDateButton.setVisibility(View.VISIBLE);
+        m_PreviousDateButton.setVisibility(View.VISIBLE);
+        m_SearchBtn.setVisibility(View.VISIBLE);
+        m_RecipeAddBtn.setVisibility(View.GONE);
+        m_RecipeCancelBtn.setVisibility(View.GONE);
+
+        if (callingFromDiary()) {
+            m_BackToDiaryBtn.setVisibility(View.VISIBLE);
+            m_DiaryTabs.setVisibility(View.VISIBLE);
         }
 
     }
@@ -362,7 +445,7 @@ public class MenuFragment extends Fragment {
 
     public void changeInTime() {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        m_CurrentDateTextView.setText(sdf.format(m_CurrentDate.getTime()));
+        m_CurrentDateTextView.setText(sdf.format(m_Calendar.getTime()));
         update();
     }
 
@@ -372,9 +455,9 @@ public class MenuFragment extends Fragment {
         String mealtime = Constants.mealTimeParseStrings.get(Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
         String menu = Constants.menuParseStrings.get(Constants.Menu.valueOf(m_CurrentMenu.getTag().toString()));
 
-        String day = Integer.toString(m_CurrentDate.get(Calendar.DAY_OF_MONTH));
-        String month = Integer.toString(m_CurrentDate.get(Calendar.MONTH) + 1);
-        String year = Integer.toString(m_CurrentDate.get(Calendar.YEAR));
+        String day = Integer.toString(m_Calendar.get(Calendar.DAY_OF_MONTH));
+        String month = Integer.toString(m_Calendar.get(Calendar.MONTH) + 1);
+        String year = Integer.toString(m_Calendar.get(Calendar.YEAR));
 
         new ParseRecipesRequest().execute(day, month, year, venue, mealtime, menu);
 
@@ -510,8 +593,7 @@ public class MenuFragment extends Fragment {
 
 
         private void notifyMenuListAdapter() {
-            m_MenuItemListAdapter.updateData(m_MenuItemsList, m_CurrentDate,
-                        Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
+            m_MenuItemListAdapter.updateData(m_MenuItemsList);
 
             // If no recipes found, show message
             if (m_MenuItemsList.isEmpty()) {
@@ -533,7 +615,7 @@ public class MenuFragment extends Fragment {
         } else {
             h.setBackgroundColor(getResources().getColor(R.color.transparent));
             tv.setTypeface(Typeface.DEFAULT);
-            tv.setTextColor(getResources().getColor(R.color.black));
+            tv.setTextColor(getResources().getColor(R.color.gray_text));
         }
     }
 
@@ -553,9 +635,9 @@ public class MenuFragment extends Fragment {
         List<Recipe> copy = new ArrayList<>();
         for (Recipe r : list) {
             copy.add(r);
+
         }
         return copy;
     }
-
 
 }

@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
+import com.example.kristenvondrak.dartmouth.Parse.User;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -32,6 +34,8 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         me = this;
 
+        initializeViews();
+        initializeListeners();
 
     }
 
@@ -93,6 +97,8 @@ public class LoginActivity extends Activity {
         boolean lowercase = false;
         boolean uppercase = false;
         boolean nonalpha = false;
+        if (password.trim().equals(""))
+            return false;
         /*
         for (Character c : password.toCharArray()) {
             if (Character.isLetter(c)) {
@@ -141,7 +147,7 @@ public class LoginActivity extends Activity {
 
 
     public void createNewParseUser(String email, String password) {
-        ParseUser user = new ParseUser();
+        User user = new User();
         // Set core properties
         user.setUsername(email);
         user.setPassword(password);

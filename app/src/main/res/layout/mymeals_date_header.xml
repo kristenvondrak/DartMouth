@@ -7,14 +7,13 @@
     android:background="@color/light_gray_transparent" >
 
     <TextView
-        android:id="@+id/category_name"
+        android:id="@+id/date_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Category"
         android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="15dp"
+        android:textSize="17dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginTop="4dp" />
+        android:layout_marginBottom="7dp"
+        android:layout_marginTop="7dp" />
 </LinearLayout>

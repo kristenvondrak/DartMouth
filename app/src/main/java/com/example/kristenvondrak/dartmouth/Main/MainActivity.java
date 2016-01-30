@@ -24,7 +24,7 @@ import com.example.kristenvondrak.dartmouth.R;
 public class MainActivity extends FragmentActivity {
     private Context m_Me;
     private FragmentTabHost m_FragmentTabHost;
-    private int m_TabCount = 3;
+    private int m_TabCount = 4;
     public static final int LOGIN_ACTIVITY_REQUEST = 1;
     public static final int DIARY_ACTIVITY_REQUEST = 2;
 
@@ -42,20 +42,27 @@ public class MainActivity extends FragmentActivity {
 
 
         m_FragmentTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+
         m_FragmentTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
+
+        m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("menu")
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_menu, "Menu")),
+                MenuFragment.class, null);
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("diary")
                         .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_diary, "Diary")),
                 DiaryFragment.class, null);
 
-        m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("menu")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_menu, "Menu")),
-                MenuFragment.class, null);
+        m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("stats")
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_stats, "Stats")),
+                PrefsFragment.class, null);
+
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("prefs")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_settings, "Prefs")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_prefs, "Prefs")),
                 PrefsFragment.class, null);
 
         updateTabs();
+        m_FragmentTabHost.getTabWidget().setDividerDrawable(null);
         m_FragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {

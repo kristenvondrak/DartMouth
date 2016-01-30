@@ -1,15 +1,20 @@
 package com.example.kristenvondrak.dartmouth.Main;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * Created by kristenvondrak on 1/9/16.
  */
 public class Constants {
+
+    public static final String DATE_FORMAT = "EEE, LLL d";
 
     public enum Venue {Foco, Hop, Novack};
 
@@ -204,6 +209,18 @@ public class Constants {
         c.set(year, month, day, 0, 0, 0);
         c.add(Calendar.DAY_OF_MONTH, 1);
         return c.getTime();
+    }
+
+    public static String getStringFromCal(Calendar cal) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        return sdf.format(cal.getTime());
+    }
+
+    public static Calendar getCalFromString(String text) throws ParseException {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        cal.setTime(sdf.parse(text));
+        return cal;
     }
 
 }

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14dp"
-        android:textColor="@color/gray"
+        android:textColor="@color/gray_text"
         android:gravity="center"
         android:layout_centerInParent="true"
         android:text="Specials"/>

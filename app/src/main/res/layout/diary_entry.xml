@@ -1,4 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
+    android:background="@drawable/white_to_gray_on_press">
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="250dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="16dp"
+            android:text="Chicken Noodle Soup"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/item_servings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="2 servings"
+            android:textColor="@color/light_gray"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/item_cals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="19dp"
+            android:text="120"
+            android:textColor="@color/light_gray"
+            android:layout_gravity="center_vertical" />
+        
+        <include layout="@layout/list_item_arrow"/>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+
+<!--
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -62,4 +129,4 @@
             android:gravity="center_vertical"/>
     </LinearLayout>
 
-</RelativeLayout>
+</RelativeLayout>-->

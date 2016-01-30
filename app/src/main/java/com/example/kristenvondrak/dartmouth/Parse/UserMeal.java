@@ -1,4 +1,4 @@
-package com.example.kristenvondrak.dartmouth.Diary;
+package com.example.kristenvondrak.dartmouth.Parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
