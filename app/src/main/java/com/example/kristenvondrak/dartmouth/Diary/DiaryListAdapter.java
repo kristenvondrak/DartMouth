@@ -164,7 +164,10 @@ public class DiaryListAdapter extends BaseAdapter{
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(m_Activity, "entry click!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(m_Activity, EditDiaryEntryActivity.class);
+                        intent.putExtra(DiaryFragment.EXTRA_DIARY_ENTRY_ID, entry.getObjectId());
+                        m_Activity.startActivityForResult(intent, MainActivity.EDIT_DIARY_ENTRY);
+                        m_Activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                     }
                 });
 
@@ -199,8 +202,8 @@ public class DiaryListAdapter extends BaseAdapter{
                     public void onClick(View v) {
                         Intent intent = new Intent(m_Activity, AddUserMealActivity.class);
                         intent.putExtra(DiaryFragment.EXTRA_MEALTIME, title);
-                        intent.putExtra(DiaryFragment.EXTRA_DATE, Constants.getStringFromCal(m_Calendar));
-                        m_Activity.startActivityForResult(intent, MainActivity.DIARY_ACTIVITY_REQUEST);
+                        intent.putExtra(DiaryFragment.EXTRA_DATE, Constants.getStringExtraFromCal(m_Calendar));
+                        m_Activity.startActivityForResult(intent, MainActivity.ADD_TO_MEAL);
                         m_Activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 
                     }

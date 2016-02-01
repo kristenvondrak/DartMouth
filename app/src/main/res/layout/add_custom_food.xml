@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:id="@+id/view_add_custom_food">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_transparent">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:textStyle="bold"
+                android:text="Food Name:" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/name_edit_text"
+                    style="@style/CustomFoodEditText"
+                    android:hint="Required"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:inputType="textCapWords"
+                    android:background="@color/transparent"/>
+
+
+                <ImageView
+                    android:id="@+id/name_error_icon"
+                    android:visibility="gone"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_error"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_marginRight="5dp"
+                    android:tint="@color/red"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:text="Calories" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/calories_edit_text"
+                    style="@style/CustomFoodEditText"
+                    android:hint="Required" />
+
+                <ImageView
+                    android:id="@+id/calories_error_icon"
+                    android:visibility="gone"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_error"
+                    android:layout_gravity="center_vertical|right"
+                    android:layout_marginRight="5dp"
+                    android:tint="@color/red"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:text="Calories from Fat" />
+
+            <EditText
+                android:id="@+id/fatcals_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:text="Fat (g)" />
+
+            <EditText
+                android:id="@+id/fat_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView2"
+                android:text="Saturated Fat (g)" />
+
+            <EditText
+                android:id="@+id/saturated_fat_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:text="Cholesterol (mg)" />
+
+            <EditText
+                android:id="@+id/cholesterol_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:text="Sodium (mg)" />
+
+            <EditText
+                android:id="@+id/sodium_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:text="Carbohydrates (g)" />
+
+            <EditText
+                android:id="@+id/carbs_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView2"
+                android:text="Fiber (g)" />
+
+            <EditText
+                android:id="@+id/fiber_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView2"
+                android:text="Sugars (g)" />
+
+            <EditText
+                android:id="@+id/sugars_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                style="@style/CustomFoodTextView"
+                android:text="Protein (g)" />
+
+            <EditText
+                android:id="@+id/protein_edit_text"
+                style="@style/CustomFoodEditText"
+                android:hint="Optional" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_gray"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_share"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="Share this food with all users"
+            android:textSize="16dp"
+            android:checked="true" />
+
+    </LinearLayout>
+
+
+</ScrollView>

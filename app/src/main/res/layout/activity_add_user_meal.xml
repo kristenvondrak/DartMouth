@@ -185,19 +185,6 @@
 
             <RelativeLayout
                 style="@style/RelativeLayoutTab"
-                android:id="@+id/tab_foods"
-                android:layout_marginRight="0.5dp"
-                android:layout_marginLeft="0.5dp">
-
-                <TextView
-                    android:id="@id/tab_text"
-                    style="@style/TextViewTab"
-                    android:text="My Foods"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                style="@style/RelativeLayoutTab"
                 android:id="@+id/tab_meals"
                 android:layout_marginRight="0.5dp"
                 android:layout_marginLeft="0.5dp">
@@ -205,8 +192,21 @@
                 <TextView
                     android:id="@id/tab_text"
                     style="@style/TextViewTab"
-                    android:text="My Meals"/>
+                    android:text="Meals"/>
 
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                style="@style/RelativeLayoutTab"
+                android:id="@+id/tab_foods"
+                android:layout_marginRight="0.5dp"
+                android:layout_marginLeft="0.5dp">
+
+                <TextView
+                    android:id="@id/tab_text"
+                    style="@style/TextViewTab"
+                    android:text="Custom"/>
 
             </RelativeLayout>
 

@@ -50,6 +50,44 @@
         <item name="android:textColor">@color/gray_transparent</item>
     </style>
 
+    <style name="CustomFoodTextView" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="CustomFoodTextView2" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:textColor">@color/gray_text</item>
+    </style>
+
+    <style name="CustomFoodEditText" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/main</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:textColorHint">@color/light_gray</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:inputType">number</item>
+    </style>
+
+
     <style name="NutritionColumn1">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

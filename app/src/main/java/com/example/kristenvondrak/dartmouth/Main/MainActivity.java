@@ -26,7 +26,8 @@ public class MainActivity extends FragmentActivity {
     private FragmentTabHost m_FragmentTabHost;
     private int m_TabCount = 4;
     public static final int LOGIN_ACTIVITY_REQUEST = 1;
-    public static final int DIARY_ACTIVITY_REQUEST = 2;
+    public static final int ADD_TO_MEAL = 2;
+    public static final int EDIT_DIARY_ENTRY = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +112,9 @@ public class MainActivity extends FragmentActivity {
         switch (requestCode) {
             case LOGIN_ACTIVITY_REQUEST:
                 return;
-            case DIARY_ACTIVITY_REQUEST:
+            case ADD_TO_MEAL:
+                return;
+            case EDIT_DIARY_ENTRY:
                 return;
             default:
                 return;

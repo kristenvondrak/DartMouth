@@ -1,15 +1,97 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
-    tools:context="com.example.kristenvondrak.main.MenuFragment">
+    android:id="@+id/myfoods_viewflipper">
 
-    <ListView
-        android:id="@+id/recents_listview"
+
+    <!-- View 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        tools:context="com.example.kristenvondrak.main.MenuFragment">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Your Custom Foods"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:layout_margin="10dp"/>
+
+
+
+        <LinearLayout
+            android:id="@+id/create_new_food_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/light_gray_transparent">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_add_circle_outline"
+                android:tint="@color/main"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create New Food"
+                android:textSize="19dp"
+                android:textColor="@color/main"
+                android:layout_gravity="center_vertical"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/right_arrow_white"
+                    android:tint="@color/main"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/myfoods_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+    </LinearLayout>
+
+    <!-- View 2 -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </ListView>
 
-</LinearLayout>
+        <!-- Nutrition Info View -->
+        <include layout="@layout/nutrition"
+            android:visibility="gone"/>
+
+        <!-- Add Custom Food Item View -->
+        <include layout="@layout/add_custom_food" />
+
+    </RelativeLayout>
+
+
+
+</ViewFlipper>

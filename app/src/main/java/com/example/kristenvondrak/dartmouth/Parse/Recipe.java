@@ -2,7 +2,9 @@ package com.example.kristenvondrak.dartmouth.Parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
+import java.net.Inet4Address;
 import java.util.Dictionary;
 import java.util.HashMap;
 
@@ -23,6 +25,10 @@ public class Recipe extends ParseObject {
 
     public String getName() {
         return getString("name");
+    }
+
+    public String getCreatedBy() {
+        return getString("createdBy");
     }
 
     public int getRank() {
@@ -53,8 +59,12 @@ public class Recipe extends ParseObject {
         put("rank", value);
     }
 
-    public void setNutrients(Dictionary<String, Dictionary<String, Object>> value) {
+    public void setNutrients(HashMap<String, HashMap<String, Object>> value) {
         put("nutrients", value);
+    }
+
+    public void setCreatedBy(ParseUser value) {
+        put("createdBy", value);
     }
 
     public void setCategory(String value) {
@@ -142,10 +152,10 @@ public class Recipe extends ParseObject {
     }
 
     public String getServingSize() {
-        String g = Integer.toString((Integer)getNutrients().get("result").get("serving_size_grams"));
-        if (g == null)
-            return (String) Integer.toString((Integer)getNutrients().get("result").get("serving_size_mls"));
-        return g;
+        Integer value =  (Integer) getNutrients().get("result").get("serving_size_grams");
+        if (value == null)
+            return "";
+        return Integer.toString(value);
     }
 
     public String getServingsPerContainer() {

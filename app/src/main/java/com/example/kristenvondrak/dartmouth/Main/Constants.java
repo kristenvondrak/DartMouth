@@ -14,9 +14,10 @@ import java.util.Map;
  */
 public class Constants {
 
-    public static final String DATE_FORMAT = "EEE, LLL d";
+    public static final String DATE_FORMAT_EXTRA = "yyyy,EEE,LLL,d";
+    public static final String DATE_FORMAT_DISPLAY = "EEE, LLL d";
 
-    public enum Venue {Foco, Hop, Novack};
+    public enum Venue {Foco, Hop, Novack, Collis};
 
     public enum MealTime {Breakfast, Lunch, Dinner, LateNight, AllDay};
 
@@ -29,16 +30,21 @@ public class Constants {
 
     public static final Map<Venue, MealTime[]> mealTimesForVenue = Collections.unmodifiableMap(
             new HashMap<Venue, MealTime[]>() {{
-                put(Venue.Foco, new MealTime[]{ MealTime.Breakfast,
+                put(Venue.Foco, new MealTime[]{
+                        MealTime.Breakfast,
                         MealTime.Lunch,
                         MealTime.Dinner});
 
 
-                put(Venue.Hop, new MealTime[]{  MealTime.Breakfast,
+                put(Venue.Hop, new MealTime[]{
                         MealTime.Lunch,
                         MealTime.Dinner,
                         MealTime.LateNight});
 
+                put(Venue.Collis, new MealTime[]{
+                        MealTime.Breakfast,
+                        MealTime.Lunch,
+                        MealTime.Dinner});
 
                 put(Venue.Novack, new MealTime[]{ MealTime.AllDay});
 
@@ -66,6 +72,9 @@ public class Constants {
                     Menu.Beverage,
                     Menu.Condiments});
 
+            put(Venue.Collis, new Menu[]{   Menu.AllItems,
+                    Menu.EverydayItems,});
+
 
             put(Venue.Novack, new Menu[]{   Menu.AllItems,
                     Menu.Specials,
@@ -76,6 +85,7 @@ public class Constants {
             new HashMap<Venue, String>() {{
                     put(Venue.Foco, "Foco");
                     put(Venue.Hop, "Hop");
+                put(Venue.Collis, "Collis");
                     put(Venue.Novack, "Novack");
                 }});
 
@@ -83,6 +93,7 @@ public class Constants {
             new HashMap<Venue, String>() {{
                 put(Venue.Foco, "DDS");
                 put(Venue.Hop, "CYC");
+                put(Venue.Collis, "COLLIS");
                 put(Venue.Novack, "NOVACK");
             }});
 
@@ -211,16 +222,21 @@ public class Constants {
         return c.getTime();
     }
 
-    public static String getStringFromCal(Calendar cal) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+    public static String getDisplayStringFromCal(Calendar cal) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DISPLAY, Locale.US);
         return sdf.format(cal.getTime());
     }
 
-    public static Calendar getCalFromString(String text) throws ParseException {
+    public static Calendar getCalFromStringExtra(String text) throws ParseException {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_EXTRA, Locale.US);
         cal.setTime(sdf.parse(text));
         return cal;
+    }
+
+    public static String getStringExtraFromCal(Calendar cal) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_EXTRA, Locale.US);
+        return sdf.format(cal.getTime());
     }
 
 }

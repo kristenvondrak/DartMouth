@@ -33,6 +33,9 @@
         <activity
             android:name=".Diary.AddUserMealActivity"
             android:label="@string/title_activity_add_user_meal"></activity>
+        <activity
+            android:name=".Diary.EditDiaryEntryActivity"
+            android:label="Edit Diary Entry"></activity>
     </application>
 
 </manifest>

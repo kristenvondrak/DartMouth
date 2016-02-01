@@ -84,7 +84,7 @@ public class AddUserMealActivity extends ActionBarActivity {
         Intent intent = getIntent();
         m_SelectedUserMeal = intent.getStringExtra(DiaryFragment.EXTRA_MEALTIME);
         try {
-            m_Calendar = Constants.getCalFromString(intent.getStringExtra(DiaryFragment.EXTRA_DATE));
+            m_Calendar = Constants.getCalFromStringExtra(intent.getStringExtra(DiaryFragment.EXTRA_DATE));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -94,7 +94,7 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_TabToFragmentMap = new HashMap<>();
         m_TabToFragmentMap.put(m_TabDDS, new MenuFragment());
         m_TabToFragmentMap.put(m_TabRecents, new RecentsFragment());
-        m_TabToFragmentMap.put(m_TabFoods, new ProgressFragment()); // Placeholder
+        m_TabToFragmentMap.put(m_TabFoods, new MyFoodsFragment()); // Placeholder
         m_TabToFragmentMap.put(m_TabMeals, new MyMealsFragment());
         m_TabToFragmentMap.put(m_TabDb, new ProgressFragment()); // Placeholder
         m_FragmentManager = getSupportFragmentManager();

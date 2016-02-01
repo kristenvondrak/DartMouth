@@ -1,6 +1,7 @@
 package com.example.kristenvondrak.dartmouth.Menu;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,6 +65,7 @@ public class MenuFragment extends NutritionFragment {
     private TextView m_CurrentDateTextView;
     public static final String DATE_FORMAT = "EEE, LLL d";
     private ImageView m_SearchBtn;
+    private DatePickerDialog.OnDateSetListener m_DatePickerListener;
 
     // Search
     private EditText m_SearchEditText;
@@ -88,7 +91,7 @@ public class MenuFragment extends NutritionFragment {
     private List<Recipe> m_MenuItemsList;
     private MenuItemListAdapter m_MenuItemListAdapter;
     private ListView m_MenuItemsListView;
-    private TextView m_EmptyMenuText;
+    private LinearLayout m_EmptyMenuText;
 
     // Diary Specific
     private LinearLayout m_BackToDiaryBtn;
@@ -151,7 +154,7 @@ public class MenuFragment extends NutritionFragment {
         m_SearchBtn = (ImageView) v.findViewById(R.id.date_search_btn);
         m_CancelSearchBtn = (TextView) v.findViewById(R.id.search_cancel_btn);
         m_SearchEditText = (EditText) v.findViewById(R.id.search_edittext);
-        m_EmptyMenuText = (TextView) v.findViewById(R.id.empty_food_list);
+        m_EmptyMenuText = (LinearLayout) v.findViewById(R.id.empty_food_list);
         m_RecipeAddBtn = (TextView) v.findViewById(R.id.add_item_add_btn);
         m_RecipeCancelBtn = (TextView) v.findViewById(R.id.add_item_cancel_btn);
         m_MenuContent = (ViewFlipper) v.findViewById(R.id.menu_contents_viewflipper);
@@ -184,6 +187,29 @@ public class MenuFragment extends NutritionFragment {
 
 
     private void initializeListeners() {
+
+       m_DatePickerListener = new DatePickerDialog.OnDateSetListener() {
+
+            // when dialog box is closed, below method will be called.
+            public void onDateSet(DatePicker view, int selectedYear,
+                                  int selectedMonth, int selectedDay) {
+                m_Calendar.set(Calendar.YEAR, selectedYear);
+                m_Calendar.set(Calendar.MONTH, selectedMonth);
+                m_Calendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                changeInTime();
+            }
+        };
+
+
+        m_CurrentDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(m_Activity, m_DatePickerListener, m_Calendar.get(Calendar.YEAR),
+                        m_Calendar.get(Calendar.MONTH), m_Calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+
         m_NextDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -279,6 +305,28 @@ public class MenuFragment extends NutritionFragment {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+        // Add button
+        m_RecipeAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
+                        (float) (m_ServingsWhole + m_ServingsFraction), m_SelectedUserMeal);
+
+                flipToPrev();
+                Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        // Cancel Button
+        m_RecipeCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flipToPrev();
             }
         });
 
@@ -639,5 +687,6 @@ public class MenuFragment extends NutritionFragment {
         }
         return copy;
     }
+
 
 }

@@ -26,12 +26,18 @@ public class Nutrients {
     }
 
     public static double convertToDouble(String string) {
+        // Check for empty string
+        if (string == null) { return NONE; }
+
+        // Extract digits
         String s = "";
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
             if (Character.isDigit(c) || c == '.')
                 s += c;
         }
+
+
         if (s.equals(""))
             return NONE;
 
@@ -39,15 +45,16 @@ public class Nutrients {
     }
 
     public static String getUnits(String string) {
-
-        int i = 0;
-        while (true) {
-            if (Character.isDigit(string.charAt(i)))
+        int start = string.length();
+        for (int i = 0; i < string.length(); i++) {
+            if (Character.isDigit(string.charAt(i))) {
+                start = i;
                 break;
-            i++;
+            }
         }
 
-        for (int j = i; j < string.length(); j++) {
+        // Extract units
+        for (int j = start; j < string.length(); j++) {
             if (Character.isLetter(string.charAt(j)))
                 return (string.substring(j, string.length()));
         }

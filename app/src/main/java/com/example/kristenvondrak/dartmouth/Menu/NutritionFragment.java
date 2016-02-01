@@ -1,38 +1,20 @@
 package com.example.kristenvondrak.dartmouth.Menu;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
 
-import com.example.kristenvondrak.dartmouth.Diary.AddUserMealActivity;
-import com.example.kristenvondrak.dartmouth.Diary.RecentsListAdapter;
 import com.example.kristenvondrak.dartmouth.Main.Constants;
-import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
-import com.example.kristenvondrak.dartmouth.Parse.User;
 import com.example.kristenvondrak.dartmouth.R;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 
 public class NutritionFragment extends Fragment {
@@ -98,28 +80,6 @@ public class NutritionFragment extends Fragment {
         });
 
 
-        // Add button
-        m_RecipeAddBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
-                        (float) (m_ServingsWhole + m_ServingsFraction), m_SelectedUserMeal);
-
-                flipToPrev();
-                Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
-            }
-
-        });
-
-        // Cancel Button
-        m_RecipeCancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flipToPrev();
-            }
-        });
-
         // UserMeal selector --Create an ArrayAdapter using the string array
         final ArrayList<String> meals = new ArrayList<>();
         for (Constants.UserMeals m : Constants.UserMeals.values()) {
@@ -140,6 +100,7 @@ public class NutritionFragment extends Fragment {
                 // Nothing??
             }
         });
+
     }
 
 
@@ -157,18 +118,27 @@ public class NutritionFragment extends Fragment {
     }
 
 
+    public void setServings(double whole, double fraction) {
+        m_ServingsWhole = whole;
+        m_ServingsFraction = fraction;
+    }
+
     private void setTextViewValue(View v, int id, String text) {
+        if (text == null)
+            return;
+
         ((TextView)v.findViewById(id)).setText(text);
     }
 
     private String getNewValue(String value, double multiplier) {
         int v = (int)(Nutrients.convertToDouble(value) * multiplier);
+        if (v < 0 || value == null)
+            return "-";
+
         String u = Nutrients.getUnits(value);
 
-        if (v < 0)
-            return "";
 
-        return Integer.toString(v) + u;
+        return Integer.toString(v) + " " +  u;
     }
 
 
@@ -186,7 +156,7 @@ public class NutritionFragment extends Fragment {
         setTextViewValue(m_RecipeNutrientsView, R.id.fiber,  getNewValue(m_SelectedRecipe.getFiber(), num_servings));
         setTextViewValue(m_RecipeNutrientsView, R.id.sugars, getNewValue(m_SelectedRecipe.getSugars(), num_servings));
         setTextViewValue(m_RecipeNutrientsView, R.id.protein, getNewValue(m_SelectedRecipe.getProtein(), num_servings));
-        setTextViewValue(m_RecipeNutrientsView, R.id.serving_size, getNewValue(m_SelectedRecipe.getServingSize(), 1));
+        //setTextViewValue(m_RecipeNutrientsView, R.id.serving_size, getNewValue(m_SelectedRecipe.getServingSize(), 1));
     }
 
     private double parseFraction(String string) {

@@ -163,7 +163,8 @@
                     android:text="30"/>
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:visibility="gone">
                 <TextView
                     style="@style/NutritionTitle"
                     android:text="Serving Size"/>
@@ -217,6 +218,9 @@
     </LinearLayout>
 
     <include layout="@layout/meal_selector" />
+
+    <include layout="@layout/trash_button" />
+
 
 </RelativeLayout>
 
