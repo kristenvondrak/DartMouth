@@ -72,6 +72,7 @@ public class MyMealsFragment extends Fragment {
         m_Activity = (AddUserMealActivity)getActivity();
         m_SelectedUserMeal = m_Activity.getUserMeal();
         m_Calendar = m_Activity.getCalendar();
+        Log.d("*********", "MyMeals cal = " + m_Calendar.toString());
 
         initializeViews(v);
         initializeListeners();

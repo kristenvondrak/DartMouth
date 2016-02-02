@@ -49,6 +49,9 @@ public class DiaryListAdapter extends BaseAdapter{
     private TreeSet<Integer> m_DividersSet = new TreeSet<Integer>();
     private HashMap<String, UserMeal> m_MealsMap = new HashMap<>();
 
+    // Need this for deletion of diary entries
+    private HashMap<DiaryEntry, String> m_EntryToUserMealIdMap = new HashMap<>();
+
 
     public DiaryListAdapter(Activity activity) {
         m_Activity = activity;
@@ -62,6 +65,7 @@ public class DiaryListAdapter extends BaseAdapter{
         m_SeparatorsSet.clear();
         m_DividersSet.clear();
         m_MealsMap.clear();
+        m_EntryToUserMealIdMap.clear();
 
         // Create map of ALL meals mapping to empty lists
         // Even if a user does not have any entries for a meal, display a header
@@ -78,6 +82,7 @@ public class DiaryListAdapter extends BaseAdapter{
             m_MealsMap.put(meal.getTitle(), meal);
             for (DiaryEntry entry : meal.getDiaryEntries()) {
                 mealToEntriesMap.get(meal.getTitle()).add(entry);
+                m_EntryToUserMealIdMap.put(entry, meal.getObjectId());
             }
         }
 
@@ -96,21 +101,19 @@ public class DiaryListAdapter extends BaseAdapter{
     }
 
     public void addItem(DiaryEntry item) {
+        Log.d("^^^^^", "adding diary entry : " + item.getObjectId());
         m_Data.add(item);
-        notifyDataSetChanged();
     }
 
     public void addSeparatorItem(final String item) {
         m_Data.add(item);
         // save separator position
         m_SeparatorsSet.add(m_Data.size() - 1);
-        notifyDataSetChanged();
     }
 
     public void addDividerItem() {
         m_Data.add("d");
         m_DividersSet.add(m_Data.size() - 1);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -164,8 +167,13 @@ public class DiaryListAdapter extends BaseAdapter{
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        // Pass the diary entry id, user meal id, and date
                         Intent intent = new Intent(m_Activity, EditDiaryEntryActivity.class);
                         intent.putExtra(DiaryFragment.EXTRA_DIARY_ENTRY_ID, entry.getObjectId());
+                        intent.putExtra(DiaryFragment.EXTRA_USER_MEAL_ID, m_EntryToUserMealIdMap.get(entry));
+                        intent.putExtra(DiaryFragment.EXTRA_DATE, m_Calendar.getTimeInMillis());
+
+                        // Start EditDiaryEntryActivity
                         m_Activity.startActivityForResult(intent, MainActivity.EDIT_DIARY_ENTRY);
                         m_Activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                     }
@@ -196,13 +204,16 @@ public class DiaryListAdapter extends BaseAdapter{
                 }
 
                 // Add to meal button
-                ImageView addBtn = (ImageView) rowView.findViewById(R.id.usermeal_add_btn);
-                addBtn.setOnClickListener(new View.OnClickListener() {
+                //ImageView addBtn = (ImageView) rowView.findViewById(R.id.usermeal_add_btn);
+                rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        // Pass the meal time and date
                         Intent intent = new Intent(m_Activity, AddUserMealActivity.class);
                         intent.putExtra(DiaryFragment.EXTRA_MEALTIME, title);
-                        intent.putExtra(DiaryFragment.EXTRA_DATE, Constants.getStringExtraFromCal(m_Calendar));
+                        intent.putExtra(DiaryFragment.EXTRA_DATE, m_Calendar.getTimeInMillis());
+
+                        // Start AddUserMealActivity
                         m_Activity.startActivityForResult(intent, MainActivity.ADD_TO_MEAL);
                         m_Activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 

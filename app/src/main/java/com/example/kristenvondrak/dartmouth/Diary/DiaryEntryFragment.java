@@ -63,16 +63,8 @@ public class DiaryEntryFragment extends NutritionFragment {
         m_DeleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // remove from parse
-
-                // Update diary entry in parse
-                // ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
-                //       (float) (m_ServingsWhole + m_ServingsFraction), m_SelectedUserMeal);
-
-                //flipToPrev();
-                ((EditDiaryEntryActivity)m_Activity).deleteDiaryEntry();
-                //m_Activity.onBackPressed();
                 Toast.makeText(m_Activity, "Deleted from diary!", Toast.LENGTH_SHORT).show();
+                ((EditDiaryEntryActivity)m_Activity).deleteDiaryEntry();
             }
 
         });

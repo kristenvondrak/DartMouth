@@ -21,7 +21,8 @@
             android:id="@+id/item_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15dp"
+            android:singleLine="true"
+            android:textSize="16dp"
             android:textColor="@color/black"
             android:text="Chicken Noodle Soup"/>
 
@@ -29,7 +30,7 @@
             android:id="@+id/item_cals_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12dp"
+            android:textSize="14dp"
             android:textColor="@color/black"
             android:text="120 cals"/>
 

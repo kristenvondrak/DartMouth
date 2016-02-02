@@ -79,6 +79,7 @@ public class MyFoodsFragment extends NutritionFragment {
         m_Calendar = ((AddUserMealActivity)m_Activity).getCalendar();
         m_SelectedUserMeal = ((AddUserMealActivity)m_Activity).getUserMeal();
 
+        Log.d("*******", "MyFoods cal = " + m_Calendar.toString());
         initializeViews(v);
         initializeListeners();
 
@@ -241,6 +242,7 @@ public class MyFoodsFragment extends NutritionFragment {
 
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
+                m_RecipesList.clear();
                 if (e == null) {
                     for (ParseObject object : objects) {
                         Recipe recipe = (Recipe) object;
@@ -256,7 +258,6 @@ public class MyFoodsFragment extends NutritionFragment {
     }
 
     private Recipe createCustomRecipe() {
-
 
         // Nutrients map
         HashMap<String, HashMap<String, Object>> value = new HashMap<>();

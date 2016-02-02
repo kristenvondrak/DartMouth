@@ -28,6 +28,7 @@ import com.example.kristenvondrak.dartmouth.Menu.MenuFragment;
 import com.example.kristenvondrak.dartmouth.Parse.DiaryEntry;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
+import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
 import com.example.kristenvondrak.dartmouth.Progress.ProgressFragment;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.GetCallback;
@@ -38,6 +39,7 @@ import com.parse.ParseQuery;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class EditDiaryEntryActivity extends ActionBarActivity {
     private Activity m_Me;
@@ -52,6 +54,8 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
     private FragmentManager m_FragmentManager;
 
     private DiaryEntry m_DiaryEntry;
+    private UserMeal m_UserMeal;
+    private Calendar m_Calendar;
 
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
@@ -65,6 +69,11 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
         String diaryEntryId = intent.getStringExtra(DiaryFragment.EXTRA_DIARY_ENTRY_ID);
+        String userMealId = intent.getStringExtra(DiaryFragment.EXTRA_USER_MEAL_ID);
+        m_Calendar = Calendar.getInstance();
+        m_Calendar.setTimeInMillis(intent.getLongExtra(DiaryFragment.EXTRA_DATE, m_Calendar.getTimeInMillis()));
+
+        // Get the diary entry
         ParseQuery<ParseObject> query = ParseQuery.getQuery("DiaryEntry");
         query.include("recipe");
         query.getInBackground(diaryEntryId, new GetCallback<ParseObject>() {
@@ -78,6 +87,20 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
                     Log.d("Error", e.getMessage());
                 }
                 updateFragment();
+            }
+        });
+
+        // Get the user meal -- for deletion purposes
+        ParseQuery<ParseObject> userMealQuery = ParseQuery.getQuery("UserMeal");
+        userMealQuery.include("entries");
+        userMealQuery.getInBackground(userMealId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, com.parse.ParseException e) {
+                if (e == null) {
+                    m_UserMeal = (UserMeal) object;
+                } else {
+                    Log.d("Error", e.getMessage());
+                }
             }
         });
 
@@ -130,8 +153,13 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
     }
 
     public void deleteDiaryEntry() {
-        // remove from user meal in Parse
-        // m_DiaryEntry.deleteInBackground();
+        // Remove pointer to entry from user meal in Parse
+        m_UserMeal.removeDiaryEntry(m_DiaryEntry);
+        m_UserMeal.saveInBackground();
+
+        // Remove diary entry
+        m_DiaryEntry.deleteInBackground();
+
         m_Me.onBackPressed();
     }
 

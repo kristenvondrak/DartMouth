@@ -46,6 +46,7 @@ public class NutritionFragment extends Fragment {
         m_RecipeNumberPickerWhole.setMaxValue(numbers.length - 1);
         m_RecipeNumberPickerWhole.setDisplayedValues(numbers);
         m_RecipeNumberPickerWhole.setWrapSelectorWheel(false);
+        // TODO
         m_RecipeNumberPickerWhole.setValue(1);
 
         m_RecipeNumberPickerWhole.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {

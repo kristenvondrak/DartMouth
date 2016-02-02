@@ -4,6 +4,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,15 @@ public class UserMeal extends ParseObject {
         List<DiaryEntry> copy = getDiaryEntries();
         copy.add(value);
         setDiaryEntries(copy);
+    }
+
+    public void removeDiaryEntry(DiaryEntry value) {
+        List<DiaryEntry> newList = new ArrayList<>();
+        for (DiaryEntry entry : getDiaryEntries()) {
+            if (!entry.getObjectId().equals(value.getObjectId()))
+                newList.add(entry);
+        }
+        setDiaryEntries(newList);
     }
 
 }

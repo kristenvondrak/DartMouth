@@ -96,8 +96,7 @@ public class MenuFragment extends NutritionFragment {
     // Diary Specific
     private LinearLayout m_BackToDiaryBtn;
     private TableLayout m_DiaryTabs;
-
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,6 +172,8 @@ public class MenuFragment extends NutritionFragment {
 
             // Different search views
             AddUserMealActivity activity = (AddUserMealActivity) m_Activity;
+            m_Calendar = activity.getCalendar();
+            m_SelectedUserMeal = activity.getUserMeal();
             m_HeaderViewFlipper = activity.getViewFlipper();
             m_SearchBtn = activity.getSearchBtn();
             m_CancelSearchBtn = activity.getCancelSearchBtn();

@@ -31,20 +31,22 @@ import java.util.List;
 
 public class DiaryFragment extends Fragment {
 
+    public static final String TAG = "DiaryFragment";
+
     public static final String EXTRA_DIARY_ENTRY_ID = "EXTRA_DIARY_ENTRY_ID";
+    public static final String EXTRA_USER_MEAL_ID = "EXTRA_USER_MEAL_ID";
     public static final String EXTRA_MEALTIME = "EXTRA_MEALTIME";
     public static final String EXTRA_DATE = "EXTRA_DATE";
 
     private Activity m_Activity;
 
     // Meals
-    private List<UserMeal> m_UserMealsList;
+    //private List<UserMeal> m_UserMealsList;
     private DiaryListAdapter m_DiaryListAdapter;
     private ListView m_DiaryListView;
-    private ImageView m_AddToMealBtn;
 
     // Date
-    private Calendar m_Calendar;
+    private Calendar m_Calendar = Calendar.getInstance();
     private TextView m_CurrentDateTextView;
     private ImageView m_NextDateButton;
     private ImageView m_PreviousDateButton;
@@ -72,30 +74,28 @@ public class DiaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.d(TAG, "onCreateView");
         m_Inflater = inflater;
         View v = m_Inflater.inflate(R.layout.fragment_diary, container, false);
         initializeViews(v);
         initializeListeners();
 
-        m_Calendar = Calendar.getInstance();
         // TODO: store in parse
         m_ExcerciseCals = 0;
         m_FoodCals = 0;
         m_GoalCals = DEFAULT_GOAL_CALS;
 
         // Create list of meals and set the adapter
-        m_UserMealsList = new ArrayList<>();
+        //m_UserMealsList = new ArrayList<>();
         m_DiaryListAdapter = new DiaryListAdapter(m_Activity);
         m_DiaryListView.setAdapter(m_DiaryListAdapter);
 
-        update();
         return v;
     }
 
 
     private void initializeViews(View v) {
         m_DiaryListView = (ListView) v.findViewById(R.id.diary_list_view);
-        m_AddToMealBtn = (ImageView) v.findViewById(R.id.add_to_meal_btn);
         m_GoalTextView = (TextView) v.findViewById(R.id.total_goal_cals);
         m_FoodTextView = (TextView) v.findViewById(R.id.total_food_cals);
         m_ExerciseTextView = (TextView) v.findViewById(R.id.total_exercise_cals);
@@ -147,10 +147,10 @@ public class DiaryFragment extends Fragment {
 
     }
 
-    private void updateCalorieSummary() {
+    private void updateCalorieSummary(List<UserMeal> list) {
         // Recalculate the total calories consumed
         m_FoodCals = 0;
-        for (UserMeal m : m_UserMealsList) {
+        for (UserMeal m : list) {
             for (DiaryEntry e : m.getDiaryEntries()) {
                 m_FoodCals += e.getTotalCalories();
             }
@@ -175,7 +175,8 @@ public class DiaryFragment extends Fragment {
 
 
 
-    private void queryUserMeals(Calendar cal) {
+    private void queryUserMeals(final Calendar cal) {
+        Log.d(TAG, "queryUserMeals() cal = " + Constants.getStringExtraFromCal(cal));
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserMeal");
         query.whereGreaterThan("date", Constants.getDateBefore(cal));
@@ -186,17 +187,18 @@ public class DiaryFragment extends Fragment {
         query.findInBackground(new FindCallback<ParseObject>() {
 
             public void done(List<ParseObject> meals, ParseException e) {
-                m_UserMealsList.clear();
+                Log.d("^^^^^^^^^^^^", "Diary Fragment: calendar = " + Constants.getDisplayStringFromCal(cal));
+                List<UserMeal> userMealList = new ArrayList<UserMeal>();
                 if (e == null) {
                     for (ParseObject object : meals) {
-                        m_UserMealsList.add((UserMeal) object);
+                        userMealList.add((UserMeal) object);
+                        Log.d("^^^^^", "adding user meal : " + ((UserMeal) object).getTitle());
                     }
                 } else {
                     Log.d("DiaryFragment", "Error getting user meals: " + e.getMessage());
-
                 }
-                m_DiaryListAdapter.updateData(m_UserMealsList, m_Calendar);
-                updateCalorieSummary();
+                m_DiaryListAdapter.updateData(userMealList, cal);
+                updateCalorieSummary(userMealList);
             }
         });
     }

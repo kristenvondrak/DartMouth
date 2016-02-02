@@ -26,7 +26,7 @@
             android:maxWidth="250dp"
             android:singleLine="true"
             android:ellipsize="end"
-            android:textSize="16dp"
+            android:textSize="18dp"
             android:text="Chicken Noodle Soup"
             android:textColor="@color/black"/>
 
@@ -34,7 +34,7 @@
             android:id="@+id/item_servings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13dp"
+            android:textSize="14dp"
             android:text="2 servings"
             android:textColor="@color/light_gray"/>
 
@@ -51,12 +51,14 @@
             android:id="@+id/item_cals"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="19dp"
+            android:textSize="20dp"
             android:text="120"
-            android:textColor="@color/light_gray"
+            android:textColor="@color/black"
             android:layout_gravity="center_vertical" />
         
-        <include layout="@layout/list_item_arrow"/>
+        <include layout="@layout/list_item_arrow"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
 
     </LinearLayout>
 

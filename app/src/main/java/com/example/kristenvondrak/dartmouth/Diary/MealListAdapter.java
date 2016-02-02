@@ -37,7 +37,6 @@ public class MealListAdapter extends BaseAdapter{
     private Activity m_Activity;
     private MyMealsFragment m_Fragment;
     private LayoutInflater m_Inflater;
-    private String m_SelectedUserMeal;
 
 
     private ArrayList<Object> m_Data = new ArrayList<Object>();

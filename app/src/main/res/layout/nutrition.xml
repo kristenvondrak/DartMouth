@@ -185,15 +185,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="17dp">
 
         <NumberPicker
             android:layout_weight="1"
             android:id="@+id/servings_picker_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:scaleX="0.8"
-            android:scaleY="0.65">
+            android:scaleX="0.7"
+            android:scaleY="0.7">
         </NumberPicker>
 
         <NumberPicker
@@ -201,8 +202,8 @@
             android:id="@+id/servings_picker_fraction"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:scaleX="0.8"
-            android:scaleY="0.65">
+            android:scaleX="0.7"
+            android:scaleY="0.7">
         </NumberPicker>
 
         <TextView

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,11 +84,9 @@ public class AddUserMealActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
         m_SelectedUserMeal = intent.getStringExtra(DiaryFragment.EXTRA_MEALTIME);
-        try {
-            m_Calendar = Constants.getCalFromStringExtra(intent.getStringExtra(DiaryFragment.EXTRA_DATE));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
+        m_Calendar = Calendar.getInstance();
+        m_Calendar.setTimeInMillis(intent.getLongExtra(DiaryFragment.EXTRA_DATE, m_Calendar.getTimeInMillis()));
 
         // Initialize tabs and fragments
         m_CurrentTab = m_TabDDS;
