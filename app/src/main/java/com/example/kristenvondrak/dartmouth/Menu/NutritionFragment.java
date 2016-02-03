@@ -137,7 +137,7 @@ public class NutritionFragment extends Fragment {
 
     private void updateNutrients() {
 
-        double num_servings = m_ServingsFraction + m_ServingsWhole;
+        double num_servings = Constants.ServingsFracFloats.get(m_ServingsFraction) + m_ServingsWhole;
 
         setTextViewValue(m_RecipeNutrientsView, R.id.calories, getNewValue(m_SelectedRecipe.getCalories(), num_servings));
         setTextViewValue(m_RecipeNutrientsView, R.id.fat_calories,  getNewValue(m_SelectedRecipe.getFatCalories(), num_servings));

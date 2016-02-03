@@ -30,7 +30,7 @@
             android:gravity="center"
             android:textSize="19dp"
             android:text="Cancel"
-            android:textColor="@color/white" />
+            android:textColor="@color/text_view_white_to_gray" />
 
         <TextView
             android:id="@+id/header_save_btn"
@@ -41,7 +41,7 @@
             android:gravity="center"
             android:textSize="19dp"
             android:text="Save"
-            android:textColor="@color/white" />
+            android:textColor="@color/text_view_white_to_gray" />
 
     </FrameLayout>
 

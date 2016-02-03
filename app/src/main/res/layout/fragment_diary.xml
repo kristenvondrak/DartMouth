@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="25dp"
-                android:textColor="@color/white"
+                android:textColor="@color/text_view_white_to_gray"
                 android:text="Sat, Jan 9"
                 android:layout_marginRight="30dp"
                 android:layout_marginLeft="30dp"/>
