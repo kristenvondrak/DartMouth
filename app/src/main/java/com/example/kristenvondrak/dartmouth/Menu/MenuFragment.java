@@ -381,6 +381,7 @@ public class MenuFragment extends NutritionFragment {
 
     @Override
     public void onItemClick(Recipe recipe) {
+        m_SelectedUserMeal = m_CurrentMealTime.getTag().toString();
         super.onItemClick(recipe);
         flipToNext();
     }
@@ -500,8 +501,6 @@ public class MenuFragment extends NutritionFragment {
 
 
     public void update() {
-        m_SelectedUserMeal = m_CurrentMealTime.getTag().toString();
-        resetMealSpinner();
         String venue = Constants.venueParseStrings.get(Constants.Venue.valueOf(m_CurrentVenue.getTag().toString()));
         String mealtime = Constants.mealTimeParseStrings.get(Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
         String menu = Constants.menuParseStrings.get(Constants.Menu.valueOf(m_CurrentMenu.getTag().toString()));
@@ -513,6 +512,8 @@ public class MenuFragment extends NutritionFragment {
         new ParseRecipesRequest().execute(day, month, year, venue, mealtime, menu);
 
     }
+
+
 
     private View.OnClickListener mealTimeTabOnClickListener() {
         return (new View.OnClickListener() {

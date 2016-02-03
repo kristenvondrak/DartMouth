@@ -58,6 +58,8 @@ public class MyMealsFragment extends Fragment {
     private String m_SelectedUserMeal;
     private Calendar m_Calendar;
 
+    private List<String> m_SpinnerMealsList;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,19 +124,19 @@ public class MyMealsFragment extends Fragment {
         });
 
         // Create an ArrayAdapter using the string array
-        final List<String> meals = new ArrayList<>();
+        m_SpinnerMealsList = new ArrayList<>();
         for (Constants.UserMeals m : Constants.UserMeals.values()) {
-            meals.add(m.name());
+            m_SpinnerMealsList.add(m.name());
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(m_Activity, R.layout.meal_spinner_item, meals);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(m_Activity, R.layout.meal_spinner_item, m_SpinnerMealsList);
         adapter.setDropDownViewResource(R.layout.meal_spinner_dropdown_item);
-        m_MealTimeSpinner.setSelection(meals.indexOf(m_SelectedUserMeal));
+        m_MealTimeSpinner.setSelection(m_SpinnerMealsList.indexOf(m_SelectedUserMeal));
         m_MealTimeSpinner.setAdapter(adapter);
         m_MealTimeSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                m_SelectedUserMeal = meals.get(position);
+                m_SelectedUserMeal = m_SpinnerMealsList.get(position);
             }
 
             @Override
@@ -195,7 +197,13 @@ public class MyMealsFragment extends Fragment {
             m_MealEntriesList.add(entry);
         }
         m_MealEntriesListAdapter.resetData();
+        m_SelectedUserMeal = meal.getTitle();
+        resetMealSpinner();
         flipToNext();
+    }
+
+    public void resetMealSpinner() {
+        m_MealTimeSpinner.setSelection(m_SpinnerMealsList.indexOf(m_SelectedUserMeal));
     }
 
 }

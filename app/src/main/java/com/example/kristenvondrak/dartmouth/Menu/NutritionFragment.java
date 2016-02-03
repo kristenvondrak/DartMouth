@@ -105,12 +105,13 @@ public class NutritionFragment extends Fragment {
     public void onItemClick(Recipe recipe) {
         m_SelectedRecipe = recipe;
         m_RecipeName.setText(recipe.getName());
+        resetServingsSelector();
+        resetMealSpinner();
+        //m_ServingsWhole = 1;
+        //m_RecipeNumberPickerWhole.setValue(1);
 
-        m_ServingsWhole = 1;
-        m_RecipeNumberPickerWhole.setValue(1);
-
-        m_ServingsFraction = 0;
-        m_RecipeNumberPickerFrac.setValue(0);
+        //m_ServingsFraction = 0;
+        //m_RecipeNumberPickerFrac.setValue(0);
 
         updateNutrients();
     }
@@ -152,10 +153,6 @@ public class NutritionFragment extends Fragment {
         //setTextViewValue(m_RecipeNutrientsView, R.id.serving_size, getNewValue(m_SelectedRecipe.getServingSize(), 1));
     }
 
-    private double parseFraction(String string) {
-        String[] parts = string.split("/");
-        return Double.parseDouble(parts[0]) / Double.parseDouble(parts[1]);
-    }
 
     protected void flipToPrev() {
 

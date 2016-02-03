@@ -88,11 +88,10 @@ public class DiaryEntryFragment extends NutritionFragment {
     }
 
     public void update() {
-        super.onItemClick(((EditDiaryEntryActivity) m_Activity).getRecipe());
         float servings = ((EditDiaryEntryActivity)m_Activity).getServingsMultiplier();
         m_ServingsWhole = (int) Math.floor(servings);
         m_ServingsFraction = Constants.getServingsFracIndex(servings - m_ServingsWhole);
-        resetServingsSelector();
+        super.onItemClick(((EditDiaryEntryActivity) m_Activity).getRecipe());
     }
 
 
