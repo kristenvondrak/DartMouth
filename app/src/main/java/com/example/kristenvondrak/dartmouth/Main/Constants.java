@@ -2,10 +2,12 @@ package com.example.kristenvondrak.dartmouth.Main;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -202,6 +204,33 @@ public class Constants {
         static String OkActionTitle = "OK";
     }
 
+    public static final String[] ServingsFracDisplay = {"-", "1/8", "1/4", "1/3", "1/2", "2/3", "3/4"};
+    public static final List<Float> ServingsFracFloats = Collections.unmodifiableList(
+            new ArrayList<Float>() {{
+                add(0, (float) 0);
+                add(1, (float) 1.0 / 8);
+                add(2, (float) 1.0 / 4);
+                add(3, (float) 1.0 / 3);
+                add(4, (float) 1.0 / 2);
+                add(5, (float) 2.0 / 3);
+                add(6, (float) 3.0 / 4);
+
+            }});
+
+    public static int getServingsFracIndex(float value) {
+        for (int i = 0; i < ServingsFracFloats.size(); i++) {
+            if (value == ServingsFracFloats.get(i))
+                return i;
+            else if (value < ServingsFracFloats.get(i)) {
+                float d1 = ServingsFracFloats.get(i) - value;
+                float d2 = value - ServingsFracFloats.get(i - 1);
+
+                return d1 < d2 ? i : i - 1;
+            }
+        }
+        return 0;
+    }
+
     public static Date getDateBefore(Calendar calendar) {
         Calendar c = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -227,12 +256,6 @@ public class Constants {
         return sdf.format(cal.getTime());
     }
 
-    public static Calendar getCalFromStringExtra(String text) throws ParseException {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_EXTRA, Locale.US);
-        cal.setTime(sdf.parse(text));
-        return cal;
-    }
 
     public static String getStringExtraFromCal(Calendar cal) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_EXTRA, Locale.US);

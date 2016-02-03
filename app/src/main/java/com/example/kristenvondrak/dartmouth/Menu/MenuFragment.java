@@ -313,9 +313,9 @@ public class MenuFragment extends NutritionFragment {
         m_RecipeAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                float fraction = Constants.ServingsFracFloats.get(m_ServingsFraction);
                 ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
-                        (float) (m_ServingsWhole + m_ServingsFraction), m_SelectedUserMeal);
+                        m_ServingsWhole + fraction, m_SelectedUserMeal);
 
                 flipToPrev();
                 Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
@@ -500,6 +500,8 @@ public class MenuFragment extends NutritionFragment {
 
 
     public void update() {
+        m_SelectedUserMeal = m_CurrentMealTime.getTag().toString();
+        resetMealSpinner();
         String venue = Constants.venueParseStrings.get(Constants.Venue.valueOf(m_CurrentVenue.getTag().toString()));
         String mealtime = Constants.mealTimeParseStrings.get(Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
         String menu = Constants.menuParseStrings.get(Constants.Menu.valueOf(m_CurrentMenu.getTag().toString()));

@@ -2,6 +2,7 @@ package com.example.kristenvondrak.dartmouth.Menu;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,10 +12,12 @@ import android.widget.TextView;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
+import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
 import com.example.kristenvondrak.dartmouth.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class NutritionFragment extends Fragment {
@@ -26,12 +29,13 @@ public class NutritionFragment extends Fragment {
     protected Spinner m_UserMealSpinner;
     protected TextView m_RecipeAddBtn;
     protected TextView m_RecipeCancelBtn;
-    protected double m_ServingsWhole;
-    protected double m_ServingsFraction;
-    protected String m_SelectedUserMeal;
+    protected int m_ServingsWhole = 1;
+    protected int m_ServingsFraction = 0;
+    protected String m_SelectedUserMeal = Constants.UserMeals.Breakfast.name();
     protected Recipe m_SelectedRecipe;
     protected Calendar m_Calendar;
     protected Activity m_Activity;
+    protected List<String> m_SpinnerMealsList;
 
 
     protected  void initializeNutritionListeners() {
@@ -46,54 +50,47 @@ public class NutritionFragment extends Fragment {
         m_RecipeNumberPickerWhole.setMaxValue(numbers.length - 1);
         m_RecipeNumberPickerWhole.setDisplayedValues(numbers);
         m_RecipeNumberPickerWhole.setWrapSelectorWheel(false);
-        // TODO
-        m_RecipeNumberPickerWhole.setValue(1);
-
+        m_RecipeNumberPickerWhole.setValue(m_ServingsWhole);
+        Log.d("*****", "whole value " + Integer.toString(m_ServingsWhole));
         m_RecipeNumberPickerWhole.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                if (newVal == 0)
-                    m_ServingsWhole = 0;
-                else
-                    m_ServingsWhole = Integer.parseInt(numbers[m_RecipeNumberPickerWhole.getValue()]);
-
+                m_ServingsWhole = newVal;
                 updateNutrients();
             }
         });
 
         // Selector wheel with values -, 1/8, 1/4, 1/3, 1/2, 2/3, 3/4
-        final String[] fractions = {"-", "1/8", "1/4", "1/3", "1/2", "2/3", "3/4"};
         m_RecipeNumberPickerFrac.setMinValue(0);
-        m_RecipeNumberPickerFrac.setMaxValue(fractions.length - 1);
-        m_RecipeNumberPickerFrac.setDisplayedValues(fractions);
+        m_RecipeNumberPickerFrac.setMaxValue(Constants.ServingsFracDisplay.length - 1);
+        m_RecipeNumberPickerFrac.setDisplayedValues(Constants.ServingsFracDisplay);
         m_RecipeNumberPickerFrac.setWrapSelectorWheel(false);
-        m_RecipeNumberPickerFrac.setValue(0);
+        m_RecipeNumberPickerFrac.setValue(m_ServingsFraction);
+        Log.d("*****", "frac value " + Integer.toString(m_ServingsFraction));
         m_RecipeNumberPickerFrac.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                if (newVal == 0)
-                    m_ServingsFraction = 0;
-                else
-                    m_ServingsFraction = parseFraction(fractions[newVal]);
-
+                m_ServingsFraction = newVal;
                 updateNutrients();
             }
         });
 
 
         // UserMeal selector --Create an ArrayAdapter using the string array
-        final ArrayList<String> meals = new ArrayList<>();
+        m_SpinnerMealsList = new ArrayList<>();
         for (Constants.UserMeals m : Constants.UserMeals.values()) {
-            meals.add(m.name());
+            m_SpinnerMealsList.add(m.name());
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(m_Activity, R.layout.meal_spinner_item, meals);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(m_Activity, R.layout.meal_spinner_item, m_SpinnerMealsList);
         adapter.setDropDownViewResource(R.layout.meal_spinner_dropdown_item);
+        m_UserMealSpinner.setSelection(m_SpinnerMealsList.indexOf(m_SelectedUserMeal));
+        Log.d("*****", "user meal " + m_SelectedUserMeal);
         m_UserMealSpinner.setAdapter(adapter);
         m_UserMealSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                m_SelectedUserMeal = meals.get(position);
+                m_SelectedUserMeal = m_SpinnerMealsList.get(position);
             }
 
             @Override
@@ -118,11 +115,6 @@ public class NutritionFragment extends Fragment {
         updateNutrients();
     }
 
-
-    public void setServings(double whole, double fraction) {
-        m_ServingsWhole = whole;
-        m_ServingsFraction = fraction;
-    }
 
     private void setTextViewValue(View v, int id, String text) {
         if (text == null)
@@ -172,5 +164,17 @@ public class NutritionFragment extends Fragment {
     protected void flipToNext() {
 
     }
+
+    protected void resetMealSpinner() {
+        m_UserMealSpinner.setSelection(m_SpinnerMealsList.indexOf(m_SelectedUserMeal));
+    }
+
+    protected void resetServingsSelector() {
+        m_RecipeNumberPickerWhole.setValue(m_ServingsWhole);
+        m_RecipeNumberPickerFrac.setValue(m_ServingsFraction);
+
+    }
+
+
 
 }

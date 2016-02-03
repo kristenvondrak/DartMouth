@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Menu.NutritionFragment;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
@@ -169,8 +170,9 @@ public class MyFoodsFragment extends NutritionFragment {
 
                         break;
                     case VIEW_CUSTOM:
+                        float fraction = Constants.ServingsFracFloats.get(m_ServingsFraction);
                         ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
-                                (float) (m_ServingsWhole + m_ServingsFraction), m_SelectedUserMeal);
+                                m_ServingsWhole + fraction, m_SelectedUserMeal);
                         Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
 
                         break;
@@ -194,6 +196,7 @@ public class MyFoodsFragment extends NutritionFragment {
 
     public void onItemClick(Recipe recipe) {
         m_CurrentMode = MODE.VIEW_CUSTOM;
+        resetServingsSelector();
         flipToNext();
         super.onItemClick(recipe);
     }

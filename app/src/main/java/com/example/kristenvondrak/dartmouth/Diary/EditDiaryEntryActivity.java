@@ -152,14 +152,21 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
         return m_DiaryEntry.getRecipe();
     }
 
+    public float getServingsMultiplier() {
+        return m_DiaryEntry.getServingsMultiplier();
+    }
+
     public void deleteDiaryEntry() {
         // Remove pointer to entry from user meal in Parse
-        m_UserMeal.removeDiaryEntry(m_DiaryEntry);
-        m_UserMeal.saveInBackground();
+        if (m_UserMeal.getDiaryEntries().size() == 1)
+            m_UserMeal.deleteInBackground();
+        else {
+            m_UserMeal.removeDiaryEntry(m_DiaryEntry);
+            m_UserMeal.saveInBackground();
+        }
 
         // Remove diary entry
         m_DiaryEntry.deleteInBackground();
-
         m_Me.onBackPressed();
     }
 

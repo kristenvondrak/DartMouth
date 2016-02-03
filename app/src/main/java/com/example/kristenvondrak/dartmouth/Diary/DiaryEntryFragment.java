@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Menu.NutritionFragment;
 import com.example.kristenvondrak.dartmouth.Parse.DiaryEntry;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
@@ -51,7 +52,6 @@ public class DiaryEntryFragment extends NutritionFragment {
         m_Inflater = inflater;
         m_Activity = getActivity();
         View v =  m_Inflater.inflate(R.layout.nutrition, container, false);
-
         initializeViews(v);
         initializeListeners();
 
@@ -64,7 +64,7 @@ public class DiaryEntryFragment extends NutritionFragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(m_Activity, "Deleted from diary!", Toast.LENGTH_SHORT).show();
-                ((EditDiaryEntryActivity)m_Activity).deleteDiaryEntry();
+                ((EditDiaryEntryActivity) m_Activity).deleteDiaryEntry();
             }
 
         });
@@ -89,10 +89,16 @@ public class DiaryEntryFragment extends NutritionFragment {
 
     public void update() {
         super.onItemClick(((EditDiaryEntryActivity) m_Activity).getRecipe());
+        float servings = ((EditDiaryEntryActivity)m_Activity).getServingsMultiplier();
+        m_ServingsWhole = (int) Math.floor(servings);
+        m_ServingsFraction = Constants.getServingsFracIndex(servings - m_ServingsWhole);
+        resetServingsSelector();
     }
 
 
     public float getServingsMultiplier() {
-        return (float) (m_ServingsWhole + m_ServingsFraction);
+        return m_ServingsWhole + Constants.ServingsFracFloats.get(m_ServingsFraction);
     }
+
+
 }

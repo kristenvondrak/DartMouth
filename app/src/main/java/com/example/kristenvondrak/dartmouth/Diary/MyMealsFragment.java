@@ -72,7 +72,6 @@ public class MyMealsFragment extends Fragment {
         m_Activity = (AddUserMealActivity)getActivity();
         m_SelectedUserMeal = m_Activity.getUserMeal();
         m_Calendar = m_Activity.getCalendar();
-        Log.d("*********", "MyMeals cal = " + m_Calendar.toString());
 
         initializeViews(v);
         initializeListeners();
@@ -129,6 +128,7 @@ public class MyMealsFragment extends Fragment {
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(m_Activity, R.layout.meal_spinner_item, meals);
         adapter.setDropDownViewResource(R.layout.meal_spinner_dropdown_item);
+        m_MealTimeSpinner.setSelection(meals.indexOf(m_SelectedUserMeal));
         m_MealTimeSpinner.setAdapter(adapter);
         m_MealTimeSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
 
