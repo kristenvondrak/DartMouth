@@ -1,37 +1,19 @@
 package com.example.kristenvondrak.dartmouth.Diary;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Menu.NutritionFragment;
-import com.example.kristenvondrak.dartmouth.Parse.DiaryEntry;
-import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
-import com.example.kristenvondrak.dartmouth.Parse.Recipe;
-import com.example.kristenvondrak.dartmouth.Parse.User;
 import com.example.kristenvondrak.dartmouth.R;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
-import com.parse.ParseUser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class DiaryEntryFragment extends NutritionFragment {
@@ -63,8 +45,7 @@ public class DiaryEntryFragment extends NutritionFragment {
         m_DeleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(m_Activity, "Deleted from diary!", Toast.LENGTH_SHORT).show();
-                ((EditDiaryEntryActivity) m_Activity).deleteDiaryEntry();
+                ((EditDiaryEntryActivity) m_Activity).showDeleteDialog();
             }
 
         });
@@ -79,9 +60,9 @@ public class DiaryEntryFragment extends NutritionFragment {
         // Nutrition Info
         m_RecipeNutrientsView = v.findViewById(R.id.nutrients);
         m_RecipeName = (TextView) v.findViewById(R.id.name);
-        m_RecipeNumberPickerWhole = (NumberPicker) v.findViewById(R.id.servings_picker_number);
-        m_RecipeNumberPickerFrac = (NumberPicker) v.findViewById(R.id.servings_picker_fraction);
-        m_UserMealSpinner = (Spinner) v.findViewById(R.id.usermeal_spinner);
+        m_NumberPickerWhole = (NumberPicker) v.findViewById(R.id.servings_picker_number);
+        m_NumberPickerFrac = (NumberPicker) v.findViewById(R.id.servings_picker_fraction);
+        m_UserMealSelector = (LinearLayout) v.findViewById(R.id.usermeal_selector);
 
         // Cannot switch meal when editing diary entry
         v.findViewById(R.id.usermeal_selector).setVisibility(View.GONE);

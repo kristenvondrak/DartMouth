@@ -15,14 +15,8 @@
         tools:context="com.example.kristenvondrak.main.MenuFragment">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Your Custom Foods"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:layout_margin="10dp"/>
-
+            style="@style/DiarySubheaderText"
+            android:text="Your Custom Foods" />
 
 
         <LinearLayout
@@ -83,15 +77,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Nutrition Info View -->
-        <include layout="@layout/nutrition"
-            android:visibility="gone"/>
-
         <!-- Add Custom Food Item View -->
         <include layout="@layout/add_custom_food" />
 
+        <!-- Nutrition Info View -->
+        <include layout="@layout/nutrition" android:visibility="gone"/>
+
     </RelativeLayout>
-
-
-
+    
 </ViewFlipper>

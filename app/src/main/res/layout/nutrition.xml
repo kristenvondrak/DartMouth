@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="3dp"
     android:background="@color/white">
 
     <TextView
@@ -217,6 +218,7 @@
             android:gravity="center"/>
 
     </LinearLayout>
+
 
     <include layout="@layout/meal_selector" />
 

@@ -86,7 +86,6 @@ public class DiaryFragment extends Fragment {
         m_GoalCals = DEFAULT_GOAL_CALS;
 
         // Create list of meals and set the adapter
-        //m_UserMealsList = new ArrayList<>();
         m_DiaryListAdapter = new DiaryListAdapter(m_Activity);
         m_DiaryListView.setAdapter(m_DiaryListAdapter);
 
@@ -158,7 +157,12 @@ public class DiaryFragment extends Fragment {
         m_ExerciseTextView.setText(Integer.toString(m_ExcerciseCals));
         m_GoalTextView.setText(Integer.toString(m_GoalCals));
         m_FoodTextView.setText(Integer.toString(m_FoodCals));
-        m_RemainingTextView.setText(Integer.toString(m_GoalCals - m_FoodCals + m_ExcerciseCals));
+        int total = m_GoalCals - m_FoodCals + m_ExcerciseCals;
+        m_RemainingTextView.setText(Integer.toString(total));
+        int color = total >= 0 ? getResources().getColor(R.color.cals_under) : getResources().getColor(R.color.cals_over);
+        m_RemainingTextView.setTextColor(color);
+
+
     }
 
     private void update() {

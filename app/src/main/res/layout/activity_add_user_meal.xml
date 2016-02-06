@@ -5,144 +5,67 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+    <!-- Header -->
     <ViewFlipper
         android:id="@+id/header_view_flipper"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
-        <!-- Main Header -->
+        <!-- View 1: Main -->
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/tab_highlight">
+            android:layout_height="match_parent"
+            android:background="@color/main">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Food"
-                android:textSize="25dp"
-                android:textColor="@color/text_view_white_to_gray"
-                android:layout_gravity="center"/>
+                style="@style/HeaderText"
+                android:text="Add Food" />
 
+            <!-- Add -->
+            <TextView
+                style="@style/RightTextHeaderButton"
+                android:id="@+id/header_add_btn"
+                android:text="Add" />
+
+            <!-- Cancel -->
+            <TextView
+                style="@style/LeftTextHeaderButton"
+                android:id="@+id/header_cancel_btn"
+                android:text="Cancel" />
+
+            <!-- Search -->
+            <ImageView
+                style="@style/RightImageHeaderButton"
+                android:id="@+id/header_search_btn"
+                android:src="@drawable/ic_search_white" />
+
+            <!-- Back to Diary -->
             <LinearLayout
-                android:id="@+id/back_to_diary_btn"
+                android:id="@+id/header_back_to_diary_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="3dp"
-                android:layout_gravity="center_vertical">
+                android:layout_gravity="center_vertical|left">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/left_arrow_white"
-                    android:tint="@color/white"
-                    android:layout_gravity="center_vertical|right" />
+                    style="@style/LeftImageHeaderButton"
+                    android:src="@drawable/left_arrow_white" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textSize="19dp"
-                    android:text="Diary"
-                    android:textColor="@color/white"/>
+                    style="@style/RightTextHeaderButton"
+                    android:text="Diary" />
 
             </LinearLayout>
-
-
-            <ImageView
-                android:id="@+id/search_btn"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/ic_search_white"
-                android:background="@android:color/transparent"
-                android:layout_marginRight="10dp"
-                android:layout_gravity="center_vertical|right" />
-
-            <!-- Header Options Cancel/Add -->
-            <TextView
-                android:id="@+id/header_cancel_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center"
-                android:textSize="19dp"
-                android:text="Cancel"
-                android:textColor="@color/text_view_white_to_gray"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/header_add_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_gravity="center_vertical|right"
-                android:gravity="center"
-                android:textSize="19dp"
-                android:text="Add"
-                android:textColor="@color/text_view_white_to_gray"
-                android:visibility="gone"/>
 
         </FrameLayout>
 
-        <!-- Search -->
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/tab_highlight">
+        <!-- View 2: Search -->
+        <include layout="@layout/search_header" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:layout_margin="10dp">
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_search_white"
-                    android:tint="@color/light_gray"
-                    android:background="@android:color/transparent"
-                    android:layout_gravity="center_vertical|left"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="5dp"/>
-
-                <EditText
-                    android:id="@+id/search_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:singleLine="true"
-                    android:textSize="16dp"
-                    android:gravity="center"
-                    android:layout_marginRight="40dp"
-                    android:hint="Search for food items"
-                    android:textColor="@color/dark_gray"
-                    android:textColorHint="@color/light_gray"
-                    android:background="@null"
-                    android:imeOptions="actionDone"/>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/search_cancel_btn"
-                android:layout_weight="0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="15dp"
-                android:gravity="center"
-                android:textColor="@color/text_view_white_to_gray"
-                android:text="Cancel"
-                android:layout_marginRight="10dp"/>
-
-        </LinearLayout>
     </ViewFlipper>
 
 
+    <!-- Choose between fragments -->
     <TableLayout
         android:id="@+id/header_tabs"
         android:layout_width="match_parent"
@@ -229,12 +152,11 @@
     </TableLayout>
 
 
+    <!-- Contents -->
     <FrameLayout
         android:id="@+id/tab_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </FrameLayout>
-
 
 </LinearLayout>

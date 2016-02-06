@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.kristenvondrak.dartmouth.Main.LoginActivity;
 import com.example.kristenvondrak.dartmouth.Main.SignupActivity;
+import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.R;
 
 
@@ -33,6 +34,7 @@ public class PrefsFragment extends Fragment {
         tv.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
+               ParseAPI.logOutParseUser();
                Intent intent = new Intent(me, LoginActivity.class);
                me.startActivity(intent);
            }

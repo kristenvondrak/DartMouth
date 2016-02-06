@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/main">
 
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="30dp"
             android:layout_centerHorizontal="true"
-            android:text="Dart Mouth"
+            android:text="@string/app_name"
             android:textSize="30dp"
             android:textColor="@color/gray"
             android:textStyle="bold"/>
@@ -32,25 +33,14 @@
             android:layout_marginRight="20dp">
 
             <EditText
+                style="@style/UserInfoEditText"
                 android:id="@+id/email_edit_text"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="7dp"
-                android:editable="true"
                 android:hint="Email"
-                android:textColorHint="@color/light_gray"
-                android:textSize="16dp"
                 android:inputType="textEmailAddress" />
 
-            <ImageView
-                android:visibility="gone"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_error"
-                android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="5dp"
-                android:tint="@color/red"/>
+            <include
+                android:id="@+id/email_error_icon"
+                layout="@layout/error_image_view" />
 
         </FrameLayout>
 
@@ -64,25 +54,13 @@
             android:layout_marginRight="20dp">
 
             <EditText
+                style="@style/UserInfoEditText"
                 android:id="@+id/password_edit_text"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="7dp"
-                android:editable="true"
                 android:hint="Password"
-                android:textColorHint="@color/light_gray"
-                android:textSize="16dp"
                 android:inputType="textPassword" />
 
-            <ImageView
-                android:visibility="gone"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_error"
-                android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="5dp"
-                android:tint="@color/red"/>
+            <include android:id="@+id/password_error_icon"
+                layout="@layout/error_image_view" />
 
         </FrameLayout>
 
@@ -137,5 +115,13 @@
             android:layout_marginBottom="20dp"
             android:clickable="true"/>
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:progressTint="@color/black"
+        android:visibility="gone"/>
 
 </RelativeLayout>

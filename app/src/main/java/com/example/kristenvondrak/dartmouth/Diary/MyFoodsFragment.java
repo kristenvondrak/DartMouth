@@ -1,9 +1,6 @@
 package com.example.kristenvondrak.dartmouth.Diary;
 
-import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -47,7 +43,6 @@ public class MyFoodsFragment extends NutritionFragment {
     private List<Recipe> m_RecipesList;
     private RecipeListAdapter m_RecipesListAdapter;
 
-
     // Add Custom Food
     private ScrollView m_AddCustomFoodView;
     private LinearLayout m_AddCustomFoodRow;
@@ -80,7 +75,6 @@ public class MyFoodsFragment extends NutritionFragment {
         m_Calendar = ((AddUserMealActivity)m_Activity).getCalendar();
         m_SelectedUserMeal = ((AddUserMealActivity)m_Activity).getUserMeal();
 
-        Log.d("*******", "MyFoods cal = " + m_Calendar.toString());
         initializeViews(v);
         initializeListeners();
 
@@ -102,11 +96,11 @@ public class MyFoodsFragment extends NutritionFragment {
         // Nutrition View
         m_RecipeNutrientsView = v.findViewById(R.id.nutrients);
         m_RecipeName = (TextView) v.findViewById(R.id.name);
-        m_RecipeNumberPickerWhole = (NumberPicker) v.findViewById(R.id.servings_picker_number);
-        m_RecipeNumberPickerFrac = (NumberPicker) v.findViewById(R.id.servings_picker_fraction);
-        m_UserMealSpinner = (Spinner) v.findViewById(R.id.usermeal_spinner);
-        m_RecipeAddBtn = ((AddUserMealActivity)m_Activity).getAddBtn();
-        m_RecipeCancelBtn = ((AddUserMealActivity)m_Activity).getCancelBtn();
+        m_NumberPickerWhole = (NumberPicker) v.findViewById(R.id.servings_picker_number);
+        m_NumberPickerFrac = (NumberPicker) v.findViewById(R.id.servings_picker_fraction);
+        m_UserMealSelector = (LinearLayout) v.findViewById(R.id.usermeal_selector);
+        m_AddBtn = ((AddUserMealActivity)m_Activity).getAddBtn();
+        m_CancelBtn = ((AddUserMealActivity)m_Activity).getCancelBtn();
 
         // Add Custom Food View
         m_AddCustomFoodView = (ScrollView) v.findViewById(R.id.view_add_custom_food);
@@ -137,7 +131,7 @@ public class MyFoodsFragment extends NutritionFragment {
         });
 
         // Add button
-        m_RecipeAddBtn.setOnClickListener(new View.OnClickListener() {
+        m_AddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -162,11 +156,15 @@ public class MyFoodsFragment extends NutritionFragment {
                                 if (e == null) {
                                     ParseAPI.addDiaryEntry(m_Calendar,
                                             ParseUser.getCurrentUser(), recipe, 1, m_SelectedUserMeal);
+
+                                    // Update the list
+                                    queryUserRecipes();
                                 } else {
                                     Log.d("Error", e.getMessage());
                                 }
                             }
                         });
+
 
                         break;
                     case VIEW_CUSTOM:
@@ -183,7 +181,7 @@ public class MyFoodsFragment extends NutritionFragment {
         });
 
         // Cancel Button
-        m_RecipeCancelBtn.setOnClickListener(new View.OnClickListener() {
+        m_CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 flipToPrev();
@@ -204,6 +202,7 @@ public class MyFoodsFragment extends NutritionFragment {
 
     @Override
     protected void flipToNext() {
+        ((AddUserMealActivity)m_Activity).showAlternativeHeader();
         m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
         m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
 
@@ -218,17 +217,15 @@ public class MyFoodsFragment extends NutritionFragment {
                 m_RecipeNutrientsView.setVisibility(View.VISIBLE);
                 break;
         }
-
         m_ViewFlipper.showNext();
-        ((AddUserMealActivity)m_Activity).showAlternativeHeader();
     }
 
     @Override
     protected void flipToPrev() {
+        ((AddUserMealActivity)m_Activity).showMainHeader();
         m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
         m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
         m_ViewFlipper.showPrevious();
-        ((AddUserMealActivity)m_Activity).showMainHeader();
     }
 
     private void queryUserRecipes() {
@@ -240,6 +237,7 @@ public class MyFoodsFragment extends NutritionFragment {
         ParseQuery query = pastRecipesRelation.getQuery();
         query.whereEqualTo("createdBy", user);
         // TODO: order by most recent
+        query.orderByAscending("updatedAt");
         query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ELSE_CACHE);
         query.findInBackground(new FindCallback<ParseObject>() {
 
@@ -321,7 +319,6 @@ public class MyFoodsFragment extends NutritionFragment {
     }
 
     private String getText(EditText editText) {
-        Log.d("*********", editText.getText().toString());
         return editText.getText().toString();
     }
 

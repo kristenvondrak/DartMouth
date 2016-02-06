@@ -3,6 +3,8 @@ package com.example.kristenvondrak.dartmouth.Diary;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,35 +13,27 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
+import android.widget.Toast;
 
-import com.example.kristenvondrak.dartmouth.Main.Constants;
-import com.example.kristenvondrak.dartmouth.Menu.MenuFragment;
 import com.example.kristenvondrak.dartmouth.Parse.DiaryEntry;
-import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
 import com.example.kristenvondrak.dartmouth.Progress.ProgressFragment;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.text.ParseException;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
 
 public class EditDiaryEntryActivity extends ActionBarActivity {
     private Activity m_Me;
@@ -190,6 +184,36 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
     public void onBackPressed(){
         this.finish();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+    }
+
+
+    public void showDeleteDialog() {
+        LayoutInflater inflater = m_Me.getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(m_Me, R.style.DialogStyle));
+        View v = inflater.inflate(R.layout.delete_entry_dialog, null);
+
+        builder .setView(v);
+        final AlertDialog dialog = builder.create();
+
+        TextView cancelBtn = (TextView) v.findViewById(R.id.cancel_btn);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        TextView deleteBtn = (TextView) v.findViewById(R.id.delete_btn);
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteDiaryEntry();
+                Toast.makeText(m_Me, "Deleted from diary!", Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
     }
 
 }

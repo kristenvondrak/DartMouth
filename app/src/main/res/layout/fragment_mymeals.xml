@@ -13,13 +13,8 @@
         android:background="@color/white">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Your Previous Meals"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:layout_margin="10dp"/>
+            style="@style/DiarySubheaderText"
+            android:text="Your Previous Meals" />
 
         <ListView
             android:id="@+id/mymeals_listview"
@@ -40,7 +35,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/gray_text"
             android:text="@string/mymeals_message"
-            android:textSize="15dp"
+            android:textSize="16dp"
             android:gravity="center"
             android:layout_margin="10dp"/>
 
@@ -53,6 +48,14 @@
             android:layout_weight="1000">
 
         </ListView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        </LinearLayout>
 
         <include layout="@layout/meal_selector"
             android:layout_height="wrap_content"

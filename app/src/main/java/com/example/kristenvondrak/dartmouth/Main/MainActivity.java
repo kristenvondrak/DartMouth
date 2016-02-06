@@ -35,13 +35,6 @@ public class MainActivity extends FragmentActivity {
         m_Me = this;
         setContentView(R.layout.activity_main);
 
-
-        if (ParseAPI.getCurrentParseUser() == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            this.startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST);
-        }
-
-
         m_FragmentTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
 
         m_FragmentTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);

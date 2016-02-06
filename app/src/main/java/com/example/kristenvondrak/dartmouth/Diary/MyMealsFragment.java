@@ -1,26 +1,17 @@
 package com.example.kristenvondrak.dartmouth.Diary;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Menu.MealSelectorFragment;
 import com.example.kristenvondrak.dartmouth.Parse.DiaryEntry;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
@@ -30,15 +21,15 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 
-public class MyMealsFragment extends Fragment {
+public class MyMealsFragment extends MealSelectorFragment {
 
     // Main View
     private ListView m_MealListView;
@@ -49,16 +40,12 @@ public class MyMealsFragment extends Fragment {
     private MealEntriesListAdapter m_MealEntriesListAdapter;
     private TextView m_AddMealBtn;
     private TextView m_CancelMealBtn;
-    private Spinner m_MealTimeSpinner;
-
     private AddUserMealActivity m_Activity;
     private ViewFlipper m_ViewFlipper;
     private List<UserMeal> m_UserMealsList;
     private MealListAdapter m_MealsListAdapter;
-    private String m_SelectedUserMeal;
     private Calendar m_Calendar;
 
-    private List<String> m_SpinnerMealsList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,7 +82,7 @@ public class MyMealsFragment extends Fragment {
         m_MealListView = (ListView) v.findViewById(R.id.mymeals_listview);
         m_ViewFlipper = (ViewFlipper) v.findViewById(R.id.mymeals_viewflipper);
         m_MealEntriesListView = (ListView) v.findViewById(R.id.meal_entries_list);
-        m_MealTimeSpinner = (Spinner) v.findViewById(R.id.usermeal_spinner);
+        m_UserMealSelector = (LinearLayout) v.findViewById(R.id.usermeal_selector);
         m_AddMealBtn = m_Activity.getAddBtn();
         m_CancelMealBtn = m_Activity.getCancelBtn();
     }
@@ -106,10 +93,7 @@ public class MyMealsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 List<DiaryEntry> list = m_MealEntriesListAdapter.getSelectedEntries();
-                for (DiaryEntry entry : list) {
-                    ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), entry.getRecipe(),
-                            entry.getServingsMultiplier(), m_SelectedUserMeal);
-                }
+                ParseAPI.addDiaryEntries(m_Calendar, ParseUser.getCurrentUser(), list, m_SelectedUserMeal);
                 flipToPrev();
                 Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
             }
@@ -123,29 +107,7 @@ public class MyMealsFragment extends Fragment {
             }
         });
 
-        // Create an ArrayAdapter using the string array
-        m_SpinnerMealsList = new ArrayList<>();
-        for (Constants.UserMeals m : Constants.UserMeals.values()) {
-            m_SpinnerMealsList.add(m.name());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(m_Activity, R.layout.meal_spinner_item, m_SpinnerMealsList);
-        adapter.setDropDownViewResource(R.layout.meal_spinner_dropdown_item);
-        m_MealTimeSpinner.setSelection(m_SpinnerMealsList.indexOf(m_SelectedUserMeal));
-        m_MealTimeSpinner.setAdapter(adapter);
-        m_MealTimeSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                m_SelectedUserMeal = m_SpinnerMealsList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Nothing??
-            }
-        });
-
-
+        initializeMealSelector();
     }
 
 
@@ -176,19 +138,17 @@ public class MyMealsFragment extends Fragment {
     }
 
     private void flipToNext() {
+        m_Activity.showAlternativeHeader();
         m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
         m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
         m_ViewFlipper.showNext();
-
-        m_Activity.showAlternativeHeader();
     }
 
     private void flipToPrev() {
+        m_Activity.showMainHeader();
         m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
         m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
         m_ViewFlipper.showPrevious();
-
-        m_Activity.showMainHeader();
     }
 
     public void onMealClick(UserMeal meal) {
@@ -198,12 +158,10 @@ public class MyMealsFragment extends Fragment {
         }
         m_MealEntriesListAdapter.resetData();
         m_SelectedUserMeal = meal.getTitle();
-        resetMealSpinner();
+        resetMealSelector();
         flipToNext();
     }
 
-    public void resetMealSpinner() {
-        m_MealTimeSpinner.setSelection(m_SpinnerMealsList.indexOf(m_SelectedUserMeal));
-    }
+
 
 }

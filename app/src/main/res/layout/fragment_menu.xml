@@ -6,155 +6,68 @@
     android:background="@color/white"
     tools:context="com.example.kristenvondrak.main.MenuFragment">
 
+    <!-- Header -->
     <ViewFlipper
         android:id="@+id/menu_header_view_flipper"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
-        <!-- Date -->
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <!-- View 1: Date -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/tab_highlight">
+            android:layout_height="match_parent"
+            android:background="@color/main">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center">
+            <include layout="@layout/date_selector_header" />
 
-                <ImageView
-                    android:id="@+id/prev_date_btn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/left_arrow_selector"
-                    android:background="@android:color/transparent"
-                    android:layout_gravity="center_vertical"/>
-
-                <TextView
-                    android:id="@+id/date_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="25dp"
-                    android:textColor="@color/text_view_white_to_gray"
-                    android:text="Sat, Jan 9"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginLeft="30dp"/>
-
-                <ImageView
-                    android:id="@+id/next_date_btn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/right_arrow_selector"
-                    android:background="@android:color/transparent"
-                    android:layout_gravity="center_vertical"/>
-
-            </LinearLayout>
-
-
+            <!-- Calendar -->
             <ImageView
-                android:id="@+id/date_search_btn"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/ic_search_white"
-                android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="10dp"/>
-
-            <!-- Nutrion Add/Cancel -->
-            <TextView
-                android:id="@+id/add_item_add_btn"
                 android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add"
-                android:textColor="@color/text_view_white_to_gray"
-                android:textSize="19dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="10dp"/>
+                style="@style/LeftImageHeaderButton"
+                android:id="@+id/header_calendar_btn"
+                android:src="@drawable/calendar" />
 
+            <!-- Search -->
+            <ImageView
+                style="@style/RightImageHeaderButton"
+                android:id="@+id/header_search_btn"
+                android:src="@drawable/ic_search_white" />
+
+            <!-- Add -->
             <TextView
-                android:id="@+id/add_item_cancel_btn"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:textColor="@color/text_view_white_to_gray"
-                android:textSize="19dp"
-                android:layout_gravity="center_vertical|left"
-                android:layout_marginLeft="10dp"/>
+                style="@style/RightTextHeaderButton"
+                android:id="@+id/header_add_btn"
+                android:text="Add" />
+
+            <!-- Cancel -->
+            <TextView
+                style="@style/LeftTextHeaderButton"
+                android:id="@+id/header_cancel_btn"
+                android:text="Cancel" />
+
+
 
         </FrameLayout>
 
-        <!-- Search -->
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/tab_highlight">
+        <!-- View 2 : Search -->
+        <include layout="@layout/search_header" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:layout_margin="10dp">
-
-                <ImageView
-                    android:id="@+id/search_btn"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_search_white"
-                    android:tint="@color/light_gray"
-                    android:background="@android:color/transparent"
-                    android:layout_gravity="center_vertical|left"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="5dp"/>
-
-                <EditText
-                    android:id="@+id/search_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:singleLine="true"
-                    android:textSize="14dp"
-                    android:gravity="center"
-                    android:layout_marginRight="40dp"
-                    android:hint="Search for food items"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/light_gray"
-                    android:background="@null"
-                    android:imeOptions="actionDone"/>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/search_cancel_btn"
-                android:layout_weight="0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="15dp"
-                android:gravity="center"
-                android:textColor="@color/text_view_white_to_gray"
-                android:text="Cancel"
-                android:layout_marginRight="10dp"/>
-
-        </LinearLayout>
     </ViewFlipper>
 
 
+    <!-- Contents -->
     <ViewFlipper
         android:id="@+id/menu_contents_viewflipper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Menu -->
+        <!-- View 1: Menu -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <!-- Venue Tabs -->
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
@@ -167,8 +80,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/menu_gray" />
+                android:background="@color/gray_text" />
 
+            <!-- Meal Tabs -->
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
@@ -182,8 +96,10 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/menu_gray" />
+                android:background="@color/gray_text" />
 
+
+            <!-- Menu Tabs -->
             <HorizontalScrollView
                 android:id="@+id/category_tabs_scroll"
                 android:layout_width="match_parent"
@@ -205,13 +121,16 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/menu_gray"
+                android:background="@color/gray_text"
                 android:layout_marginBottom="5dp"/>
 
+
+            <!-- Menu Contents -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <!-- List -->
                 <ListView
                     android:id="@+id/food_items_list_view"
                     android:layout_width="match_parent"
@@ -222,6 +141,8 @@
                     android:fadingEdgeLength="30dp">
                 </ListView>
 
+
+                <!-- Empty List Icon -->
                 <LinearLayout
                     android:id="@+id/empty_food_list"
                     android:visibility="gone"
@@ -247,12 +168,18 @@
 
                 </LinearLayout>
 
+                <ProgressBar
+                    android:id="@+id/progress_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
 
             </FrameLayout>
-
         </LinearLayout>
 
-        <!-- Nutrition Info -->
+
+        <!-- View 2: Nutrition Info -->
         <include layout="@layout/nutrition" />
 
     </ViewFlipper>

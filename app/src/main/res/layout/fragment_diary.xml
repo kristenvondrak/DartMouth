@@ -6,62 +6,19 @@
     android:background="@color/white"
     tools:context="com.example.kristenvondrak.main.DiaryFragment">
 
+    <!-- Header -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="60dp"
+        android:background="@color/main">
 
-        <!-- Date selector header -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:background="@color/tab_highlight">
+        <!-- Date -->
+        <include layout="@layout/date_selector_header" />
 
-            <ImageView
-                android:id="@+id/prev_date_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/left_arrow_selector"
-                android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"/>
-
-            <TextView
-                android:id="@+id/date_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="25dp"
-                android:textColor="@color/text_view_white_to_gray"
-                android:text="Sat, Jan 9"
-                android:layout_marginRight="30dp"
-                android:layout_marginLeft="30dp"/>
-
-            <ImageView
-                android:id="@+id/next_date_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/right_arrow_selector"
-                android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"/>
-
-        </LinearLayout>
-
-
-        <ImageView
-            android:visibility="gone"
-            android:id="@+id/add_to_meal_btn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_add_circle_outline"
-            android:tint="@color/white"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="10dp"/>
     </FrameLayout>
 
 
-
-
+    <!-- Calorie Summary -->
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,7 +27,7 @@
         android:background="@color/light_gray_transparent"
         android:stretchColumns="*">
 
-        <!-- Calorie Headers -->
+        <!-- Calorie Names -->
         <TableRow
             android:id="@+id/table_headers">
 
@@ -163,32 +120,14 @@
         android:layout_marginBottom="5dp"
         android:background="@color/light_gray" />
 
+
+    <!-- Content -->
     <ListView
         android:id="@+id/diary_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:dividerHeight="0dp"
         android:divider="@null">
-
     </ListView>
-    <!--
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:requiresFadingEdge="horizontal"
-        android:fadingEdgeLength="40dp">
-
-        <LinearLayout
-            android:id="@+id/usermeal_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        </LinearLayout>
-
-
-     </ScrollView>
-    -->
-
 
 </LinearLayout>

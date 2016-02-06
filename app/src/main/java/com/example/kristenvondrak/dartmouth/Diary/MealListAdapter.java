@@ -58,7 +58,6 @@ public class MealListAdapter extends BaseAdapter{
         m_Data.clear();
         m_SeparatorsSet.clear();
 
-
         // Map the dates to usermeals
         HashMap<String, List<UserMeal>> dateMap = new HashMap<>();
         for (UserMeal meal : list) {

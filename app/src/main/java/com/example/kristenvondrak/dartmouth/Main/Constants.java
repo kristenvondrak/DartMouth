@@ -87,7 +87,7 @@ public class Constants {
             new HashMap<Venue, String>() {{
                     put(Venue.Foco, "Foco");
                     put(Venue.Hop, "Hop");
-                put(Venue.Collis, "Collis");
+                    put(Venue.Collis, "Collis");
                     put(Venue.Novack, "Novack");
                 }});
 
@@ -108,6 +108,7 @@ public class Constants {
                 put(MealTime.AllDay, "All Day");
             }});
 
+    /*
     public static final Map<MealTime, String> mealTimeParseStrings = Collections.unmodifiableMap(
             new HashMap<MealTime, String>() {{
                 put(MealTime.Breakfast, "Breakfast");
@@ -116,7 +117,16 @@ public class Constants {
                 put(MealTime.LateNight, "Late Night");
                 put(MealTime.AllDay, "Every Day");
             }});
+*/
 
+    public static final Map<MealTime, String[]> mealTimeParseStrings = Collections.unmodifiableMap(
+            new HashMap<MealTime, String[]>() {{
+                put(MealTime.Breakfast, new String[]{"Breakfast"});
+                put(MealTime.Lunch, new String[]{"Lunch"});
+                put(MealTime.Dinner, new String[] {"Dinner"});
+                put(MealTime.LateNight, new String[]{"Late Night"});
+                put(MealTime.AllDay, new String[]{"Every Day", "Everyday"});
+            }});
 
     public static final Map<Menu, String> menuDisplayStrings = Collections.unmodifiableMap(
             new HashMap<Menu, String>() {{
@@ -188,13 +198,16 @@ public class Constants {
     public static class Validation {
         static int MinimumPasswordLength = 6;
         static int MaximumPasswordLength = 25;
-        static String EmailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+        static String EmailRegex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+
+        //static String EmailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
 
         static String InvalidEmailTitle = "Invalid Email";
         static String InvalidEmailMessage = "Please sign up with a valid email.";
         static String InvalidPasswordTitle = "Invalid Password";
         static String InvalidPasswordMessage = "Please enter a password between " +
-                "(MinimumPasswordLength) and (MaximumPasswordLength) characters, inclusive.";
+                Integer.toString(6) +  " and " + Integer.toString(MaximumPasswordLength) +
+                " characters.";
         static String NoMatchPasswordsTitle = "Passwords Don't Match";
         static String NoMatchPasswordsMessage = "Please correctly confirm your password.";
         static String SignupErrorTitle = "Signup Error";
@@ -261,5 +274,6 @@ public class Constants {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_EXTRA, Locale.US);
         return sdf.format(cal.getTime());
     }
+
 
 }

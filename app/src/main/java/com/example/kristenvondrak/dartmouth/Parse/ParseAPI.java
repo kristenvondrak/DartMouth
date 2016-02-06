@@ -41,6 +41,28 @@ public class ParseAPI {
         addUserMeal(cal, user, entries, userMeal);
     }
 
+    public static void addDiaryEntries(final Calendar cal, final ParseUser user,
+                                       final List<DiaryEntry> entries, final String userMeal) {
+
+
+        ParseRelation<ParseObject> pastRecipesRelation = user.getRelation("pastRecipes");
+        List<DiaryEntry> diaryEntriesList = new ArrayList<>();
+        for (DiaryEntry entry : entries) {
+            // Add to user's past recipes
+            pastRecipesRelation.add(entry.getRecipe());
+
+            final DiaryEntry diaryEntry = new DiaryEntry();
+            diaryEntry.setDate(cal.getTime());
+            diaryEntry.setUser(user);
+            diaryEntry.setRecipe(entry.getRecipe());
+            diaryEntry.setServingsMultiplier(entry.getServingsMultiplier());
+            diaryEntry.saveInBackground();
+            diaryEntriesList.add(diaryEntry);
+        }
+        user.saveInBackground();
+        addUserMeal(cal, user, diaryEntriesList, userMeal);
+    }
+
     public static void addUserMeal(final Calendar cal, final ParseUser user, final List<DiaryEntry> entries,
                                      final String userMeal) {
 

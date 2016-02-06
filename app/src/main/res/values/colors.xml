@@ -14,7 +14,8 @@
     <color name="purple">#800080</color>
     <color name="maroon">#800000</color>
     <color name="aqua">#00FFFF</color>
-    <color name="lime">#00FF00</color>
+    <color name="cals_under">#00E676</color>
+    <color name="cals_over">#FF0000</color>
     <color name="green">#ff005f00</color>
     <color name="blue">#0000FF</color>
     <color name="navy">#000080</color>

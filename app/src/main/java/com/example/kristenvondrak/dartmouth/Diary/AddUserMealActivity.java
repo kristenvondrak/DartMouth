@@ -9,38 +9,27 @@ import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Menu.MenuFragment;
-import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.Progress.ProgressFragment;
 import com.example.kristenvondrak.dartmouth.R;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 public class AddUserMealActivity extends ActionBarActivity {
     private Activity m_Me;
@@ -128,10 +117,10 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_TabDb = (RelativeLayout) findViewById(R.id.tab_db);
         m_TabContent = (FrameLayout) findViewById(R.id.tab_content);
         m_HeaderViewFlipper = (ViewFlipper) findViewById(R.id.header_view_flipper);
-        m_SearchBtn = (ImageView) findViewById(R.id.search_btn);
-        m_SearchEditText = (EditText) findViewById(R.id.search_edittext);
-        m_CancelSearchBtn = (TextView) findViewById(R.id.search_cancel_btn);
-        m_BackBtn = (LinearLayout) findViewById(R.id.back_to_diary_btn);
+        m_SearchBtn = (ImageView) findViewById(R.id.header_search_btn);
+        m_SearchEditText = (EditText) findViewById(R.id.header_search_edittext);
+        m_CancelSearchBtn = (TextView) findViewById(R.id.header_search_cancel_btn);
+        m_BackBtn = (LinearLayout) findViewById(R.id.header_back_to_diary_btn);
         m_CancelBtn = (TextView) findViewById(R.id.header_cancel_btn);
         m_AddBtn = (TextView) findViewById(R.id.header_add_btn);
     }
@@ -143,26 +132,6 @@ public class AddUserMealActivity extends ActionBarActivity {
                 m_Me.onBackPressed();
             }
         });
-    }
-
-    public ViewFlipper getViewFlipper() {
-        return m_HeaderViewFlipper;
-    }
-
-    public ImageView getSearchBtn() {
-        return m_SearchBtn;
-    }
-
-    public TextView getCancelSearchBtn() {
-        return m_CancelSearchBtn;
-    }
-
-    public EditText getSearchEditText() {
-        return m_SearchEditText;
-    }
-
-    public LinearLayout getBackBtn() {
-        return m_BackBtn;
     }
 
     private void setTabHighlight(View view, boolean highlight) {
@@ -197,6 +166,43 @@ public class AddUserMealActivity extends ActionBarActivity {
         return m_Calendar;
     }
 
+    public ViewFlipper getViewFlipper() {
+        return m_HeaderViewFlipper;
+    }
+
+    public ImageView getSearchBtn() {
+        return m_SearchBtn;
+    }
+
+    public TextView getCancelSearchBtn() {
+        return m_CancelSearchBtn;
+    }
+
+    public EditText getSearchEditText() {
+        return m_SearchEditText;
+    }
+
+    public LinearLayout getBackBtn() { return m_BackBtn;}
+
+    public void showAlternativeHeader() {
+        m_BackBtn.setVisibility(View.GONE);
+        m_SearchBtn.setVisibility(View.GONE);
+        m_MainTabs.setVisibility(View.GONE);
+
+        m_AddBtn.setVisibility(View.VISIBLE);
+        m_CancelBtn.setVisibility(View.VISIBLE);
+    }
+
+    public void showMainHeader() {
+        m_AddBtn.setVisibility(View.GONE);
+        m_CancelBtn.setVisibility(View.GONE);
+
+        m_BackBtn.setVisibility(View.VISIBLE);
+        m_SearchBtn.setVisibility(View.VISIBLE);
+        m_MainTabs.setVisibility(View.VISIBLE);
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -217,24 +223,6 @@ public class AddUserMealActivity extends ActionBarActivity {
     public void onBackPressed(){
         this.finish();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
-    }
-
-    public void showAlternativeHeader() {
-        m_BackBtn.setVisibility(View.GONE);
-        m_SearchBtn.setVisibility(View.GONE);
-        m_MainTabs.setVisibility(View.GONE);
-
-        m_AddBtn.setVisibility(View.VISIBLE);
-        m_CancelBtn.setVisibility(View.VISIBLE);
-    }
-
-    public void showMainHeader() {
-        m_AddBtn.setVisibility(View.GONE);
-        m_CancelBtn.setVisibility(View.GONE);
-
-        m_BackBtn.setVisibility(View.VISIBLE);
-        m_SearchBtn.setVisibility(View.VISIBLE);
-        m_MainTabs.setVisibility(View.VISIBLE);
     }
 
 

@@ -1,6 +1,8 @@
 package com.example.kristenvondrak.dartmouth.Main;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,30 +25,37 @@ import com.parse.SignUpCallback;
 
 public class LoginActivity extends Activity {
 
-    private EditText m_EmailEditText;
-    private EditText m_PasswordEditText;
+    protected EditText m_EmailEditText;
+    protected EditText m_PasswordEditText;
+    protected ImageView m_EmailError;
+    protected ImageView m_PasswordError;
+    protected ProgressBar m_ProgressSpinner;
+
     private TextView m_LoginTextView;
     private TextView m_ResetTextView;
     private TextView m_SignupTextView;
-    public Activity me;
+
+    public Activity m_Me;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        me = this;
+        m_Me = this;
 
         initializeViews();
         initializeListeners();
-
     }
 
     private void initializeViews() {
         m_EmailEditText = (EditText) findViewById(R.id.email_edit_text);
         m_PasswordEditText = (EditText) findViewById(R.id.password_edit_text);
+        m_EmailError = (ImageView) findViewById(R.id.email_error_icon);
+        m_PasswordError = (ImageView) findViewById(R.id.password_error_icon);
         m_LoginTextView = (TextView) findViewById(R.id.login);
         m_ResetTextView = (TextView) findViewById(R.id.reset_password);
         m_SignupTextView = (TextView) findViewById(R.id.signup);
+        m_ProgressSpinner = (ProgressBar) findViewById(R.id.progress_spinner);
     }
 
     private void initializeListeners() {
@@ -55,20 +66,17 @@ public class LoginActivity extends Activity {
                 Object email = m_EmailEditText.getText();
                 Object password = m_PasswordEditText.getText();
 
-                if (email == null || !isValidEmail(email.toString())) {
-                    Toast.makeText(me, "Invalid Email", Toast.LENGTH_SHORT).show();
-                    // !
+                if (email == null || !isValidEmail(email.toString().trim())) {
+                    showInvalidFieldDialog(Constants.Validation.InvalidEmailTitle, Constants.Validation.InvalidEmailMessage);
+                    m_EmailError.setVisibility(View.VISIBLE);
 
-                } else if (password == null || !isValidPassword(password.toString())) {
-                    Toast.makeText(me, "Invalid Password", Toast.LENGTH_SHORT).show();
-                    // !
+                } else if (password == null || !isValidPassword(password.toString().trim())) {
+                    showInvalidFieldDialog(Constants.Validation.InvalidPasswordTitle, Constants.Validation.InvalidPasswordMessage);
+                    m_PasswordError.setVisibility(View.VISIBLE);
 
-                }  else {
-                    logInParseUser(email.toString(),password.toString());
+                } else {
+                    logInParseUser(email.toString().trim(), password.toString().trim());
                 }
-
-                // register user/validate
-                // show red ! in edittext
             }
         });
 
@@ -77,8 +85,8 @@ public class LoginActivity extends Activity {
         m_SignupTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(me, SignupActivity.class);
-                me.startActivity(intent);
+                Intent intent = new Intent(m_Me, SignupActivity.class);
+                m_Me.startActivity(intent);
             }
         });
 
@@ -86,87 +94,52 @@ public class LoginActivity extends Activity {
 
     }
 
-    private boolean isValidEmail(String email) {
-        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+    protected boolean isValidEmail(String email) {
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(Constants.Validation.EmailRegex);
         java.util.regex.Matcher m = p.matcher(email);
         return m.matches();
     }
 
-    private boolean isValidPassword(String password) {
-        boolean lowercase = false;
-        boolean uppercase = false;
-        boolean nonalpha = false;
-        if (password.trim().equals(""))
-            return false;
-        /*
-        for (Character c : password.toCharArray()) {
-            if (Character.isLetter(c)) {
-                if (Character.isLowerCase(c)) {
-                    lowercase = true;
-                } else {
-                    uppercase = true;
-                }
-            } else if ({
-
-            }
-        }*/
-        return true;
-
+    protected boolean isValidPassword(String password) {
+        return (password.length() >= Constants.Validation.MinimumPasswordLength &&
+                password.length() <= Constants.Validation.MaximumPasswordLength);
     }
 
-    public static void logOutParseUser() {
-        ParseUser.logOut();
-        ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be null
+    protected boolean isValidConfirmation(String first, String second) {
+        return first.equalsIgnoreCase(second);
     }
 
-    public static ParseUser getCurrentParseUser() {
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null) {
-            // do stuff with the user
-        } else {
-            // show the signup or login screen
-        }
-        return currentUser;
+    protected void showInvalidFieldDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(m_Me);
+        builder .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // close
+                    }
+                });
+        builder.create().show();
     }
 
 
     public void logInParseUser(final String email, final String password) {
+        m_ProgressSpinner.setVisibility(View.VISIBLE);
         ParseUser.logInInBackground(email, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
-                    // Hooray! The user is logged in.
-                    me.finish();
+                    Intent intent = new Intent(m_Me, MainActivity.class);
+                    m_Me.startActivity(intent);
                 } else {
-                    // Signup failed. Look at the ParseException to see what happened.
-                    createNewParseUser(email, password);
+                    // Signin failed
+                    // TODO: look at parse messages
+                    m_ProgressSpinner.setVisibility(View.GONE);
+                    showInvalidFieldDialog(Constants.Validation.SigninErrorTitle, e.getMessage());
                 }
             }
         });
     }
 
 
-    public void createNewParseUser(String email, String password) {
-        User user = new User();
-        // Set core properties
-        user.setUsername(email);
-        user.setPassword(password);
-        user.setEmail(email);
-
-        // Invoke signUpInBackground
-        user.signUpInBackground(new SignUpCallback() {
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("Login", "User signup success");
-                    me.finish();
-                } else {
-                    Log.d("Login", "User signup fail " + e.toString());
-                    // Sign up didn't succeed. Look at the ParseException
-                    // to figure out what went wrong
-                }
-            }
-        });
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -180,5 +153,12 @@ public class LoginActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+        // disable back button
+        //Intent intent = new Intent(m_Me, SignupActivity.class);
+        //m_Me.startActivity(intent);
     }
 }
