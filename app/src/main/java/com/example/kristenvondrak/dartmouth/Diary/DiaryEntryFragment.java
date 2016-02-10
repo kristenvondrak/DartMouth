@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Menu.NutritionFragment;
 import com.example.kristenvondrak.dartmouth.R;
 
@@ -71,7 +72,7 @@ public class DiaryEntryFragment extends NutritionFragment {
     public void update() {
         float servings = ((EditDiaryEntryActivity)m_Activity).getServingsMultiplier();
         m_ServingsWhole = (int) Math.floor(servings);
-        m_ServingsFraction = Constants.getServingsFracIndex(servings - m_ServingsWhole);
+        m_ServingsFraction = Utils.getServingsFracIndex(servings - m_ServingsWhole);
         super.onItemClick(((EditDiaryEntryActivity) m_Activity).getRecipe());
     }
 

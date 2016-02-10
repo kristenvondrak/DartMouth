@@ -5,6 +5,7 @@
     android:layout_width="match_parent">
 
 
+
     <LinearLayout
         android:id="@+id/viewflipper_main"
         android:layout_width="match_parent"
@@ -16,11 +17,24 @@
             style="@style/DiarySubheaderText"
             android:text="Your Previous Meals" />
 
-        <ListView
-            android:id="@+id/mymeals_listview"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </ListView>
+
+            <ListView
+                android:id="@+id/mymeals_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ListView>
+
+            <ProgressBar
+                android:id="@+id/progress_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -52,18 +66,34 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@color/light_gray_transparent">
 
+            <include layout="@layout/meal_selector"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+
+
+            <TextView
+                android:id="@+id/meal_total_cals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="calories: 580"
+                android:gravity="right"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/black"/>
 
         </LinearLayout>
 
-        <include layout="@layout/meal_selector"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_weight="1"/>
-
-
     </LinearLayout>
+
+
 
 
 </ViewFlipper>

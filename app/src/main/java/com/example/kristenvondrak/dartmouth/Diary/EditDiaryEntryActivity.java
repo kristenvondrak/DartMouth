@@ -188,6 +188,25 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
 
 
     public void showDeleteDialog() {
+        // Use the Builder class for convenient dialog construction
+   /*     AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(m_Me, R.style.DialogStyle));
+        builder.setMessage("Remove From Diary?")
+                .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteDiaryEntry();
+                        Toast.makeText(m_Me, "Deleted from diary!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.red));
+*/
         LayoutInflater inflater = m_Me.getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(m_Me, R.style.DialogStyle));
         View v = inflater.inflate(R.layout.delete_entry_dialog, null);

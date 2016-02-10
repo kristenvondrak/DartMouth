@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.example.kristenvondrak.dartmouth.Main.SearchHeader;
+import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Menu.MenuFragment;
 import com.example.kristenvondrak.dartmouth.Progress.ProgressFragment;
 import com.example.kristenvondrak.dartmouth.R;
@@ -32,7 +36,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class AddUserMealActivity extends ActionBarActivity {
-    private Activity m_Me;
+
+    private Activity m_Activity;
+    public boolean SEARCH_MODE = false;
 
     // Tabs
     private TableLayout m_MainTabs;
@@ -65,9 +71,10 @@ public class AddUserMealActivity extends ActionBarActivity {
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user_meal);
-        m_Me = this;
+        m_Activity = this;
         initializeViews();
         initializeListeners();
 
@@ -100,6 +107,7 @@ public class AddUserMealActivity extends ActionBarActivity {
                     // Change the content
                     FragmentTransaction ft = m_FragmentManager.beginTransaction();
                     ft.replace(m_TabContent.getId(), m_TabToFragmentMap.get(m_CurrentTab)).commit();
+
                 }
             });
         }
@@ -129,10 +137,77 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_BackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_Me.onBackPressed();
+                m_Activity.onBackPressed();
+            }
+        });
+
+        m_SearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start Search
+                SEARCH_MODE = true;
+
+                // Show search header
+                flipHeaderToNext();
+
+                // Fragment specific
+                SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
+                currentFragment.onSearchClick();
+            }
+        });
+
+        m_CancelSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Exit Search
+                SEARCH_MODE = false;
+                m_SearchEditText.setText("");
+                Utils.hideKeyboard(m_Activity);
+
+                // Show main header
+                flipHeaderToPrev();
+
+                // Fragment specific
+                SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
+                currentFragment.onCancelSearchClick();
+            }
+        });
+
+        m_SearchEditText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = getSearchText();
+                if (text != null) {
+                    SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
+                    currentFragment.onSearchEditTextChanged(text, start, before);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
+
+    private void flipHeaderToNext() {
+        m_HeaderViewFlipper.setInAnimation(this, R.anim.slide_in_from_right);
+        m_HeaderViewFlipper.setOutAnimation(this, R.anim.slide_out_to_left);
+        m_HeaderViewFlipper.showNext();
+    }
+
+    private void flipHeaderToPrev() {
+        m_HeaderViewFlipper.setInAnimation(this, R.anim.slide_in_from_left);
+        m_HeaderViewFlipper.setOutAnimation(this, R.anim.slide_out_to_right);
+        m_HeaderViewFlipper.showPrevious();
+    }
+
 
     private void setTabHighlight(View view, boolean highlight) {
         TextView tv = (TextView) view.findViewById(R.id.tab_text);
@@ -225,5 +300,16 @@ public class AddUserMealActivity extends ActionBarActivity {
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }
 
+    public boolean inSearchMode() {
+        return SEARCH_MODE;
+    }
+
+    public String getSearchText() {
+        Object input = m_SearchEditText.getText();
+        if (input == null)
+            return null;
+        else
+            return input.toString().toLowerCase().trim();
+    }
 
 }

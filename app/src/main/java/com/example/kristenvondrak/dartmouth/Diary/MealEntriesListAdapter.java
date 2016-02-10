@@ -23,12 +23,14 @@ import java.util.List;
  */
 public class MealEntriesListAdapter extends BaseAdapter{
 
+    private MyMealsFragment m_Fragment;
     private List<Integer> m_UncheckedEntries = new ArrayList<>();
     private LayoutInflater m_Inflater;
     private List<DiaryEntry> m_List = new ArrayList<>();
 
 
-    public MealEntriesListAdapter(Activity activity, List<DiaryEntry> list) {
+    public MealEntriesListAdapter(Activity activity, List<DiaryEntry> list, MyMealsFragment fragment) {
+        m_Fragment = fragment;
         m_List = list;
         m_Inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -65,6 +67,8 @@ public class MealEntriesListAdapter extends BaseAdapter{
                     m_UncheckedEntries.add(position);
                 else
                     m_UncheckedEntries.remove((Integer)position);
+
+                m_Fragment.resetTotalCals(getSelectedEntries());
             }
         });
 

@@ -1,6 +1,7 @@
 package com.example.kristenvondrak.dartmouth.Parse;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -68,8 +69,8 @@ public class ParseAPI {
 
         // Check if user meal exists
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserMeal");
-        query.whereGreaterThan("date", Constants.getDateBefore(cal));
-        query.whereLessThan("date", Constants.getDateAfter(cal));
+        query.whereGreaterThan("date", Utils.getDateBefore(cal));
+        query.whereLessThan("date", Utils.getDateAfter(cal));
         query.whereEqualTo("user", user);
         query.whereEqualTo("title", userMeal);
 

@@ -155,7 +155,11 @@ public class Recipe extends ParseObject {
         Integer value =  (Integer) getNutrients().get("result").get("serving_size_grams");
         if (value == null)
             return "";
-        return Integer.toString(value);
+        return Integer.toString(value) + " g";
+    }
+
+    public String getServingText() {
+        return (String) getNutrients().get("result").get("serving_size_text");
     }
 
     public String getServingsPerContainer() {

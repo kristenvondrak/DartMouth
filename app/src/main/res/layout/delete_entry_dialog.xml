@@ -30,15 +30,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="CANCEL"
-            android:textColor="@color/black"
-            android:textSize="19dp"
+            android:textColor="@color/main"
+            android:textSize="17dp"
+            android:textStyle="bold"
             android:gravity="center"
-            android:layout_margin="15dp"/>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/light_gray" />
+            android:padding="15dp"/>
 
         <TextView
             android:id="@+id/delete_btn"
@@ -47,11 +43,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="DELETE"
-            android:textSize="19dp"
+            android:textSize="17dp"
             android:textStyle="bold"
             android:textColor="@color/red"
             android:gravity="center"
-            android:layout_margin="15dp"/>
+            android:padding="15dp" />
     </LinearLayout>
 
 </LinearLayout>

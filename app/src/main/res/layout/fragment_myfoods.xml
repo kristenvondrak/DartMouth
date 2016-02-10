@@ -63,12 +63,25 @@
 
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/myfoods_listview"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </ListView>
+            <ListView
+                android:id="@+id/myfoods_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </ListView>
+
+            <ProgressBar
+                android:id="@+id/progress_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -81,7 +94,7 @@
         <include layout="@layout/add_custom_food" />
 
         <!-- Nutrition Info View -->
-        <include layout="@layout/nutrition" android:visibility="gone"/>
+        <include layout="@layout/nutrition" />
 
     </RelativeLayout>
     

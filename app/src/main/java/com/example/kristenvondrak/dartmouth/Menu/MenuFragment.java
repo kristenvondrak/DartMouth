@@ -1,12 +1,11 @@
 package com.example.kristenvondrak.dartmouth.Menu;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +26,12 @@ import android.widget.ViewFlipper;
 
 import com.example.kristenvondrak.dartmouth.Diary.AddUserMealActivity;
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.SearchHeader;
+import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Parse.Offering;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
+import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -46,7 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MenuFragment extends NutritionFragment {
+public class MenuFragment extends NutritionFragment implements SearchHeader{
 
     private enum MODE {MENU, DIARY};
 
@@ -54,15 +56,14 @@ public class MenuFragment extends NutritionFragment {
     private ViewFlipper m_HeaderViewFlipper;
 
     // Date
-    private View m_DateView;
     private ImageView m_NextDateButton;
     private ImageView m_PreviousDateButton;
     private TextView m_CurrentDateTextView;
     private ImageView m_CalendarButton;
-    public static final String DATE_FORMAT = "EEE, LLL d";
     private DatePickerDialog.OnDateSetListener m_DatePickerListener;
 
     // Search
+    private boolean SEARCH_MODE = false;
     private ImageView m_SearchBtn;
     private EditText m_SearchEditText;
     private TextView m_CancelSearchBtn;
@@ -94,12 +95,6 @@ public class MenuFragment extends NutritionFragment {
     // Diary Specific
     private LinearLayout m_BackToDiaryBtn;
     private TableLayout m_DiaryTabs;
-
-
-    private View[] m_MainHeaderBtns = new View[]{m_CalendarButton, m_DateView, m_SearchBtn};
-    private View[] m_AlternativeHeaderBtns = new View[]{m_AddBtn, m_CancelBtn};
-    private View[] m_DiaryHeaderBtns = new View[] {m_DiaryTabs, m_BackToDiaryBtn};
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,7 +128,7 @@ public class MenuFragment extends NutritionFragment {
         setHighlight(m_CurrentVenue, true);
 
         // Update the date
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_DISPLAY, Locale.US);
         m_CurrentDateTextView.setText(sdf.format(m_Calendar.getTime()));
 
         // Create list of recipes and set the adapter
@@ -141,12 +136,22 @@ public class MenuFragment extends NutritionFragment {
         m_MenuItemListAdapter = new MenuItemListAdapter(m_Activity, this);
         m_MenuItemsListView.setAdapter(m_MenuItemListAdapter);
 
-        // Call parse
-        changeInVenue();
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        changeInVenue();
+    }
+
+
+
+    // ------------------------------------------------------------------------- Views
+
     private void initializeViews(View v) {
+
+        // Main
         m_ProgressSpinner = (ProgressBar) v.findViewById(R.id.progress_spinner);
         m_VenueTabs = (TableRow) v.findViewById(R.id.venue_tabs_row);
         m_MealTimesTabs = (TableRow) v.findViewById(R.id.mealtime_tabs_row);
@@ -154,17 +159,22 @@ public class MenuFragment extends NutritionFragment {
         m_MenuItemsListView = (ListView) v.findViewById(R.id.food_items_list_view);
         m_EmptyMenuText = (LinearLayout) v.findViewById(R.id.empty_food_list);
         m_MenuContent = (ViewFlipper) v.findViewById(R.id.menu_contents_viewflipper);
+
+        // Nutrition
         m_RecipeNutrientsView = v.findViewById(R.id.nutrients);
         m_RecipeName = (TextView) v.findViewById(R.id.name);
         m_NumberPickerWhole = (NumberPicker) v.findViewById(R.id.servings_picker_number);
         m_NumberPickerFrac = (NumberPicker) v.findViewById(R.id.servings_picker_fraction);
         m_UserMealSelector = (LinearLayout) v.findViewById(R.id.usermeal_selector);
         m_HeaderViewFlipper = (ViewFlipper) v.findViewById(R.id.menu_header_view_flipper);
-        m_DateView = v.findViewById(R.id.date_selector);
+
+        // Date
         m_NextDateButton = (ImageView) v.findViewById(R.id.next_date_btn);
         m_PreviousDateButton = (ImageView) v.findViewById(R.id.prev_date_btn);
         m_CurrentDateTextView = (TextView) v.findViewById(R.id.date_text_view);
         m_CalendarButton = (ImageView) v.findViewById(R.id.header_calendar_btn);
+
+        // Header
         m_AddBtn = (TextView) v.findViewById(R.id.header_add_btn);
         m_CancelBtn = (TextView) v.findViewById(R.id.header_cancel_btn);
         m_SearchBtn = (ImageView) v.findViewById(R.id.header_search_btn);
@@ -172,6 +182,7 @@ public class MenuFragment extends NutritionFragment {
         m_SearchEditText = (EditText)v.findViewById(R.id.header_search_edittext);
 
         if (m_Mode == MODE.DIARY) {
+
             // Do not show date
             m_HeaderViewFlipper.setVisibility(View.GONE);
 
@@ -192,181 +203,6 @@ public class MenuFragment extends NutritionFragment {
         hideAddBtns();
     }
 
-
-
-    private void initializeListeners() {
-
-       m_DatePickerListener = new DatePickerDialog.OnDateSetListener() {
-
-            // when dialog box is closed, below method will be called.
-            public void onDateSet(DatePicker view, int selectedYear,
-                                  int selectedMonth, int selectedDay) {
-                m_Calendar.set(Calendar.YEAR, selectedYear);
-                m_Calendar.set(Calendar.MONTH, selectedMonth);
-                m_Calendar.set(Calendar.DAY_OF_MONTH, selectedDay);
-                changeInTime();
-            }
-        };
-
-
-        m_CalendarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(m_Activity, m_DatePickerListener, m_Calendar.get(Calendar.YEAR),
-                        m_Calendar.get(Calendar.MONTH), m_Calendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
-
-        m_CurrentDateTextView.setOnClickListener(new DoubleClickListener() {
-            @Override
-            public void onSingleClick(View v) {
-                // do nothing
-            }
-
-            @Override
-            public void onDoubleClick(View v) {
-                m_Calendar = Calendar.getInstance();
-                changeInTime();
-            }
-        });
-
-        m_NextDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                m_Calendar.add(Calendar.DATE, 1);
-                changeInTime();
-            }
-        });
-
-        m_PreviousDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                m_Calendar.add(Calendar.DATE, -1);
-                changeInTime();
-            }
-        });
-
-        m_SearchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Display next screen
-                flipHeaderToNext();
-                m_RestoredList = copyRecipeList(m_MenuItemsList);
-            }
-        });
-
-        m_CancelSearchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Clear memory
-                m_RestoredList.clear();
-
-                // Exit search and restore previous items
-                update();
-
-                // Hide the keyboard
-                View view = m_Activity.getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm =
-                            (InputMethodManager) m_Activity.getSystemService(m_Activity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    // TODO: do we want to restore the items before search??
-                }
-                // Clear the search
-                m_SearchEditText.setText("");
-
-                // Display previous screen
-                flipHeaderToPrev();
-            }
-        });
-
-        m_SearchEditText.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                // Check for input
-                Object input = m_SearchEditText.getText();
-                if (input == null) return;
-
-                // If the part of the input was deleted, search again from original list
-                List<Recipe> listToSearch;
-                if (start < before) {
-                    listToSearch = m_RestoredList;
-                    // Otherwise, search from restricted list
-                } else {
-                    listToSearch = m_MenuItemsList;
-                }
-
-                // Substring match
-                String text = input.toString().toLowerCase().trim();
-                ArrayList<Recipe> searchResults = new ArrayList<>();
-                for (Recipe r : listToSearch) {
-                    String name = r.getName().toLowerCase();
-                    if (name.contains(text)) {
-                        searchResults.add(r);
-                    }
-                }
-
-                // Update the list and notify adapter
-                m_MenuItemsList = searchResults;
-                m_MenuItemListAdapter.updateData(m_MenuItemsList);
-
-                setHighlight(m_CurrentMenu, false);
-                m_CurrentMenu = m_MenuTabsLinearLayout.getChildAt(0);
-                setHighlight(m_CurrentMenu, true);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        // Add button
-        m_AddBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float fraction = Constants.ServingsFracFloats.get(m_ServingsFraction);
-                ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
-                        m_ServingsWhole + fraction, m_SelectedUserMeal);
-
-                flipToPrev();
-                Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
-            }
-
-        });
-
-        // Cancel Button
-        m_CancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flipToPrev();
-            }
-        });
-
-        for (int i = 0; i < m_MenuTabsLinearLayout.getChildCount(); i++) {
-            final int index = i;
-            final View tv = m_MenuTabsLinearLayout.getChildAt(i).findViewById(R.id.tab_text);
-            tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    View v = m_MenuTabsLinearLayout.getChildAt(index).findViewById(R.id.tab_highlight);
-                    v.setMinimumWidth(tv.getWidth());
-                    v.invalidate();
-                    v.requestLayout();
-
-                }
-            });
-        }
-        initializeNutritionListeners();
-
-    }
 
     private void flipHeaderToNext() {
         m_HeaderViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
@@ -426,14 +262,239 @@ public class MenuFragment extends NutritionFragment {
 
     }
 
-    @Override
-    public void onItemClick(Recipe recipe) {
-        m_SelectedUserMeal = m_CurrentMealTime.getTag().toString();
-        super.onItemClick(recipe);
-        flipToNext();
+
+    public void setHighlight(View v, boolean highlight) {
+        TextView tv = (TextView)v.findViewById(R.id.tab_text);
+        View h = v.findViewById(R.id.tab_highlight);
+        if (highlight) {
+            h.setBackgroundColor(getResources().getColor(R.color.main));
+            tv.setTypeface(Typeface.DEFAULT_BOLD);
+            tv.setTextColor(getResources().getColor(R.color.main));
+        } else {
+            h.setBackgroundColor(getResources().getColor(R.color.transparent));
+            tv.setTypeface(Typeface.DEFAULT);
+            tv.setTextColor(getResources().getColor(R.color.gray_text));
+        }
+    }
+
+    private void updateView(View v) {
+        v.invalidate();
+        v.requestLayout();
     }
 
 
+
+    // ---------------------------------------------------------------------------------- Listeners
+    private void initializeListeners() {
+
+       m_DatePickerListener = new DatePickerDialog.OnDateSetListener() {
+
+            // when dialog box is closed, below method will be called.
+            public void onDateSet(DatePicker view, int selectedYear,
+                                  int selectedMonth, int selectedDay) {
+                m_Calendar.set(Calendar.YEAR, selectedYear);
+                m_Calendar.set(Calendar.MONTH, selectedMonth);
+                m_Calendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                changeInTime();
+            }
+        };
+
+
+        m_CalendarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(m_Activity, m_DatePickerListener, m_Calendar.get(Calendar.YEAR),
+                        m_Calendar.get(Calendar.MONTH), m_Calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        m_CurrentDateTextView.setOnClickListener(new DoubleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                // do nothing
+            }
+
+            @Override
+            public void onDoubleClick(View v) {
+                m_Calendar = Calendar.getInstance();
+                changeInTime();
+            }
+        });
+
+        m_NextDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m_Calendar.add(Calendar.DATE, 1);
+                changeInTime();
+            }
+        });
+
+        m_PreviousDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m_Calendar.add(Calendar.DATE, -1);
+                changeInTime();
+            }
+        });
+
+
+        // Add button
+        m_AddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float fraction = Constants.ServingsFracFloats.get(m_ServingsFraction);
+                ParseAPI.addDiaryEntry( m_Calendar,
+                                        ParseUser.getCurrentUser(),
+                                        m_SelectedRecipe,
+                                        m_ServingsWhole + fraction, m_SelectedUserMeal);
+
+                flipToPrev();
+                Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        // Cancel Button
+        m_CancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flipToPrev();
+            }
+        });
+
+
+        // Because we reuse this fragment in the diary AND menu, we don't want
+        // to reset the listeners initialized from the AddUserMealActivity
+        // So only init listeners if in MainActivity
+        // TODO: make this cleaner
+        if (m_Mode == MODE.MENU) {
+
+            m_SearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    flipHeaderToNext();
+                    onSearchClick();
+                }
+            });
+
+            m_CancelSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Show main header
+                    flipHeaderToPrev();
+
+                    // Hide the keyboard
+                    Utils.hideKeyboard(m_Activity);
+
+                    // Clear the previous search
+                    m_SearchEditText.setText("");
+                    onCancelSearchClick();
+                }
+            });
+
+            m_SearchEditText.addTextChangedListener(new TextWatcher() {
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // Get input
+                    Object input = m_SearchEditText.getText();
+                    if (input == null) return;
+                    String text = input.toString().toLowerCase().trim();
+
+                    onSearchEditTextChanged(text, start, before);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+        }
+
+
+        for (int i = 0; i < m_MenuTabsLinearLayout.getChildCount(); i++) {
+            final int index = i;
+            final View tv = m_MenuTabsLinearLayout.getChildAt(i).findViewById(R.id.tab_text);
+            tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    View v = m_MenuTabsLinearLayout.getChildAt(index).findViewById(R.id.tab_highlight);
+                    v.setMinimumWidth(tv.getWidth());
+                    v.invalidate();
+                    v.requestLayout();
+
+                }
+            });
+        }
+        initializeNutritionListeners();
+
+    }
+
+    private View.OnClickListener mealTimeTabOnClickListener() {
+        return (new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlight(m_CurrentMealTime, false);
+                m_CurrentMealTime = v;
+                setHighlight(v, true);
+                update();
+            }
+        });
+    }
+
+    private View.OnClickListener menuTabOnClickListener() {
+        return (new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlight(m_CurrentMenu, false);
+                m_CurrentMenu = v;
+                setHighlight(v, true);
+                update();
+            }
+        });
+    }
+
+
+    private View.OnClickListener venueTabOnClickListener() {
+        return (new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlight(m_CurrentVenue, false);
+                m_CurrentVenue = v;
+                setHighlight(v, true);
+                changeInVenue();
+            }
+        });
+    }
+
+    public abstract class DoubleClickListener implements View.OnClickListener {
+
+        private static final long DOUBLE_CLICK_TIME_DELTA = 300; //milliseconds
+
+        long lastClickTime = 0;
+
+        @Override
+        public void onClick(View v) {
+            long clickTime = System.currentTimeMillis();
+            if (clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA){
+                onDoubleClick(v);
+            } else {
+                onSingleClick(v);
+            }
+            lastClickTime = clickTime;
+        }
+
+        public abstract void onSingleClick(View v);
+        public abstract void onDoubleClick(View v);
+    }
+
+
+
+
+    // ------------------------------------------------------------------------- Main Data/Parse
 
     public void changeInVenue() {
 
@@ -507,24 +568,24 @@ public class MenuFragment extends NutritionFragment {
         update();
     }
 
-    private void updateView(View v) {
-        v.invalidate();
-        v.requestLayout();
-    }
-
-
     public void changeInTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_DISPLAY, Locale.US);
         m_CurrentDateTextView.setText(sdf.format(m_Calendar.getTime()));
         update();
     }
 
 
     public void update() {
-        showProgressSpinner();
-        String venue = Constants.venueParseStrings.get(Constants.Venue.valueOf(m_CurrentVenue.getTag().toString()));
-        String[] mealtime = Constants.mealTimeParseStrings.get(Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
-        String menu = Constants.menuParseStrings.get(Constants.Menu.valueOf(m_CurrentMenu.getTag().toString()));
+        Utils.showProgressSpinner(m_ProgressSpinner);
+
+        String venue = Constants.venueParseStrings
+                .get(Constants.Venue.valueOf(m_CurrentVenue.getTag().toString()));
+
+        String[] mealtime = Constants.mealTimeParseStrings
+                .get(Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString()));
+
+        String menu = Constants.menuParseStrings
+                .get(Constants.Menu.valueOf(m_CurrentMenu.getTag().toString()));
 
         int day = m_Calendar.get(Calendar.DAY_OF_MONTH);
         int month = m_Calendar.get(Calendar.MONTH) + 1;
@@ -533,46 +594,9 @@ public class MenuFragment extends NutritionFragment {
         queryParseRecipes(day, month, year, venue, mealtime, menu);
     }
 
-    private View.OnClickListener mealTimeTabOnClickListener() {
-        return (new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setHighlight(m_CurrentMealTime, false);
-                m_CurrentMealTime = v;
-                setHighlight(v, true);
-                update();
-            }
-        });
-    }
 
-    private View.OnClickListener menuTabOnClickListener() {
-        return (new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setHighlight(m_CurrentMenu, false);
-                m_CurrentMenu = v;
-                setHighlight(v, true);
-                update();
-            }
-        });
-    }
-
-
-    private View.OnClickListener venueTabOnClickListener() {
-        return (new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setHighlight(m_CurrentVenue, false);
-                m_CurrentVenue = v;
-                setHighlight(v, true);
-                changeInVenue();
-            }
-        });
-    }
-
-
-
-    private void queryParseRecipes(int day, int month, int year, String venueKey, String[] mealNames, String menuName) {
+    private void queryParseRecipes(int day, int month, int year, String venueKey,
+                                   String[] mealNames, String menuName) {
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Offering");
         query.whereEqualTo("month", month);
@@ -625,9 +649,14 @@ public class MenuFragment extends NutritionFragment {
                                     m_MenuItemsList.add((Recipe) object);
                             }
 
-                            // Notify the adapter and update the view
-                            notifyMenuListAdapter();
-
+                            // If the search bar is currently open, filter the results
+                            if (SEARCH_MODE) {
+                                resetSearch();
+                                updateSearch(m_MenuItemsList, getSearchText());
+                            } else {
+                                // Notify the adapter and update the view
+                                notifyMenuListAdapter();
+                            }
                         }
                     });
                 } else {
@@ -637,9 +666,25 @@ public class MenuFragment extends NutritionFragment {
         });
     }
 
+    @Override
+    public void onItemClick(Recipe recipe) {
+        if (SEARCH_MODE) {
+            clearSearch();
+        }
+        m_ServingsWhole = 1;
+        m_ServingsFraction = 0;
+
+        // Get user meal (breakfast, lunch, dinner, snacks) from meal time
+        Constants.MealTime mealTime = Constants.MealTime.valueOf(m_CurrentMealTime.getTag().toString());
+        Constants.UserMeals userMeal = Constants.userMealForMealTime.get(mealTime);
+        m_SelectedUserMeal = userMeal.name();
+
+        super.onItemClick(recipe);
+        flipToNext();
+    }
 
     private void notifyMenuListAdapter() {
-        hideProgressSpinner();
+        Utils.hideProgressSpinner(m_ProgressSpinner);
         m_MenuItemListAdapter.updateData(m_MenuItemsList);
 
         // If no recipes found, show message
@@ -651,20 +696,6 @@ public class MenuFragment extends NutritionFragment {
     }
 
 
-    public void setHighlight(View v, boolean highlight) {
-        TextView tv = (TextView)v.findViewById(R.id.tab_text);
-        View h = v.findViewById(R.id.tab_highlight);
-        if (highlight) {
-            h.setBackgroundColor(getResources().getColor(R.color.main));
-            tv.setTypeface(Typeface.DEFAULT_BOLD);
-            tv.setTextColor(getResources().getColor(R.color.main));
-        } else {
-            h.setBackgroundColor(getResources().getColor(R.color.transparent));
-            tv.setTypeface(Typeface.DEFAULT);
-            tv.setTextColor(getResources().getColor(R.color.gray_text));
-        }
-    }
-
     private void setMode() {
         String callingActivity = m_Activity.getLocalClassName();
         String diaryActivity = AddUserMealActivity.class.getName();
@@ -672,44 +703,84 @@ public class MenuFragment extends NutritionFragment {
     }
 
 
-    private List<Recipe> copyRecipeList(List<Recipe> list) {
-        List<Recipe> copy = new ArrayList<>();
-        for (Recipe r : list) {
-            copy.add(r);
+    // ------------------------------------------------------------------------------------ Search
 
-        }
-        return copy;
+    @Override
+    public final void onSearchClick() {
+        resetSearch();
     }
 
+    @Override
+    public final void onCancelSearchClick() {
+        clearSearch();
+    }
 
-    public abstract class DoubleClickListener implements View.OnClickListener {
+    @Override
+    public final void onSearchEditTextChanged(String text, int start, int before) {
 
-        private static final long DOUBLE_CLICK_TIME_DELTA = 300; //milliseconds
+        // If the part of the input was deleted, search again from original list
+        List<Recipe> listToSearch;
+        if (start < before) {
+            listToSearch = m_RestoredList;
+            // Otherwise, search from restricted list
+        } else {
+            listToSearch = m_MenuItemsList;
+        }
 
-        long lastClickTime = 0;
+        // Substring match
+        updateSearch(listToSearch, text);
 
-        @Override
-        public void onClick(View v) {
-            long clickTime = System.currentTimeMillis();
-            if (clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA){
-                onDoubleClick(v);
-            } else {
-                onSingleClick(v);
+    }
+
+    private void resetSearch() {
+        SEARCH_MODE = true;
+        m_RestoredList = Utils.copyRecipeList(m_MenuItemsList);
+    }
+
+    private void clearSearch() {
+        SEARCH_MODE = false;
+        m_RestoredList.clear();
+
+        // Exit search and restore previous items
+        update();
+    }
+
+    @Override
+    public void updateSearch(List listToSearch, String text) {
+
+        if (text == null)
+            return;
+
+        // Fragment initialized with search already open
+        if (listToSearch == null) {
+            resetSearch();
+            listToSearch = m_MenuItemsList;
+        }
+
+        // List of results that contain substring
+        ArrayList<Recipe> searchResults = new ArrayList<>();
+        for (Object item : listToSearch) {
+            Recipe r = (Recipe) item;
+            String name = r.getName().toLowerCase();
+            if (name.contains(text)) {
+                searchResults.add(r);
             }
-            lastClickTime = clickTime;
         }
 
-        public abstract void onSingleClick(View v);
-        public abstract void onDoubleClick(View v);
+        // Update the list and notify adapter
+        m_MenuItemsList = searchResults;
+        notifyMenuListAdapter();
     }
 
-    private void showProgressSpinner() {
-        m_ProgressSpinner.setVisibility(View.VISIBLE);
-        m_ProgressSpinner.bringToFront();
+    private String getSearchText() {
+        String text;
+        try {
+            text = (m_Mode == MODE.DIARY) ?
+                    ((AddUserMealActivity)m_Activity).getSearchText() :
+                    m_SearchEditText.getText().toString().toLowerCase().trim();
+        } catch (NullPointerException e) {
+            text = "";
+        }
+        return text;
     }
-
-    private void hideProgressSpinner() {
-        m_ProgressSpinner.setVisibility(View.GONE);
-    }
-
 }

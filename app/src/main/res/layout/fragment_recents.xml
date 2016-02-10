@@ -15,11 +15,25 @@
             style="@style/DiarySubheaderText"
             android:text="Your Previous Foods" />
 
-        <ListView
-            android:id="@+id/recents_listview"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </ListView>
+
+            <ListView
+                android:id="@+id/recents_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ListView>
+
+
+            <ProgressBar
+                android:id="@+id/progress_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </FrameLayout>
 
     </LinearLayout>
 

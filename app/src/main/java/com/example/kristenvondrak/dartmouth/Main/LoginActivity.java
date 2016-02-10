@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -110,9 +112,19 @@ public class LoginActivity extends Activity {
     }
 
     protected void showInvalidFieldDialog(String title, String message) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(m_Me);
-        builder .setTitle(title)
-                .setMessage(message)
+
+        LayoutInflater inflater = m_Me.getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_login_error, null);
+
+        TextView titleView = (TextView) v.findViewById(R.id.title);
+        titleView.setText(title);
+
+        TextView messageView = (TextView) v.findViewById(R.id.message);
+        messageView.setText(message);
+
+        builder.setView(v)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // close

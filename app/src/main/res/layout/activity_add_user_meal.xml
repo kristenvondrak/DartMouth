@@ -116,7 +116,7 @@
                 <TextView
                     android:id="@id/tab_text"
                     style="@style/TextViewTab"
-                    android:text="Meals"/>
+                    android:text="My Meals"/>
 
 
             </RelativeLayout>
@@ -130,7 +130,7 @@
                 <TextView
                     android:id="@id/tab_text"
                     style="@style/TextViewTab"
-                    android:text="Custom"/>
+                    android:text="My Foods"/>
 
             </RelativeLayout>
 

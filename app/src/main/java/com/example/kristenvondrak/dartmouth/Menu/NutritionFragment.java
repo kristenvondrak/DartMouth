@@ -1,11 +1,7 @@
 package com.example.kristenvondrak.dartmouth.Menu;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -13,9 +9,7 @@ import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 
 public class NutritionFragment extends MealSelectorFragment {
@@ -95,7 +89,8 @@ public class NutritionFragment extends MealSelectorFragment {
         setTextViewValue(m_RecipeNutrientsView, R.id.fiber, getNewValue(m_SelectedRecipe.getFiber(), num_servings));
         setTextViewValue(m_RecipeNutrientsView, R.id.sugars, getNewValue(m_SelectedRecipe.getSugars(), num_servings));
         setTextViewValue(m_RecipeNutrientsView, R.id.protein, getNewValue(m_SelectedRecipe.getProtein(), num_servings));
-        //setTextViewValue(m_RecipeNutrientsView, R.id.serving_size, getNewValue(m_SelectedRecipe.getServingSize(), 1));
+        setTextViewValue(m_RecipeNutrientsView, R.id.serving_size, m_SelectedRecipe.getServingSize());
+        setTextViewValue(m_RecipeNutrientsView, R.id.serving_text, m_SelectedRecipe.getServingText());
     }
 
 

@@ -1,5 +1,11 @@
 package com.example.kristenvondrak.dartmouth.Main;
 
+import android.view.View;
+import android.widget.ProgressBar;
+
+import com.example.kristenvondrak.dartmouth.Parse.Recipe;
+import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,6 +89,15 @@ public class Constants {
                     Menu.EverydayItems,});
     }});
 
+    public static final Map<MealTime, UserMeals> userMealForMealTime = Collections.unmodifiableMap(
+            new HashMap<MealTime, UserMeals>() {{
+                put(MealTime.Breakfast, UserMeals.Breakfast);
+                put(MealTime.Lunch, UserMeals.Lunch);
+                put(MealTime.Dinner, UserMeals.Dinner);
+                put(MealTime.LateNight, UserMeals.Snacks);
+                put(MealTime.AllDay, UserMeals.Snacks);
+            }});
+
     public static final Map<Venue, String> venueDisplayStrings = Collections.unmodifiableMap(
             new HashMap<Venue, String>() {{
                     put(Venue.Foco, "Foco");
@@ -108,7 +123,7 @@ public class Constants {
                 put(MealTime.AllDay, "All Day");
             }});
 
-    /*
+ /*
     public static final Map<MealTime, String> mealTimeParseStrings = Collections.unmodifiableMap(
             new HashMap<MealTime, String>() {{
                 put(MealTime.Breakfast, "Breakfast");
@@ -161,40 +176,6 @@ public class Constants {
             }});
 
 
-    public static class MenuStrings {
-        static String AllItemsDisplay = "All Items";
-
-        static String SpecialsDisplay = "Today's Specials";
-        static String SpecialsParse = "Today's Specials";
-
-        static String EverydayItemsDisplay = "Everyday Items";
-        static String EverydayItemsParse = "Everyday Items";
-
-        static String BeverageDisplay = "Beverage";
-        static String BeverageParse = "Beverage";
-
-        static String CerealDisplay = "Cereal";
-        static String CerealParse = "Cereal";
-
-        static String CondimentsDisplay = "Condiments";
-        static String CondimentsParse = "Condiments";
-
-        static String GlutenFreeDisplay = "Gluten Free";
-        static String GlutenFreeParse = "Additional Gluten Free";
-
-        static String DeliDisplay = "Deli";
-        static String DeliParse = "Courtyard Deli";
-
-        static String GrillDisplay = "Grill";
-        static String GrillParse = "Courtyard Grill";
-
-        static String GrabGoDisplay = "Grab & Go";
-        static String GrabGoParse = "Grab & Go";
-
-        static String SnacksDisplay = "Snacks";
-        static String SnacksParse = "Courtyard Snacks";
-    }
-
     public static class Validation {
         static int MinimumPasswordLength = 6;
         static int MaximumPasswordLength = 25;
@@ -229,51 +210,6 @@ public class Constants {
                 add(6, (float) 3.0 / 4);
 
             }});
-
-    public static int getServingsFracIndex(float value) {
-        for (int i = 0; i < ServingsFracFloats.size(); i++) {
-            if (value == ServingsFracFloats.get(i))
-                return i;
-            else if (value < ServingsFracFloats.get(i)) {
-                float d1 = ServingsFracFloats.get(i) - value;
-                float d2 = value - ServingsFracFloats.get(i - 1);
-
-                return d1 < d2 ? i : i - 1;
-            }
-        }
-        return 0;
-    }
-
-    public static Date getDateBefore(Calendar calendar) {
-        Calendar c = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DATE);
-        c.set(year, month, day, 23, 59, 59);
-        c.add(Calendar.DAY_OF_MONTH, -1);
-        return c.getTime();
-    }
-
-    public static Date getDateAfter(Calendar calendar) {
-        Calendar c = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DATE);
-        c.set(year, month, day, 0, 0, 0);
-        c.add(Calendar.DAY_OF_MONTH, 1);
-        return c.getTime();
-    }
-
-    public static String getDisplayStringFromCal(Calendar cal) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DISPLAY, Locale.US);
-        return sdf.format(cal.getTime());
-    }
-
-
-    public static String getStringExtraFromCal(Calendar cal) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_EXTRA, Locale.US);
-        return sdf.format(cal.getTime());
-    }
 
 
 }

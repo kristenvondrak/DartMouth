@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Parse.DiaryEntry;
 import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
 import com.example.kristenvondrak.dartmouth.R;
@@ -166,7 +167,7 @@ public class DiaryFragment extends Fragment {
     }
 
     private void update() {
-        m_CurrentDateTextView.setText(Constants.getDisplayStringFromCal(m_Calendar));
+        m_CurrentDateTextView.setText(Utils.getDisplayStringFromCal(m_Calendar));
         queryUserMeals(m_Calendar);
     }
 
@@ -180,23 +181,21 @@ public class DiaryFragment extends Fragment {
 
 
     private void queryUserMeals(final Calendar cal) {
-        Log.d(TAG, "queryUserMeals() cal = " + Constants.getStringExtraFromCal(cal));
+        Log.d(TAG, "queryUserMeals() cal = " + Utils.getStringExtraFromCal(cal));
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserMeal");
-        query.whereGreaterThan("date", Constants.getDateBefore(cal));
-        query.whereLessThan("date", Constants.getDateAfter(cal));
+        query.whereGreaterThan("date", Utils.getDateBefore(cal));
+        query.whereLessThan("date", Utils.getDateAfter(cal));
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.include("entries.recipe");
         query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ELSE_CACHE);
         query.findInBackground(new FindCallback<ParseObject>() {
 
             public void done(List<ParseObject> meals, ParseException e) {
-                Log.d("^^^^^^^^^^^^", "Diary Fragment: calendar = " + Constants.getDisplayStringFromCal(cal));
                 List<UserMeal> userMealList = new ArrayList<UserMeal>();
                 if (e == null) {
                     for (ParseObject object : meals) {
                         userMealList.add((UserMeal) object);
-                        Log.d("^^^^^", "adding user meal : " + ((UserMeal) object).getTitle());
                     }
                 } else {
                     Log.d("DiaryFragment", "Error getting user meals: " + e.getMessage());

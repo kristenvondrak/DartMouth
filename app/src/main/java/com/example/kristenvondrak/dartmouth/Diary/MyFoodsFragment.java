@@ -1,5 +1,7 @@
 package com.example.kristenvondrak.dartmouth.Diary;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,12 +11,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.SearchHeader;
+import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Menu.NutritionFragment;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
@@ -33,15 +38,19 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class MyFoodsFragment extends NutritionFragment {
+public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
+
 
     public enum MODE {ADD_CUSTOM, VIEW_CUSTOM};
 
     // Main
+    private AddUserMealActivity m_AddUserMealActivity;
     private ViewFlipper m_ViewFlipper;
     private ListView m_ListView;
     private List<Recipe> m_RecipesList;
     private RecipeListAdapter m_RecipesListAdapter;
+    private List<Recipe> m_RestoredList;
+    private ProgressBar m_ProgressSpinner;
 
     // Add Custom Food
     private ScrollView m_AddCustomFoodView;
@@ -72,6 +81,7 @@ public class MyFoodsFragment extends NutritionFragment {
         View v = inflater.inflate(R.layout.fragment_myfoods, container, false);
 
         m_Activity = getActivity();
+        m_AddUserMealActivity = (AddUserMealActivity) m_Activity;
         m_Calendar = ((AddUserMealActivity)m_Activity).getCalendar();
         m_SelectedUserMeal = ((AddUserMealActivity)m_Activity).getUserMeal();
 
@@ -83,15 +93,24 @@ public class MyFoodsFragment extends NutritionFragment {
         m_RecipesListAdapter = new RecipeListAdapter(m_Activity, this, m_RecipesList);
         m_ListView.setAdapter(m_RecipesListAdapter);
 
-        queryUserRecipes();
         return v;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        queryUserRecipes();
+    }
+
+
+    // ------------------------------------------------------------------------------------- Views
 
     private void initializeViews(View v) {
 
         // Main View
         m_ListView = (ListView) v.findViewById(R.id.myfoods_listview);
         m_ViewFlipper = (ViewFlipper) v.findViewById(R.id.myfoods_viewflipper);
+        m_ProgressSpinner = (ProgressBar) v.findViewById(R.id.progress_spinner);
 
         // Nutrition View
         m_RecipeNutrientsView = v.findViewById(R.id.nutrients);
@@ -118,7 +137,36 @@ public class MyFoodsFragment extends NutritionFragment {
         m_ProteinEditText = (EditText) v.findViewById(R.id.protein_edit_text);
     }
 
+    @Override
+    protected void flipToNext() {
+        ((AddUserMealActivity)m_Activity).showAlternativeHeader();
+        m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
+        m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
 
+        switch (m_CurrentMode){
+            case ADD_CUSTOM:
+                m_AddCustomFoodView.setVisibility(View.VISIBLE);
+                m_RecipeNutrientsView.setVisibility(View.GONE);
+                break;
+
+            case VIEW_CUSTOM:
+                m_AddCustomFoodView.setVisibility(View.GONE);
+                m_RecipeNutrientsView.setVisibility(View.VISIBLE);
+                break;
+        }
+        m_ViewFlipper.showNext();
+    }
+
+    @Override
+    protected void flipToPrev() {
+        ((AddUserMealActivity)m_Activity).showMainHeader();
+        m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
+        m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
+        m_ViewFlipper.showPrevious();
+    }
+
+
+    // --------------------------------------------------------------------------------- Listeners
 
     protected  void initializeListeners() {
 
@@ -127,6 +175,10 @@ public class MyFoodsFragment extends NutritionFragment {
             public void onClick(View v) {
                 m_CurrentMode = MODE.ADD_CUSTOM;
                 flipToNext();
+
+                // Clear any current search
+                if (((AddUserMealActivity)m_Activity).SEARCH_MODE)
+                    ((AddUserMealActivity)m_Activity).getCancelSearchBtn().callOnClick();
             }
         });
 
@@ -192,43 +244,27 @@ public class MyFoodsFragment extends NutritionFragment {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     public void onItemClick(Recipe recipe) {
         m_CurrentMode = MODE.VIEW_CUSTOM;
-        resetServingsSelector();
         flipToNext();
+        m_ServingsFraction = 0;
+        m_ServingsWhole = 1;
+
+        // Clear any current search
+        if (((AddUserMealActivity)m_Activity).SEARCH_MODE)
+            ((AddUserMealActivity)m_Activity).getCancelSearchBtn().callOnClick();
+
         super.onItemClick(recipe);
     }
 
 
-    @Override
-    protected void flipToNext() {
-        ((AddUserMealActivity)m_Activity).showAlternativeHeader();
-        m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_right);
-        m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_left);
 
-        switch (m_CurrentMode){
-            case ADD_CUSTOM:
-                m_AddCustomFoodView.setVisibility(View.VISIBLE);
-                m_RecipeNutrientsView.setVisibility(View.GONE);
-                break;
 
-            case VIEW_CUSTOM:
-                m_AddCustomFoodView.setVisibility(View.GONE);
-                m_RecipeNutrientsView.setVisibility(View.VISIBLE);
-                break;
-        }
-        m_ViewFlipper.showNext();
-    }
-
-    @Override
-    protected void flipToPrev() {
-        ((AddUserMealActivity)m_Activity).showMainHeader();
-        m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
-        m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
-        m_ViewFlipper.showPrevious();
-    }
+    // ------------------------------------------------------------------------------------- Parse
 
     private void queryUserRecipes() {
+        Utils.showProgressSpinner(m_ProgressSpinner);
         User user = (User) ParseUser.getCurrentUser();
         ParseRelation<ParseObject> pastRecipesRelation = user.getPastRecipes();
         if (pastRecipesRelation == null)
@@ -250,10 +286,14 @@ public class MyFoodsFragment extends NutritionFragment {
                         m_RecipesList.add(recipe);
                     }
                     m_RecipesListAdapter.notifyDataSetChanged();
+                    if (m_AddUserMealActivity.inSearchMode()) {
+                        resetSearch();
+                        updateSearch(m_RecipesList, m_AddUserMealActivity.getSearchText());
+                    }
                 } else {
                     Log.d("ERROR:", e.getMessage());
-                    // TODO: manage error
                 }
+                Utils.hideProgressSpinner(m_ProgressSpinner);
             }
         });
     }
@@ -314,6 +354,77 @@ public class MyFoodsFragment extends NutritionFragment {
     }
 
 
+
+    // ------------------------------------------------------------------------------------ Search
+
+    @Override
+    public void onSearchClick() {
+        resetSearch();
+    }
+
+    @Override
+    public void onCancelSearchClick() {
+        clearSearch();
+    }
+
+    @Override
+    public void onSearchEditTextChanged(String text, int start, int before) {
+
+        // If the part of the input was deleted, search again from original list
+        List<Recipe> listToSearch;
+        if (start < before) {
+            listToSearch = m_RestoredList;
+
+        // Otherwise, search from the restricted list
+        } else {
+            listToSearch = m_RecipesList;
+        }
+
+        updateSearch(listToSearch, text);
+    }
+
+
+    private void resetSearch() {
+        m_RestoredList = Utils.copyRecipeList(m_RecipesList);
+    }
+
+    private void clearSearch() {
+        m_RestoredList.clear();
+        queryUserRecipes();
+    }
+
+    @Override
+    public void updateSearch(List listToSearch, String text) {
+        if (text == null)
+            return;
+
+        // Fragment initialized with search already open
+        if (listToSearch == null) {
+            resetSearch();
+            listToSearch = m_RecipesList;
+        }
+
+        // List of results that contain substring
+        ArrayList<Recipe> searchResults = new ArrayList<>();
+        for (Object item : listToSearch) {
+            Recipe r = (Recipe) item;
+            String name = r.getName().toLowerCase();
+            if (name.contains(text)) {
+                searchResults.add(r);
+            }
+        }
+
+        // Update the list and notify adapter
+        m_RecipesList.clear();
+        for (Recipe r : searchResults)
+            m_RecipesList.add(r);
+        m_RecipesListAdapter.notifyDataSetChanged();
+
+    }
+
+
+
+
     private boolean isEmpty(EditText editText) {
         return editText.getText() == null || editText.getText().toString().trim().equals("");
     }
@@ -321,5 +432,8 @@ public class MyFoodsFragment extends NutritionFragment {
     private String getText(EditText editText) {
         return editText.getText().toString();
     }
+
+
+
 
 }
