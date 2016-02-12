@@ -6,10 +6,13 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -391,6 +394,7 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
 
                     // Clear the previous search
                     m_SearchEditText.setText("");
+                    m_ClearSearchBtn.setVisibility(View.GONE);
                     onCancelSearchClick();
                 }
             });
@@ -400,6 +404,9 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
                 public void onClick(View v) {
                     // Clear the previous search
                     m_SearchEditText.setText("");
+                    if(m_SearchEditText.requestFocus()) {
+                        m_Activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    }
                     onClearSearchClick();
                 }
             });
@@ -416,12 +423,23 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
                     Object input = m_SearchEditText.getText();
                     if (input == null) return;
                     String text = input.toString().toLowerCase().trim();
-
+                    m_ClearSearchBtn.setVisibility(View.VISIBLE);
                     onSearchEditTextChanged(text, start, before);
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
+                }
+            });
+
+
+            m_SearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        Utils.hideKeyboard(m_Activity);
+                        return true;
+                    }
+                    return false;
                 }
             });
         }
@@ -730,6 +748,7 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
     @Override
     public void onClearSearchClick() {
         clearSearch();
+        resetSearch();
     }
 
     @Override

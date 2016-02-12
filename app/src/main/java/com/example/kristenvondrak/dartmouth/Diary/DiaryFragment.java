@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
@@ -41,10 +42,10 @@ public class DiaryFragment extends Fragment {
 
     private Activity m_Activity;
 
-    // Meals
-    //private List<UserMeal> m_UserMealsList;
+    // Main
     private DiaryListAdapter m_DiaryListAdapter;
     private ListView m_DiaryListView;
+    private ProgressBar m_ProgressSpinner;
 
     // Date
     private Calendar m_Calendar = Calendar.getInstance();
@@ -103,6 +104,7 @@ public class DiaryFragment extends Fragment {
         m_CurrentDateTextView = (TextView) v.findViewById(R.id.date_text_view);
         m_NextDateButton = (ImageView) v.findViewById(R.id.next_date_btn);
         m_PreviousDateButton = (ImageView) v.findViewById(R.id.prev_date_btn);
+        m_ProgressSpinner = (ProgressBar) v.findViewById(R.id.progress_spinner);
     }
 
 
@@ -181,7 +183,7 @@ public class DiaryFragment extends Fragment {
 
 
     private void queryUserMeals(final Calendar cal) {
-        Log.d(TAG, "queryUserMeals() cal = " + Utils.getStringExtraFromCal(cal));
+        Utils.showProgressSpinner(m_ProgressSpinner);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserMeal");
         query.whereGreaterThan("date", Utils.getDateBefore(cal));
@@ -198,10 +200,11 @@ public class DiaryFragment extends Fragment {
                         userMealList.add((UserMeal) object);
                     }
                 } else {
-                    Log.d("DiaryFragment", "Error getting user meals: " + e.getMessage());
+                    Log.d(TAG, "Error getting user meals: " + e.getMessage());
                 }
                 m_DiaryListAdapter.updateData(userMealList, cal);
                 updateCalorieSummary(userMealList);
+                Utils.hideProgressSpinner(m_ProgressSpinner);
             }
         });
     }

@@ -28,7 +28,7 @@ public class Constants {
         public static final String SearchBaseUrl = "http://api.nal.usda.gov/ndb/search";
         public static final String ReportsBaseUrl = "http://api.nal.usda.gov/ndb/reports";
 
-        public static class ParameterKeys {
+        public static final class ParameterKeys {
             public static String ApiKey = "api_key";
             public static String SearchText = "q";
             public static String SortType = "sort";
@@ -51,16 +51,16 @@ public class Constants {
             public static String ReportStats = "s";
         }
 
-        public static class ReportNutrients {
-            public static String Calories = "Energy";
-            public static String TotalFat = "Total lipid (fat)";
-            public static String SaturatedFat = "Fatty acids, total saturated";
-            public static String Cholesterol = "Cholesterol";
-            public static String Sodium = "Sodium, Na";
-            public static String TotalCarbs = "Carbohydrate, by difference";
-            public static String Fiber = "Fiber, total dietary";
-            public static String Sugar = "Sugars, total";
-            public static String Protein = "Protein";
+        public static final class ReportNutrients {
+            public static final String Calories = "Energy";
+            public static final String TotalFat = "Total lipid (fat)";
+            public static final String SaturatedFat = "Fatty acids, total saturated";
+            public static final String Cholesterol = "Cholesterol";
+            public static final String Sodium = "Sodium, Na";
+            public static final String TotalCarbs = "Carbohydrate, by difference";
+            public static final String Fiber = "Fiber, total dietary";
+            public static final String Sugar = "Sugars, total";
+            public static final String Protein = "Protein";
         }
     }
 

@@ -1,12 +1,16 @@
 package com.example.kristenvondrak.dartmouth.Database;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -23,10 +27,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.kristenvondrak.dartmouth.Diary.AddUserMealActivity;
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.Constants.Database;
+import com.example.kristenvondrak.dartmouth.Main.Constants.Database.ReportNutrients;
 import com.example.kristenvondrak.dartmouth.Main.SearchHeader;
 import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Menu.NutritionFragment;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
+import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.ParseUser;
 
@@ -48,6 +55,7 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
     private ListView m_ListView;
     private ProgressBar m_ProgressSpinner;
     private TextView m_PromptTextView;
+    private View m_EmptyMessage;
     private RequestQueue m_RequestQueue;
 
 
@@ -104,6 +112,7 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
         m_ViewFlipper = (ViewFlipper) v.findViewById(R.id.db_viewflipper);
         m_ProgressSpinner = (ProgressBar) v.findViewById(R.id.progress_spinner);
         m_PromptTextView = (TextView) v.findViewById(R.id.db_prompt_textview);
+        m_EmptyMessage = v.findViewById(R.id.empty_food_list);
 
         // Nutrition View
         m_RecipeNutrientsView = v.findViewById(R.id.nutrients);
@@ -141,6 +150,7 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
             @Override
             public void onClick(View v) {
                 float fraction = Constants.ServingsFracFloats.get(m_ServingsFraction);
+                m_SelectedRecipe.saveInBackground();
                 ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
                         m_ServingsWhole + fraction, m_SelectedUserMeal);
 
@@ -164,6 +174,10 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     public void onItemClick(DatabaseRecipe dbRecipe) {
+        queryDbRecipeNutrients(dbRecipe);
+    }
+
+    private void showRecipeNutrients(Recipe recipe) {
         flipToNext();
         m_ServingsFraction = 0;
         m_ServingsWhole = 1;
@@ -172,19 +186,24 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
         if (((AddUserMealActivity)m_Activity).SEARCH_MODE)
             ((AddUserMealActivity)m_Activity).getCancelSearchBtn().callOnClick();
 
-        // query db
-        // convert to regular recipe
-
-       // super.onItemClick(recipe);
+        super.onItemClick(recipe);
     }
 
     public void resetInitialSearchView(boolean showKeyboard) {
 
-        if (showKeyboard)
-            Utils.showKeyboard(m_Activity);
+        // Show keyboard if no search in progress
+        if (showKeyboard) {
+            EditText editText = m_AddUserMealActivity.getSearchEditText();
+            editText.requestFocus();
+            InputMethodManager imm = (InputMethodManager) m_Activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            m_Activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+        }
 
         // Show search prompt text
         m_PromptTextView.setVisibility(View.VISIBLE);
+        m_EmptyMessage.setVisibility(View.GONE);
         m_PromptTextView.bringToFront();
     }
 
@@ -198,36 +217,31 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
     }
 
     private void queryDbRecipes(String searchText) {
+        m_PromptTextView.setVisibility(View.GONE);
+        m_EmptyMessage.setVisibility(View.GONE);
         Utils.showProgressSpinner(m_ProgressSpinner);
 
+        searchText = convertTextToDbQuery(searchText);
+
         Map<String, String> params = new HashMap<>();
-        params.put(Constants.Database.ParameterKeys.ApiKey, Constants.Database.ApiKey);
-        params.put(Constants.Database.ParameterKeys.SearchText, searchText);
+        params.put(Database.ParameterKeys.ApiKey, Database.ApiKey);
+        params.put(Database.ParameterKeys.SearchText, searchText);
+        params.put(Database.ParameterKeys.SortType, Database.ParameterValues.Relevance);
+        params.put(Database.ParameterKeys.MaxResultCount, Database.ParameterValues.Max);
+        params.put(Database.ParameterKeys.ResultOffset, Database.ParameterValues.Offset);
+        params.put(Database.ParameterKeys.ResponseFormat, Database.ParameterValues.JSON);
 
         // TODO: figure out why the fuck volley doesnt take the params
-        String URL = Constants.Database.SearchBaseUrl + "?";
-        URL += Constants.Database.ParameterKeys.ResponseFormat + "=" + Constants.Database.ParameterValues.JSON + "&";
-        URL += Constants.Database.ParameterKeys.SearchText + "=" + searchText + "&";
-        URL += Constants.Database.ParameterKeys.MaxResultCount + "=" + Constants.Database.ParameterValues.Max +"&";
-        URL += Constants.Database.ParameterKeys.ResultOffset + "=" + Constants.Database.ParameterValues.Offset + "&";
-        URL += Constants.Database.ParameterKeys.ApiKey + "=" + Constants.Database.ApiKey;
-
-//        params.put(ParameterKeys.SortType, ParameterValues.Relevance);
-//        params.put(ParameterKeys.MaxResultCount, ParameterValues.Max);
-//        params.put(ParameterKeys.ResultOffset, ParameterValues.Offset);
-//        params.put(ParameterKeys.ResponseFormat, ParameterValues.JSON);
-
-
+        String url = Database.SearchBaseUrl + getQueryParams(searchText);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
 
                         // Clear current list
                         m_DbRecipesList.clear();
-
 
                         List<JSONObject> dbRecipesList = new ArrayList<>();
                         try {
@@ -254,10 +268,13 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
 
                             } else {
                                 // TODO: no items found
+                                queryDbRecipesFail("No items found.");
                             }
 
                         } catch (JSONException e) {
+                            queryDbRecipes("No items found.");
                             e.printStackTrace();
+
                         }
 
                         // Update
@@ -269,8 +286,7 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        Log.d("ERROR", error.getMessage());
+                        queryDbRecipesFail("Unknown error.");
                         Utils.hideProgressSpinner(m_ProgressSpinner);
 
                     }
@@ -279,10 +295,202 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
     }
 
 
-    private void queryDbForNutrients(DatabaseRecipe dbRecipe) {
+    private void queryDbRecipeNutrients(final DatabaseRecipe dbRecipe) {
+
+        String url = Database.ReportsBaseUrl + getQueryNutrientsParams(dbRecipe);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+
+                        List<JSONObject> dbRecipesList = new ArrayList<>();
+                        try {
+                            if (response.has("report") && response.getJSONObject("report").has("food")
+                                    && response.getJSONObject("report").getJSONObject("food").has("nutrients")){
+
+                                // Create parse recipe
+                                JSONArray nutrientsJSON = response.getJSONObject("report")
+                                        .getJSONObject("food").getJSONArray("nutrients");
+
+                                Recipe recipe = new Recipe();
+                                recipe.setName(dbRecipe.getName());
+                                recipe.setCategory(dbRecipe.getGroup());
+                                recipe.setCreatedBy(ParseUser.getCurrentUser());
+                                recipe.setNutrients(extractNutrients(nutrientsJSON));
+                                //TODO: do we want to save this recipe in parse??
+                                //recipe.saveInBackground();
+                                showRecipeNutrients(recipe);
+
+                            } else {
+                                queryDbRecipesFail("No items found.");
+                            }
+
+                        } catch (JSONException e) {
+                            queryDbRecipes("No items found.");
+                            e.printStackTrace();
+
+                        }
+
+                        // Update
+                        m_DbRecipesListAdapter.notifyDataSetChanged();
+                        Utils.hideProgressSpinner(m_ProgressSpinner);
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        queryDbRecipesFail("Unknown error.");
+                        Utils.hideProgressSpinner(m_ProgressSpinner);
+
+                    }
+                });
+
+        getRequestQueue().add(jsObjRequest);
 
     }
 
+    private HashMap<String, HashMap<String, Object>> extractNutrients(JSONArray nutrientsJSON) {
+        HashMap<String, Object> nutrients = new HashMap<>();
+
+        // Add all the nutrient values
+        for (int i = 0; i < nutrientsJSON.length(); i ++) {
+            String name = null;
+            JSONObject item = null;
+            try {
+                item = nutrientsJSON.getJSONObject(i);
+                name = item.getString("name");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (name == null)
+                continue;
+
+            String value;
+            switch (name) {
+
+                case Constants.Database.ReportNutrients.Calories:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.Calories, value);
+                    break;
+
+                case ReportNutrients.TotalFat:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.TotalFat, value);
+                    break;
+
+                case ReportNutrients.SaturatedFat:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.SaturatedFat, value);
+                    break;
+
+                case ReportNutrients.Cholesterol:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.Cholesterol, value);
+                    break;
+
+                case ReportNutrients.Sodium:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.Sodium, value);
+                    break;
+
+                case ReportNutrients.TotalCarbs:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.TotalCarbs, value);
+                    break;
+
+                case ReportNutrients.Fiber:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.Fiber, value);
+                    break;
+
+                case ReportNutrients.Sugar:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.Sugars, value);
+                    break;
+
+                case ReportNutrients.Protein:
+                    value = getNutrientValue(item, name);
+                    if (value != null)
+                        nutrients.put(Recipe.Fields.Protein, value);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // Add the serving size and text
+        try {
+            JSONObject first = nutrientsJSON.getJSONObject(0);
+            JSONArray measures = first.getJSONArray("measures");
+            JSONObject item = measures.getJSONObject(0);
+            int qty = item.getInt("qty");
+            String label = item.getString("label");
+            int grams = item.getInt("eqv");
+
+            String servingsText = Integer.toString(qty) + " " + label;
+            nutrients.put(Recipe.Fields.ServingSizeText, servingsText);
+            nutrients.put(Recipe.Fields.ServingSizeGrams, grams);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        HashMap<String, HashMap<String, Object>> map = new HashMap<>();
+        map.put(Recipe.Fields.NutrientResults, nutrients);
+        return map;
+    }
+
+    private String getNutrientValue(JSONObject item, String name) {
+        try {
+            return item.getString("value");
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    private void queryDbRecipesFail(String message) {
+        m_EmptyMessage.setVisibility(View.VISIBLE);
+        m_EmptyMessage.bringToFront();
+    }
+
+    private String convertTextToDbQuery(String text) {
+        return  text.replace(" ", "+");
+    }
+
+
+    private String getQueryParams(String searchText) {
+        String params = "?";
+        params += Database.ParameterKeys.ResponseFormat + "=" + Database.ParameterValues.JSON + "&";
+        params += Database.ParameterKeys.SearchText + "=" + searchText + "&";
+        params += Database.ParameterKeys.MaxResultCount + "=" + Database.ParameterValues.Max +"&";
+        params += Database.ParameterKeys.ResultOffset + "=" + Database.ParameterValues.Offset + "&";
+        params += Database.ParameterKeys.ApiKey + "=" + Database.ApiKey;
+        return params;
+    }
+
+    private String getQueryNutrientsParams(DatabaseRecipe dbRecipe) {
+        String params = "?";
+        params += Database.ParameterKeys.ApiKey + "=" + Database.ApiKey + "&";
+        params += Database.ParameterKeys.NDBNumber + "=" + dbRecipe.getNDBNo() + "&";
+        params += Database.ParameterKeys.ReportType + "=" + Database.ParameterValues.ReportBasic + "&";
+        params += Database.ParameterKeys.ResponseFormat + "=" + Database.ParameterValues.JSON;
+        return params;
+    }
 
     private boolean isValidJSON(JSONObject object) {
         return object.has("group") && object.has("name") && object.has("ndbno");
@@ -310,7 +518,6 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
 
     @Override
     public void onEnterClick() {
-        m_PromptTextView.setVisibility(View.GONE);
         queryDbRecipes(m_AddUserMealActivity.getSearchText());
     }
 
@@ -324,9 +531,6 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
         m_DbRecipesList.clear();
         m_DbRecipesListAdapter.notifyDataSetChanged();
     }
-
-
-
 
 
 }

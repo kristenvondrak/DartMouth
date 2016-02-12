@@ -4,6 +4,7 @@ package com.example.kristenvondrak.dartmouth.Diary;
 import android.annotation.TargetApi;
 import android.app.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.Fragment;
@@ -18,7 +19,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -170,6 +173,7 @@ public class AddUserMealActivity extends ActionBarActivity {
                 // Exit Search
                 SEARCH_MODE = false;
                 m_SearchEditText.setText("");
+                m_ClearSearchBtn.setVisibility(View.GONE);
                 Utils.hideKeyboard(m_Activity);
 
                 // Show main header
@@ -186,7 +190,6 @@ public class AddUserMealActivity extends ActionBarActivity {
             public void onClick(View v) {
                 // Clear the text but do not exit search
                 m_SearchEditText.setText("");
-                Utils.showKeyboard(m_Activity);
 
                 // Fragment specific
                 SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);

@@ -25,6 +25,8 @@
             android:textSize="30dp"
             android:text="Search the USDA Database for Foods"/>
 
+        <include layout="@layout/empty_food_list" />
+
         <ProgressBar
             android:id="@+id/progress_spinner"
             android:layout_width="wrap_content"

@@ -65,7 +65,7 @@ public class DatabaseListAdapter extends BaseAdapter {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // m_Fragment.onItemClick(dbRecipe);
+               m_Fragment.onItemClick(dbRecipe);
             }
         });
 

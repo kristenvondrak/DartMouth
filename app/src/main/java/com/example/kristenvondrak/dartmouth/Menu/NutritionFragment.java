@@ -6,6 +6,7 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.R;
 
@@ -67,6 +68,7 @@ public class NutritionFragment extends MealSelectorFragment {
 
 
     public void onItemClick(Recipe recipe) {
+        Utils.hideKeyboard(m_Activity);
         m_SelectedRecipe = recipe;
         m_RecipeName.setText(recipe.getName());
         resetServingsSelector();
