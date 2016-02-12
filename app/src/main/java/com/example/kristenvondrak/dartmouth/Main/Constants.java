@@ -22,6 +22,49 @@ import java.util.Map;
  */
 public class Constants {
 
+    public static class Database {
+
+        public static final String ApiKey = "yh3tgkw5HHJfqDNJkWhiKUdKsbeNRSf3wjc8VY6w";
+        public static final String SearchBaseUrl = "http://api.nal.usda.gov/ndb/search";
+        public static final String ReportsBaseUrl = "http://api.nal.usda.gov/ndb/reports";
+
+        public static class ParameterKeys {
+            public static String ApiKey = "api_key";
+            public static String SearchText = "q";
+            public static String SortType = "sort";
+            public static String MaxResultCount = "max";
+            public static String ResultOffset = "offset";
+            public static String ResponseFormat = "format";
+            public static String NDBNumber = "ndbno";
+            public static String ReportType = "type";
+        }
+
+        public static class ParameterValues {
+            public static String Relevance = "r";
+            public static String Name = "n";
+            public static String JSON = "JSON";
+            public static String Max = "50";
+            public static String Offset = "0";
+            public static String XML = "XML";
+            public static String ReportBasic = "b";
+            public static String ReportFull = "f";
+            public static String ReportStats = "s";
+        }
+
+        public static class ReportNutrients {
+            public static String Calories = "Energy";
+            public static String TotalFat = "Total lipid (fat)";
+            public static String SaturatedFat = "Fatty acids, total saturated";
+            public static String Cholesterol = "Cholesterol";
+            public static String Sodium = "Sodium, Na";
+            public static String TotalCarbs = "Carbohydrate, by difference";
+            public static String Fiber = "Fiber, total dietary";
+            public static String Sugar = "Sugars, total";
+            public static String Protein = "Protein";
+        }
+    }
+
+
     public static final String DATE_FORMAT_EXTRA = "yyyy,EEE,LLL,d";
     public static final String DATE_FORMAT_DISPLAY = "EEE, LLL d";
 
@@ -123,17 +166,6 @@ public class Constants {
                 put(MealTime.AllDay, "All Day");
             }});
 
- /*
-    public static final Map<MealTime, String> mealTimeParseStrings = Collections.unmodifiableMap(
-            new HashMap<MealTime, String>() {{
-                put(MealTime.Breakfast, "Breakfast");
-                put(MealTime.Lunch, "Lunch");
-                put(MealTime.Dinner, "Dinner");
-                put(MealTime.LateNight, "Late Night");
-                put(MealTime.AllDay, "Every Day");
-            }});
-*/
-
     public static final Map<MealTime, String[]> mealTimeParseStrings = Collections.unmodifiableMap(
             new HashMap<MealTime, String[]>() {{
                 put(MealTime.Breakfast, new String[]{"Breakfast"});
@@ -197,6 +229,7 @@ public class Constants {
         static String SigninErrorDefaultMessage = "Unknown error signing in.";
         static String OkActionTitle = "OK";
     }
+
 
     public static final String[] ServingsFracDisplay = {"-", "1/8", "1/4", "1/3", "1/2", "2/3", "3/4"};
     public static final List<Float> ServingsFracFloats = Collections.unmodifiableList(

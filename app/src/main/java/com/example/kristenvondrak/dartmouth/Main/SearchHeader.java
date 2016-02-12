@@ -12,6 +12,6 @@ public interface SearchHeader {
     void onSearchClick();
     void onCancelSearchClick();
     void onSearchEditTextChanged(String text, int start, int before);
-    void updateSearch(List listToSearch, String text);
-
+    void onEnterClick();
+    void onClearSearchClick();
 }

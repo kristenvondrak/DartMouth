@@ -1,13 +1,16 @@
-package com.example.kristenvondrak.dartmouth.Diary;
+package com.example.kristenvondrak.dartmouth.MyFoods;
 
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -17,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.example.kristenvondrak.dartmouth.Diary.AddUserMealActivity;
+import com.example.kristenvondrak.dartmouth.Diary.RecipeListAdapter;
 import com.example.kristenvondrak.dartmouth.Main.Constants;
 import com.example.kristenvondrak.dartmouth.Main.SearchHeader;
 import com.example.kristenvondrak.dartmouth.Main.Utils;
@@ -66,6 +71,14 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
     private EditText m_FiberEditText;
     private EditText m_SugarsEditText;
     private EditText m_ProteinEditText;
+
+
+    private boolean errorName = false;
+    private boolean errorCals = false;
+    private ImageView m_NameErrorIcon;
+    private ImageView m_CalsErrorIcon;
+    private TextWatcher m_NameTextWatcher;
+    private TextWatcher m_CalsTextWatcher;
 
     private MODE m_CurrentMode;
 
@@ -135,6 +148,8 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
         m_FiberEditText = (EditText) v.findViewById(R.id.fiber_edit_text);
         m_SugarsEditText = (EditText) v.findViewById(R.id.sugars_edit_text);
         m_ProteinEditText = (EditText) v.findViewById(R.id.protein_edit_text);
+        m_NameErrorIcon = (ImageView) v.findViewById(R.id.name_error_icon);
+        m_CalsErrorIcon = (ImageView) v.findViewById(R.id.calories_error_icon);
     }
 
     @Override
@@ -147,13 +162,16 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
             case ADD_CUSTOM:
                 m_AddCustomFoodView.setVisibility(View.VISIBLE);
                 m_RecipeNutrientsView.setVisibility(View.GONE);
+                m_AddCustomFoodView.bringToFront();
                 break;
 
             case VIEW_CUSTOM:
                 m_AddCustomFoodView.setVisibility(View.GONE);
                 m_RecipeNutrientsView.setVisibility(View.VISIBLE);
+                m_RecipeNutrientsView.bringToFront();
                 break;
         }
+
         m_ViewFlipper.showNext();
     }
 
@@ -163,6 +181,12 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
         m_ViewFlipper.setInAnimation(m_Activity, R.anim.slide_in_from_left);
         m_ViewFlipper.setOutAnimation(m_Activity, R.anim.slide_out_to_right);
         m_ViewFlipper.showPrevious();
+
+        if (m_CurrentMode == MODE.ADD_CUSTOM) {
+            clearViews();
+            Utils.hideKeyboard(m_Activity);
+        }
+
     }
 
 
@@ -171,14 +195,15 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
     protected  void initializeListeners() {
 
         m_AddCustomFoodRow.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
             @Override
             public void onClick(View v) {
                 m_CurrentMode = MODE.ADD_CUSTOM;
                 flipToNext();
 
                 // Clear any current search
-                if (((AddUserMealActivity)m_Activity).SEARCH_MODE)
-                    ((AddUserMealActivity)m_Activity).getCancelSearchBtn().callOnClick();
+                if (((AddUserMealActivity) m_Activity).SEARCH_MODE)
+                    ((AddUserMealActivity) m_Activity).getCancelSearchBtn().callOnClick();
             }
         });
 
@@ -191,12 +216,10 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
                     case ADD_CUSTOM:
                         // Check that required fields are filled in
                         if (isEmpty(m_NameEditText)) {
-                            //m_NameErrorIcon.setVisibility(View.VISIBLE);
-                            //m_NameEditText.setText("");
+                            showNameErrorIcon();
                             break;
                         } else if (isEmpty(m_CaloriesEditText)) {
-
-                            // Add to diary
+                            showCalsErrorIcon();
                             break;
                         }
 
@@ -216,6 +239,7 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
                                 }
                             }
                         });
+                        flipToPrev();
 
 
                         break;
@@ -224,10 +248,10 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
                         ParseAPI.addDiaryEntry(m_Calendar, ParseUser.getCurrentUser(), m_SelectedRecipe,
                                 m_ServingsWhole + fraction, m_SelectedUserMeal);
                         Toast.makeText(m_Activity, "Added to diary!", Toast.LENGTH_SHORT).show();
-
+                        flipToPrev();
                         break;
                 }
-                flipToPrev();
+
             }
 
         });
@@ -258,6 +282,66 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
         super.onItemClick(recipe);
     }
 
+    private void showNameErrorIcon() {
+        errorName = true;
+        m_NameEditText.setHint("");
+        m_NameErrorIcon.setVisibility(View.VISIBLE);
+
+        m_NameTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (errorName && s.length() > 0) {
+                    errorName = false;
+                    m_NameErrorIcon.setVisibility(View.GONE);
+                } else if (s.length() == 0) {
+                    errorName = true;
+                    m_NameErrorIcon.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+        m_NameEditText.addTextChangedListener(m_NameTextWatcher);
+    }
+
+    private void showCalsErrorIcon() {
+        errorCals = true;
+        m_CaloriesEditText.setHint("");
+        m_CalsErrorIcon.setVisibility(View.VISIBLE);
+
+        m_CalsTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (errorCals && s.length() > 0) {
+                    errorCals = false;
+                    m_CalsErrorIcon.setVisibility(View.GONE);
+                } else if (s.length() == 0) {
+                    errorCals = true;
+                    m_CalsErrorIcon.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+        m_CaloriesEditText.addTextChangedListener(m_CalsTextWatcher);
+    }
+
 
 
 
@@ -272,8 +356,7 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
 
         ParseQuery query = pastRecipesRelation.getQuery();
         query.whereEqualTo("createdBy", user);
-        // TODO: order by most recent
-        query.orderByAscending("updatedAt");
+        query.orderByDescending("updatedAt");
         query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ELSE_CACHE);
         query.findInBackground(new FindCallback<ParseObject>() {
 
@@ -353,6 +436,31 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
         return recipe;
     }
 
+    private void clearViews() {
+        m_NameEditText.setText("");
+        m_CaloriesEditText.setText("");
+        m_FatCalsEditText.setText("");
+        m_FatEditText.setText("");
+        m_SaturatedFatEditText.setText("");
+        m_CholesterolEditText.setText("");
+        m_SodiumEditText.setText("");
+        m_CarbsEditText.setText("");
+        m_FiberEditText.setText("");
+        m_SugarsEditText.setText("");
+        m_ProteinEditText.setText("");
+
+        if (errorName)
+            m_NameEditText.removeTextChangedListener(m_NameTextWatcher);
+        if (errorCals)
+            m_CaloriesEditText.removeTextChangedListener(m_CalsTextWatcher);
+
+        m_NameErrorIcon.setVisibility(View.GONE);
+        m_CalsErrorIcon.setVisibility(View.GONE);
+        m_NameEditText.setHint("Required");
+        m_CaloriesEditText.setHint("Required");
+
+    }
+
 
 
     // ------------------------------------------------------------------------------------ Search
@@ -365,6 +473,16 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
     @Override
     public void onCancelSearchClick() {
         clearSearch();
+    }
+
+    @Override
+    public void onClearSearchClick() {
+        clearSearch();
+    }
+
+    @Override
+    public void onEnterClick() {
+        // do nothing since we update as user types
     }
 
     @Override
@@ -393,7 +511,7 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
         queryUserRecipes();
     }
 
-    @Override
+
     public void updateSearch(List listToSearch, String text) {
         if (text == null)
             return;

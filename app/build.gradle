@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.kristenvondrak.dartmouth"
-        minSdkVersion 13
+        minSdkVersion 15
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -26,4 +26,5 @@ dependencies {
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.parse:parse-android:1.+'
     compile 'com.android.support:support-v4:21.0.3'
+    compile project(":volley")
 }

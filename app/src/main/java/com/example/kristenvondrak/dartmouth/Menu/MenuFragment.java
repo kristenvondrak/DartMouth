@@ -67,6 +67,7 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
     private ImageView m_SearchBtn;
     private EditText m_SearchEditText;
     private TextView m_CancelSearchBtn;
+    private ImageView m_ClearSearchBtn;
     private List<Recipe> m_RestoredList;
 
     // Main
@@ -179,6 +180,7 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
         m_CancelBtn = (TextView) v.findViewById(R.id.header_cancel_btn);
         m_SearchBtn = (ImageView) v.findViewById(R.id.header_search_btn);
         m_CancelSearchBtn = (TextView) v.findViewById(R.id.header_search_cancel_btn);
+        m_ClearSearchBtn = (ImageView) v.findViewById(R.id.header_clear_search_btn);
         m_SearchEditText = (EditText)v.findViewById(R.id.header_search_edittext);
 
         if (m_Mode == MODE.DIARY) {
@@ -193,6 +195,7 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
             m_HeaderViewFlipper = activity.getViewFlipper();
             m_SearchBtn = activity.getSearchBtn();
             m_CancelSearchBtn = activity.getCancelSearchBtn();
+            m_ClearSearchBtn = activity.getClearSearchBtn();
             m_SearchEditText = activity.getSearchEditText();
             m_AddBtn = activity.getAddBtn();
             m_CancelBtn = activity.getCancelBtn();
@@ -389,6 +392,15 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
                     // Clear the previous search
                     m_SearchEditText.setText("");
                     onCancelSearchClick();
+                }
+            });
+
+            m_ClearSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Clear the previous search
+                    m_SearchEditText.setText("");
+                    onClearSearchClick();
                 }
             });
 
@@ -716,6 +728,16 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
     }
 
     @Override
+    public void onClearSearchClick() {
+        clearSearch();
+    }
+
+    @Override
+    public void onEnterClick() {
+        // do nothing since we update as user types
+    }
+
+    @Override
     public final void onSearchEditTextChanged(String text, int start, int before) {
 
         // If the part of the input was deleted, search again from original list
@@ -745,7 +767,7 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
         update();
     }
 
-    @Override
+
     public void updateSearch(List listToSearch, String text) {
 
         if (text == null)

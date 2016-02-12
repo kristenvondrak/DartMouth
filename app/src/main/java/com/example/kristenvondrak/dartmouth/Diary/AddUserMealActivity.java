@@ -13,10 +13,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,11 +28,15 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.example.kristenvondrak.dartmouth.Database.DatabaseFragment;
 import com.example.kristenvondrak.dartmouth.Main.SearchHeader;
 import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Menu.MenuFragment;
-import com.example.kristenvondrak.dartmouth.Progress.ProgressFragment;
+import com.example.kristenvondrak.dartmouth.MyFoods.MyFoodsFragment;
+import com.example.kristenvondrak.dartmouth.MyMeals.MyMealsFragment;
+import com.example.kristenvondrak.dartmouth.Stats.ProgressFragment;
 import com.example.kristenvondrak.dartmouth.R;
+import com.example.kristenvondrak.dartmouth.Recents.RecentsFragment;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -60,6 +66,7 @@ public class AddUserMealActivity extends ActionBarActivity {
     private ImageView m_SearchBtn;
     private EditText m_SearchEditText;
     private TextView m_CancelSearchBtn;
+    private ImageView m_ClearSearchBtn;
 
     // Alternative Header
     private TextView m_CancelBtn;
@@ -91,7 +98,7 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_TabToFragmentMap.put(m_TabRecents, new RecentsFragment());
         m_TabToFragmentMap.put(m_TabFoods, new MyFoodsFragment()); // Placeholder
         m_TabToFragmentMap.put(m_TabMeals, new MyMealsFragment());
-        m_TabToFragmentMap.put(m_TabDb, new ProgressFragment()); // Placeholder
+        m_TabToFragmentMap.put(m_TabDb, new DatabaseFragment()); // Placeholder
         m_FragmentManager = getSupportFragmentManager();
 
         for (RelativeLayout tab : m_TabToFragmentMap.keySet()) {
@@ -128,6 +135,7 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_SearchBtn = (ImageView) findViewById(R.id.header_search_btn);
         m_SearchEditText = (EditText) findViewById(R.id.header_search_edittext);
         m_CancelSearchBtn = (TextView) findViewById(R.id.header_search_cancel_btn);
+        m_ClearSearchBtn = (ImageView) findViewById(R.id.header_clear_search_btn);
         m_BackBtn = (LinearLayout) findViewById(R.id.header_back_to_diary_btn);
         m_CancelBtn = (TextView) findViewById(R.id.header_cancel_btn);
         m_AddBtn = (TextView) findViewById(R.id.header_add_btn);
@@ -173,6 +181,19 @@ public class AddUserMealActivity extends ActionBarActivity {
             }
         });
 
+        m_ClearSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Clear the text but do not exit search
+                m_SearchEditText.setText("");
+                Utils.showKeyboard(m_Activity);
+
+                // Fragment specific
+                SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
+                currentFragment.onClearSearchClick();
+            }
+        });
+
         m_SearchEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -184,6 +205,7 @@ public class AddUserMealActivity extends ActionBarActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = getSearchText();
                 if (text != null) {
+                    m_ClearSearchBtn.setVisibility(View.VISIBLE);
                     SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
                     currentFragment.onSearchEditTextChanged(text, start, before);
                 }
@@ -194,6 +216,19 @@ public class AddUserMealActivity extends ActionBarActivity {
 
             }
         });
+
+        m_SearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
+                    currentFragment.onEnterClick();
+                    Utils.hideKeyboard(m_Activity);
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     private void flipHeaderToNext() {
@@ -251,6 +286,10 @@ public class AddUserMealActivity extends ActionBarActivity {
 
     public TextView getCancelSearchBtn() {
         return m_CancelSearchBtn;
+    }
+
+    public ImageView getClearSearchBtn() {
+        return m_ClearSearchBtn;
     }
 
     public EditText getSearchEditText() {

@@ -1,4 +1,4 @@
-package com.example.kristenvondrak.dartmouth.Diary;
+package com.example.kristenvondrak.dartmouth.MyFoods;
 
 
 import android.app.Activity;

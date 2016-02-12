@@ -1,4 +1,4 @@
-package com.example.kristenvondrak.dartmouth.Progress;
+package com.example.kristenvondrak.dartmouth.Stats;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

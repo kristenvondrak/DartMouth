@@ -2,6 +2,7 @@ package com.example.kristenvondrak.dartmouth.Main;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
@@ -99,5 +100,10 @@ public class Utils {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    public static void showKeyboard(Activity activity) {
+        activity.getWindow().setSoftInputMode (WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
 
 }

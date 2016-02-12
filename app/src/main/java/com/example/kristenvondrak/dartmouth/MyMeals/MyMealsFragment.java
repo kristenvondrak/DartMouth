@@ -1,4 +1,4 @@
-package com.example.kristenvondrak.dartmouth.Diary;
+package com.example.kristenvondrak.dartmouth.MyMeals;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -14,20 +14,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.example.kristenvondrak.dartmouth.Main.Constants;
+import com.example.kristenvondrak.dartmouth.Diary.AddUserMealActivity;
+import com.example.kristenvondrak.dartmouth.Diary.MealEntriesListAdapter;
 import com.example.kristenvondrak.dartmouth.Main.SearchHeader;
 import com.example.kristenvondrak.dartmouth.Main.Utils;
 import com.example.kristenvondrak.dartmouth.Menu.MealSelectorFragment;
 import com.example.kristenvondrak.dartmouth.Parse.DiaryEntry;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
-import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
 import com.example.kristenvondrak.dartmouth.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -223,6 +222,16 @@ public class MyMealsFragment extends MealSelectorFragment implements SearchHeade
     }
 
     @Override
+    public void onClearSearchClick() {
+        clearSearch();
+    }
+
+    @Override
+    public void onEnterClick() {
+        // do nothing since we update as user types
+    }
+
+    @Override
     public void onSearchEditTextChanged(String text, int start, int before) {
 
         // If the part of the input was deleted, search again from original list
@@ -246,7 +255,6 @@ public class MyMealsFragment extends MealSelectorFragment implements SearchHeade
         queryPastMeals();
     }
 
-    @Override
     public void updateSearch(List listToSearch, String text) {
         if (text == null)
             return;
