@@ -94,6 +94,11 @@ public class DiaryFragment extends Fragment {
         return v;
     }
 
+    private void update() {
+        m_CurrentDateTextView.setText(Utils.getDisplayStringFromCal(m_Calendar));
+        queryUserMeals(m_Calendar);
+    }
+
 
     private void initializeViews(View v) {
         m_DiaryListView = (ListView) v.findViewById(R.id.diary_list_view);
@@ -167,12 +172,6 @@ public class DiaryFragment extends Fragment {
 
 
     }
-
-    private void update() {
-        m_CurrentDateTextView.setText(Utils.getDisplayStringFromCal(m_Calendar));
-        queryUserMeals(m_Calendar);
-    }
-
 
     @Override
     public void onResume() {

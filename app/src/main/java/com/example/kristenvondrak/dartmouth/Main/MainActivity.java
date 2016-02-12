@@ -15,6 +15,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.example.kristenvondrak.dartmouth.Diary.DiaryFragment;
+import com.example.kristenvondrak.dartmouth.Menu.BlankFragment;
 import com.example.kristenvondrak.dartmouth.Menu.MenuFragment;
 import com.example.kristenvondrak.dartmouth.Parse.ParseAPI;
 import com.example.kristenvondrak.dartmouth.Preferences.PrefsFragment;
@@ -49,7 +50,7 @@ public class MainActivity extends FragmentActivity {
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("stats")
                         .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_stats, "Stats")),
-                PrefsFragment.class, null);
+                BlankFragment.class, null);
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("prefs")
                         .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_prefs, "Prefs")),

@@ -4,16 +4,14 @@
     tools:context="com.example.kristenvondrak.main.PrefsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Logout"
+        android:text="Sorry, this tab is not implemented yet."
         android:textSize="20dp"
-        android:textStyle="bold"
         android:layout_gravity="center"
-        android:textColor="@color/accent_blue"
-        android:layout_margin="10dp"/>
+        android:textColor="@color/gray_text"
+        android:layout_margin="20dp"/>
 
 </FrameLayout>

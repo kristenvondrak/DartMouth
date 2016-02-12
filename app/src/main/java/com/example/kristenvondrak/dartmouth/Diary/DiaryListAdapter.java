@@ -101,7 +101,6 @@ public class DiaryListAdapter extends BaseAdapter{
     }
 
     public void addItem(DiaryEntry item) {
-        Log.d("^^^^^", "adding diary entry : " + item.getObjectId());
         m_Data.add(item);
     }
 
@@ -162,6 +161,8 @@ public class DiaryListAdapter extends BaseAdapter{
                 cal.setText(Integer.toString(entry.getTotalCalories()));
 
                 TextView servings = (TextView) rowView.findViewById(R.id.item_servings);
+
+                // TODO: use display not float
                 servings.setText(Float.toString(entry.getServingsMultiplier()) + " servings");
 
                 rowView.setOnClickListener(new View.OnClickListener() {

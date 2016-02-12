@@ -22,6 +22,7 @@ import java.util.Locale;
  */
 public class Utils {
 
+
     public static int getServingsFracIndex(float value) {
         for (int i = 0; i < Constants.ServingsFracFloats.size(); i++) {
             if (value == Constants.ServingsFracFloats.get(i))

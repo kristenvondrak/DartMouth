@@ -26,7 +26,9 @@ import com.example.kristenvondrak.dartmouth.Parse.Recipe;
 import com.example.kristenvondrak.dartmouth.Parse.UserMeal;
 import com.example.kristenvondrak.dartmouth.Stats.ProgressFragment;
 import com.example.kristenvondrak.dartmouth.R;
+import com.parse.DeleteCallback;
 import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -120,12 +122,12 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
                         if (e == null) {
                             //TODO: for non-DDS items --> update all
                             DiaryEntry entry = (DiaryEntry) object;
-                            entry.put("servingsMultiplier", ((DiaryEntryFragment)m_Fragment).getServingsMultiplier());
+                            entry.put("servingsMultiplier", ((DiaryEntryFragment) m_Fragment).getServingsMultiplier());
                             entry.saveInBackground();
                         }
+                        m_Me.onBackPressed();
                     }
                 });
-                m_Me.onBackPressed();
             }
         });
 
@@ -158,7 +160,7 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
 
         // Remove diary entry
         m_DiaryEntry.deleteInBackground();
-        m_Me.onBackPressed();
+
     }
 
     @Override
@@ -185,25 +187,7 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
 
 
     public void showDeleteDialog() {
-        // Use the Builder class for convenient dialog construction
-   /*     AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(m_Me, R.style.DialogStyle));
-        builder.setMessage("Remove From Diary?")
-                .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        deleteDiaryEntry();
-                        Toast.makeText(m_Me, "Deleted from diary!", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object and return it
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.red));
-*/
+
         LayoutInflater inflater = m_Me.getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(m_Me, R.style.DialogStyle));
         View v = inflater.inflate(R.layout.delete_entry_dialog, null);
