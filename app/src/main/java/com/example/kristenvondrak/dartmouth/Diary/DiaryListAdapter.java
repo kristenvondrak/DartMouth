@@ -163,7 +163,7 @@ public class DiaryListAdapter extends BaseAdapter{
                 TextView servings = (TextView) rowView.findViewById(R.id.item_servings);
 
                 // TODO: use display not float
-                servings.setText(Float.toString(entry.getServingsMultiplier()) + " servings");
+                servings.setText(Float.toString(entry.getServingsMultiplier()) + " Servings");
 
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override

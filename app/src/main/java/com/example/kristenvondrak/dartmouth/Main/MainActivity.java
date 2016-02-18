@@ -41,19 +41,19 @@ public class MainActivity extends FragmentActivity {
         m_FragmentTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("menu")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_menu, "Menu")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.android_menu, "Menu")),
                 MenuFragment.class, null);
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("diary")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_diary, "Diary")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.android_diary, "Diary")),
                 DiaryFragment.class, null);
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("stats")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_stats, "Stats")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.android_stats, "Stats")),
                 BlankFragment.class, null);
 
         m_FragmentTabHost.addTab(m_FragmentTabHost.newTabSpec("prefs")
-                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.main_prefs, "Prefs")),
+                        .setIndicator(getTabIndicator(m_FragmentTabHost.getContext(), R.drawable.android_prefs, "Prefs")),
                 PrefsFragment.class, null);
 
         updateTabs();

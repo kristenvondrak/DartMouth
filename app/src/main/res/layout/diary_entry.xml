@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginLeft="10dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true">
 
@@ -34,7 +34,8 @@
             android:id="@+id/item_servings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14dp"
+            android:paddingTop="5dp"
+            android:textSize="15dp"
             android:text="2 servings"
             android:textColor="@color/light_gray"/>
 
@@ -53,7 +54,7 @@
             android:layout_height="wrap_content"
             android:textSize="20dp"
             android:text="120"
-            android:textColor="@color/black"
+            android:textColor="@color/material_blue_grey_800"
             android:layout_gravity="center_vertical" />
         
         <include layout="@layout/list_item_arrow"

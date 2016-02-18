@@ -184,6 +184,8 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
 
         // Clear any current search
         ((AddUserMealActivity)m_Activity).cancelSearchIfExists();
+        //TODO: just flip header, dont clear search
+        // save the search results
 
         super.onItemClick(recipe);
     }
@@ -196,8 +198,6 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
             editText.requestFocus();
             InputMethodManager imm = (InputMethodManager) m_Activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-            //m_Activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
         } else {
             Utils.hideKeyboard(m_Activity);
         }

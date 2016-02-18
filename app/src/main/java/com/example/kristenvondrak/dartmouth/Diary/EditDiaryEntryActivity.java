@@ -134,7 +134,6 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
         m_CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Cancel
                 m_Me.onBackPressed();
             }
         });
@@ -210,6 +209,7 @@ public class EditDiaryEntryActivity extends ActionBarActivity {
                 deleteDiaryEntry();
                 Toast.makeText(m_Me, "Deleted from diary!", Toast.LENGTH_SHORT).show();
                 dialog.cancel();
+                m_Me.onBackPressed();
             }
         });
 

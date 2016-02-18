@@ -18,7 +18,6 @@
     </FrameLayout>
 
 
-    <!-- Calorie Summary -->
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,90 +28,53 @@
 
         <!-- Calorie Names -->
         <TableRow
-            android:id="@+id/table_headers">
+            android:id="@+id/table_headers"
+            android:paddingBottom="2dp">
 
-            <!-- Goal -->
             <TextView
                 android:layout_weight="5"
-                android:textSize="14dp"
+                android:textSize="16dp"
                 android:gravity="center"
-                android:text="Goal"/>
+                android:text="Budget"/>
 
-            <TextView
-                android:layout_weight=".5"
-                android:gravity="center"
-                android:text=""/>
-
-            <!-- Food -->
             <TextView
                 android:layout_weight="5"
-                android:textSize="14dp"
+                android:textSize="16dp"
                 android:gravity="center"
                 android:text="Food"/>
 
             <TextView
-                android:layout_weight=".5"
-                android:gravity="center"
-                android:text=""/>
-
-            <!-- Exercise -->
-            <TextView
+                android:id="@+id/remaining_header"
                 android:layout_weight="5"
-                android:textSize="14dp"
+                android:textSize="16dp"
                 android:gravity="center"
-                android:text="Exercise"/>
-
-            <TextView
-                android:layout_weight=".5"
-                android:gravity="center"
-                android:text=""/>
-
-            <!-- Remaining -->
-            <TextView
-                android:layout_weight="5"
-                android:textSize="14dp"
-                android:gravity="center"
-                android:text="Remaining"/>
-
+                android:text="Under"/>
         </TableRow>
 
-        <!-- Calorie Values-->
-        <TableRow>
+        <!-- Calorie Names -->
+        <TableRow
+            android:id="@+id/table_values">
 
             <TextView
-                android:id="@+id/total_goal_cals"
+                android:id="@+id/budget_cals"
                 style="@style/DiaryTableValue"
-                android:text="1,500"/>
+                android:text="2000"/>
 
             <TextView
-                style="@style/DiaryTableSymbol"
-                android:text="-"/>
-
-            <TextView
-                android:id="@+id/total_food_cals"
-                style="@style/DiaryTableValue"
-                android:text="780"/>
-
-            <TextView
-                style="@style/DiaryTableSymbol"
-                android:text="+"/>
-
-            <TextView
-                android:id="@+id/total_exercise_cals"
+                android:id="@+id/food_cals"
                 style="@style/DiaryTableValue"
                 android:text="350"/>
 
+            <!--style="@style/DiaryTableRemainder"-->
             <TextView
-                style="@style/DiaryTableSymbol"
-                android:text="="/>
-
-            <TextView
-                android:id="@+id/total_remaining_cals"
+                android:id="@+id/remaining_cals"
                 style="@style/DiaryTableRemainder"
                 android:text="1,070"/>
-
         </TableRow>
+
     </TableLayout>
+
+    <!-- Calorie Summary -->
 
     <View
         android:layout_width="match_parent"

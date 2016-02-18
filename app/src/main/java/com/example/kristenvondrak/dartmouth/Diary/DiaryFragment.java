@@ -57,13 +57,19 @@ public class DiaryFragment extends Fragment {
 
     // Summary calorie
     private static final int DEFAULT_GOAL_CALS = 2000;
-    private TextView m_GoalTextView;
+    //private TextView m_GoalTextView;
+    //private TextView m_FoodTextView;
+    //private TextView m_ExerciseTextView;
+    //private int m_ExcerciseCals;
+    //private int m_GoalCals;
+    //private int m_FoodCals;
+
+    private TextView m_BudgetTextView;
     private TextView m_FoodTextView;
-    private TextView m_ExerciseTextView;
     private TextView m_RemainingTextView;
-    private int m_ExcerciseCals;
-    private int m_GoalCals;
+    private TextView m_RemainingHeaderTextView;
     private int m_FoodCals;
+    private int m_BudgetCals;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,9 +89,8 @@ public class DiaryFragment extends Fragment {
         initializeListeners();
 
         // TODO: store in parse
-        m_ExcerciseCals = 0;
         m_FoodCals = 0;
-        m_GoalCals = DEFAULT_GOAL_CALS;
+        m_BudgetCals = DEFAULT_GOAL_CALS;
 
         // Create list of meals and set the adapter
         m_DiaryListAdapter = new DiaryListAdapter(m_Activity);
@@ -102,10 +107,10 @@ public class DiaryFragment extends Fragment {
 
     private void initializeViews(View v) {
         m_DiaryListView = (ListView) v.findViewById(R.id.diary_list_view);
-        m_GoalTextView = (TextView) v.findViewById(R.id.total_goal_cals);
-        m_FoodTextView = (TextView) v.findViewById(R.id.total_food_cals);
-        m_ExerciseTextView = (TextView) v.findViewById(R.id.total_exercise_cals);
-        m_RemainingTextView = (TextView) v.findViewById(R.id.total_remaining_cals);
+        m_RemainingHeaderTextView = (TextView) v.findViewById(R.id.remaining_header);
+        m_BudgetTextView = (TextView) v.findViewById(R.id.budget_cals);
+        m_FoodTextView = (TextView) v.findViewById(R.id.food_cals);
+        m_RemainingTextView = (TextView) v.findViewById(R.id.remaining_cals);
         m_CurrentDateTextView = (TextView) v.findViewById(R.id.date_text_view);
         m_NextDateButton = (ImageView) v.findViewById(R.id.next_date_btn);
         m_PreviousDateButton = (ImageView) v.findViewById(R.id.prev_date_btn);
@@ -162,13 +167,17 @@ public class DiaryFragment extends Fragment {
                 m_FoodCals += e.getTotalCalories();
             }
         }
-        m_ExerciseTextView.setText(Integer.toString(m_ExcerciseCals));
-        m_GoalTextView.setText(Integer.toString(m_GoalCals));
+
+        m_BudgetTextView.setText(Integer.toString(m_BudgetCals));
         m_FoodTextView.setText(Integer.toString(m_FoodCals));
-        int total = m_GoalCals - m_FoodCals + m_ExcerciseCals;
-        m_RemainingTextView.setText(Integer.toString(total));
+
+        int total = m_BudgetCals - m_FoodCals;
         int color = total >= 0 ? getResources().getColor(R.color.cals_under) : getResources().getColor(R.color.cals_over);
+        m_RemainingTextView.setText(Integer.toString(total));
         m_RemainingTextView.setTextColor(color);
+
+        String header = total >= 0?  "Under" : "Over";
+        m_RemainingHeaderTextView.setText(header);
 
 
     }
