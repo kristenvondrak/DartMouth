@@ -147,9 +147,9 @@ public class MyMealsFragment extends MealSelectorFragment implements SearchHeade
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     public void onMealClick(UserMeal meal) {
+
         // Clear any current search
-        if (m_Activity.SEARCH_MODE)
-            m_Activity.getCancelSearchBtn().callOnClick();
+        m_Activity.cancelSearchIfExists();
 
         // Display the diary entries in the meal
         m_MealEntriesList.clear();
@@ -160,9 +160,9 @@ public class MyMealsFragment extends MealSelectorFragment implements SearchHeade
         m_MealEntriesListAdapter.resetData();
         m_SelectedUserMeal = meal.getTitle();
         resetMealSelector();
+
+        // Show details
         flipToNext();
-
-
     }
 
 

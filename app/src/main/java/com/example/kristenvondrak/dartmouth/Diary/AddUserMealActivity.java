@@ -99,9 +99,9 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_TabToFragmentMap = new HashMap<>();
         m_TabToFragmentMap.put(m_TabDDS, new MenuFragment());
         m_TabToFragmentMap.put(m_TabRecents, new RecentsFragment());
-        m_TabToFragmentMap.put(m_TabFoods, new MyFoodsFragment()); // Placeholder
+        m_TabToFragmentMap.put(m_TabFoods, new MyFoodsFragment());
         m_TabToFragmentMap.put(m_TabMeals, new MyMealsFragment());
-        m_TabToFragmentMap.put(m_TabDb, new DatabaseFragment()); // Placeholder
+        m_TabToFragmentMap.put(m_TabDb, new DatabaseFragment());
         m_FragmentManager = getSupportFragmentManager();
 
         for (RelativeLayout tab : m_TabToFragmentMap.keySet()) {
@@ -113,6 +113,11 @@ public class AddUserMealActivity extends ActionBarActivity {
                     setTabHighlight(m_CurrentTab, false);
                     setTabHighlight(view, true);
                     m_CurrentTab = (RelativeLayout) view;
+
+                    // Exit search
+                    if (SEARCH_MODE)
+                        exitSearch();
+
 
                     // Change the content
                     FragmentTransaction ft = m_FragmentManager.beginTransaction();
@@ -155,11 +160,7 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_SearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Start Search
-                SEARCH_MODE = true;
-
-                // Show search header
-                flipHeaderToNext();
+                startSearch();
 
                 // Fragment specific
                 SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
@@ -170,14 +171,7 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_CancelSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Exit Search
-                SEARCH_MODE = false;
-                m_SearchEditText.setText("");
-                m_ClearSearchBtn.setVisibility(View.GONE);
-                Utils.hideKeyboard(m_Activity);
-
-                // Show main header
-                flipHeaderToPrev();
+                exitSearch();
 
                 // Fragment specific
                 SearchHeader currentFragment = (SearchHeader) m_TabToFragmentMap.get(m_CurrentTab);
@@ -246,6 +240,25 @@ public class AddUserMealActivity extends ActionBarActivity {
         m_HeaderViewFlipper.showPrevious();
     }
 
+    public void cancelSearchIfExists() {
+        if (SEARCH_MODE)
+            m_CancelSearchBtn.callOnClick();
+
+    }
+
+    private void exitSearch() {
+        Utils.hideKeyboard(m_Activity);
+
+        SEARCH_MODE = false;
+        m_SearchEditText.setText("");
+        m_ClearSearchBtn.setVisibility(View.GONE);
+        flipHeaderToPrev();
+    }
+
+    private void startSearch() {
+        SEARCH_MODE = true;
+        flipHeaderToNext();
+    }
 
     private void setTabHighlight(View view, boolean highlight) {
         TextView tv = (TextView) view.findViewById(R.id.tab_text);
@@ -348,7 +361,7 @@ public class AddUserMealActivity extends ActionBarActivity {
 
     public String getSearchText() {
         Object input = m_SearchEditText.getText();
-        if (input == null)
+        if (input == null || input.toString().trim().equals(""))
             return null;
         else
             return input.toString().toLowerCase().trim();

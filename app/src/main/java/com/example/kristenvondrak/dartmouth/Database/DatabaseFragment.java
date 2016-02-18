@@ -94,13 +94,13 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
         super.onResume();
 
         // If search open, make request
-        if (m_AddUserMealActivity.inSearchMode()) {
-            queryDbRecipes(m_AddUserMealActivity.getSearchText());
+//        if (m_AddUserMealActivity.inSearchMode()) {
+  //          queryDbRecipes(m_AddUserMealActivity.getSearchText());
 
         // Otherwise open search bar and show keyboard
-        } else {
+    //    } else {
             m_AddUserMealActivity.getSearchBtn().callOnClick();
-        }
+      //  }
     }
 
 
@@ -183,8 +183,7 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
         m_ServingsWhole = 1;
 
         // Clear any current search
-        if (((AddUserMealActivity)m_Activity).SEARCH_MODE)
-            ((AddUserMealActivity)m_Activity).getCancelSearchBtn().callOnClick();
+        ((AddUserMealActivity)m_Activity).cancelSearchIfExists();
 
         super.onItemClick(recipe);
     }
@@ -197,8 +196,10 @@ public class DatabaseFragment extends NutritionFragment implements SearchHeader{
             editText.requestFocus();
             InputMethodManager imm = (InputMethodManager) m_Activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-            m_Activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            //m_Activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
+        } else {
+            Utils.hideKeyboard(m_Activity);
         }
 
         // Show search prompt text

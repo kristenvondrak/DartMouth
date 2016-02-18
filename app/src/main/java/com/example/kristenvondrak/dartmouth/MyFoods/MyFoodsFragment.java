@@ -270,14 +270,14 @@ public class MyFoodsFragment extends NutritionFragment implements SearchHeader{
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     public void onItemClick(Recipe recipe) {
-        m_CurrentMode = MODE.VIEW_CUSTOM;
-        flipToNext();
         m_ServingsFraction = 0;
         m_ServingsWhole = 1;
 
+        m_CurrentMode = MODE.VIEW_CUSTOM;
+        flipToNext();
+
         // Clear any current search
-        if (((AddUserMealActivity)m_Activity).SEARCH_MODE)
-            ((AddUserMealActivity)m_Activity).getCancelSearchBtn().callOnClick();
+        ((AddUserMealActivity)m_Activity).cancelSearchIfExists();
 
         super.onItemClick(recipe);
     }

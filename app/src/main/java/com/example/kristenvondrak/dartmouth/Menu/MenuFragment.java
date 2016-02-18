@@ -701,6 +701,7 @@ public class MenuFragment extends NutritionFragment implements SearchHeader{
         if (SEARCH_MODE) {
             clearSearch();
         }
+
         m_ServingsWhole = 1;
         m_ServingsFraction = 0;
 
