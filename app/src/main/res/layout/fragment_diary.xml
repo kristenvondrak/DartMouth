@@ -15,6 +15,18 @@
         <!-- Date -->
         <include layout="@layout/date_selector_header" />
 
+        <!-- Calendar -->
+        <ImageView
+            style="@style/LeftImageHeaderButton"
+            android:id="@+id/header_calendar_btn"
+            android:src="@drawable/calendar" />
+
+        <!-- Add -->
+        <ImageView
+            style="@style/RightImageHeaderButton"
+            android:id="@+id/header_quick_add_btn"
+            android:src="@drawable/ic_add_circle_outline"/>
+
     </FrameLayout>
 
 

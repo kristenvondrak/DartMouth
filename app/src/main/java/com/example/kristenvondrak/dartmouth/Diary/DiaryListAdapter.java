@@ -216,7 +216,7 @@ public class DiaryListAdapter extends BaseAdapter{
 
                         // Start AddUserMealActivity
                         m_Activity.startActivityForResult(intent, MainActivity.ADD_TO_MEAL);
-                        m_Activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                        m_Activity.overridePendingTransition(R.anim.none, R.anim.slide_in_from_bottom);
 
                     }
                 });

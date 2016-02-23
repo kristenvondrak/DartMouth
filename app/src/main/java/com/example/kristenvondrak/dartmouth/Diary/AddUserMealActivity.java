@@ -352,7 +352,7 @@ public class AddUserMealActivity extends ActionBarActivity {
     @Override
     public void onBackPressed(){
         this.finish();
-        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+        overridePendingTransition(R.anim.slide_out_to_bottom, R.anim.none);
     }
 
     public boolean inSearchMode() {
